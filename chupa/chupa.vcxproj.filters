@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="directx">
+      <UniqueIdentifier>{2b0e3ccc-ec97-4b5d-b63a-828d7104124d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="games">
+      <UniqueIdentifier>{7b22c42d-62f3-48af-9ebd-61257bb0d8e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{a855cbe2-6dfc-47ae-b37f-61ae991f0387}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{3a090dd8-ca58-44d9-8f2a-b2f3914dfc22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{5b1d5bf6-4560-4f5a-9dd1-2bd0943a3987}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Math.hpp">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.hpp">
+      <Filter>directx</Filter>
+    </ClInclude>
+    <ClInclude Include="Overlay.hpp" />
+    <ClInclude Include="utill.hpp">
+      <Filter>util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>shader</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Model.cpp">
+      <Filter>directx</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Overlay.cpp" />
+    <ClCompile Include="utill.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
