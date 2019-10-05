@@ -24,9 +24,11 @@
     <ClInclude Include="Model.hpp">
       <Filter>directx</Filter>
     </ClInclude>
-    <ClInclude Include="Overlay.hpp" />
     <ClInclude Include="utill.hpp">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="Overlay.hpp">
+      <Filter>directx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -42,9 +44,11 @@
       <Filter>directx</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="utill.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="Overlay.cpp">
+      <Filter>directx</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

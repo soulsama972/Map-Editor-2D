@@ -74,16 +74,16 @@
     <LibraryPath>E:\projects 2019\static lib\64bit;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\projects 2019\static lib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\projects 2019\static lib\64bit;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\projects 2019\static lib\include;D:\static lib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\projects 2019\static lib\64bit;D:\static lib\64bit;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>E:\projects 2019\static lib\include;$(IncludePath)</IncludePath>
     <LibraryPath>E:\projects 2019\static lib\64bit;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>E:\projects 2019\static lib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\projects 2019\static lib\64bit;$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\projects 2019\static lib\include;D:\static lib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\projects 2019\static lib\64bit;D:\static lib\64bit;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

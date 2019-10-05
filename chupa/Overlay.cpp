@@ -1,7 +1,7 @@
 #include "Overlay.hpp"
 
 #define SafeDelete(x) if (x) {x->Release(); x = nullptr;}
-
+#define CheckFAILED(x) if(FAILED(x)) { MessageBoxA(NULL,std::to_string(__LINE__).c_str(),__FILE__,MB_OK); exit(0);}
 Overlay * Overlay::pThis = 0;
 LRESULT Overlay::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -21,25 +21,103 @@ LRESULT Overlay::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		if (rdy)
 		{
-			setScreenSize(fVec2(LOWORD(lParam), HIWORD(lParam)));
-			for (int y = 0; y < 500; y++)
-			{
-				for (int x = 0; x < 98; x++)
-				{
-					VertexInstance in;
-					in.color =  fVec4(0, 0, 0, 1);
-					in.size = GetScale(fVec2(10,10));
-					in.position = GetTransalte(fVec2(x * 10 + 10, y * 20 + 10), fVec2(10, 10));
-					
-					fCircle.ChangeInstance(x + y * 98,in);
-				}
-			}
-			fCircle.UpdateModel();
+			UpdateScreen(fVec2(LOWORD(lParam), HIWORD(lParam)));
+			
 		}
 	}
 	break;
 	}
 	return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+void Overlay::CreateSwapChain()
+{
+	// create a struct to hold information about the swap chain
+	DXGI_SWAP_CHAIN_DESC scd;
+
+	// clear out the struct for use
+	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
+
+	// fill the swap chain description struct
+	scd.BufferCount = 1;                                   // one back buffer
+	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;    // use 32-bit color
+	scd.BufferDesc.Width = static_cast<UINT>(screen.x);                   // set the back buffer width
+	scd.BufferDesc.Height = static_cast<UINT>(screen.y);                 // set the back buffer height
+	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;     // how swap chain is to be used
+	scd.OutputWindow = hwnd;                               // the window to be used
+	scd.SampleDesc.Count = 8u;                              // how many multisamples
+	scd.SampleDesc.Quality = 0;
+	scd.Windowed = TRUE;                                   // windowed/full-screen mode
+	scd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;    // allow full-screen switching
+	scd.BufferDesc.RefreshRate.Numerator = 0;
+	scd.BufferDesc.RefreshRate.Denominator = 0;
+	scd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	scd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	UINT swapCreateFlags = 0u;
+#ifndef NDEBUG
+	swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+	// create a device, device context and swap chain using the information in the scd struct
+	CheckFAILED(D3D11CreateDeviceAndSwapChain(NULL,
+		D3D_DRIVER_TYPE_HARDWARE,
+		NULL,
+		swapCreateFlags,
+		NULL,
+		NULL,
+		D3D11_SDK_VERSION,
+		&scd,
+		&swapChain,
+		&dev,
+		NULL,
+		&devcon));
+}
+
+void Overlay::CreateBackBuffer()
+{
+	// get the address of the back buffer
+	ID3D11Texture2D* pBackBuffer;
+	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)& pBackBuffer);
+
+	// use the back buffer address to create the render target
+	CheckFAILED(dev->CreateRenderTargetView(pBackBuffer, NULL, &backBuffer));
+	pBackBuffer->Release();
+}
+
+void Overlay::CreateDpethStencil()
+{
+	// create depth stensil state
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+	dsDesc.DepthEnable = TRUE;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	CheckFAILED(dev->CreateDepthStencilState(&dsDesc, &depthStencil));
+}
+
+void Overlay::CreateDepthStencilView()
+{
+	// create depth stensil texture
+	ID3D11Texture2D* pDepthStencil;
+	D3D11_TEXTURE2D_DESC descDepth = {};
+	
+	descDepth.Width = static_cast<UINT>(screen.x);
+	descDepth.Height = static_cast<UINT>(screen.y);
+	descDepth.MipLevels = 1u;
+	descDepth.ArraySize = 1u;
+	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+	descDepth.SampleDesc.Count = 8u;
+	descDepth.SampleDesc.Quality = 0u;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	CheckFAILED(dev->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
+
+	// create view of depth stensil texture
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
+	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	descDSV.Texture2D.MipSlice = 0u;
+	CheckFAILED(dev->CreateDepthStencilView(pDepthStencil, &descDSV, &depthStencilView));
+	SafeDelete(pDepthStencil);
 }
 
 
@@ -49,6 +127,7 @@ Overlay::Overlay(int with,int height)
 	pThis = this;
 	hInstance = GetModuleHandle(nullptr);
 	screen = fVec2(with, height);
+	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
 	WNDCLASSEX wc = { 0 };
 
 	wc.cbSize = sizeof(wc);
@@ -80,7 +159,8 @@ Overlay::~Overlay()
 	SafeDelete(dev);
 	SafeDelete(devcon);
 	SafeDelete(swapChain);
-
+	SafeDelete(depthStencil);
+	SafeDelete(depthStencilView);
 	line.CleanUp();
 	rect.CleanUp();
 	circle.CleanUp();
@@ -88,57 +168,28 @@ Overlay::~Overlay()
 
 void Overlay::InitD3D()
 {
-	// create a struct to hold information about the swap chain
-	DXGI_SWAP_CHAIN_DESC scd;
+	CreateSwapChain();
 
-	// clear out the struct for use
-	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
+	CreateBackBuffer();
 
-	// fill the swap chain description struct
-	scd.BufferCount = 1;                                   // one back buffer
-	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;    // use 32-bit color
-	scd.BufferDesc.Width = static_cast<UINT>(screen.x);                   // set the back buffer width
-	scd.BufferDesc.Height = static_cast<UINT>( screen.y);                 // set the back buffer height
-	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;     // how swap chain is to be used
-	scd.OutputWindow = hwnd;                               // the window to be used
-	scd.SampleDesc.Count = 8;                              // how many multisamples
-	scd.Windowed = TRUE;                                   // windowed/full-screen mode
-	scd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH ;    // allow full-screen switching
-														   // create a device, device context and swap chain using the information in the scd struct
-	D3D11CreateDeviceAndSwapChain(NULL,
-		D3D_DRIVER_TYPE_HARDWARE,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		D3D11_SDK_VERSION,
-		&scd,
-		&swapChain,
-		&dev,
-		NULL,
-		&devcon);
-	// get the address of the back buffer
-	ID3D11Texture2D* pBackBuffer;
-	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)& pBackBuffer);
+	CreateDpethStencil();
 
-	// use the back buffer address to create the render target
-	dev->CreateRenderTargetView(pBackBuffer, NULL, &backBuffer);
-	pBackBuffer->Release();
+	CreateDepthStencilView();
 
-	// set the render target as the back buffer
-	devcon->OMSetRenderTargets(1, &backBuffer, NULL);
+	rdy = true;
 
+	// bind depth state
+	devcon->OMSetDepthStencilState(depthStencil, 1u);
 
-	// Set the viewport
-	D3D11_VIEWPORT viewport;
-	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+	// bind depth stensil view to OM
+	devcon->OMSetRenderTargets(1u, &backBuffer, depthStencilView);
 
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.Width = screen.x;
 	viewport.Height = screen.y;
 	devcon->RSSetViewports(1, &viewport);
-	rdy = true;
+
 }
 
 void Overlay::InitShapes()
@@ -209,30 +260,23 @@ void Overlay::InitShapes()
 	circle.InitBuffer(dev, devcon, VertexCircle, numVertex, hallowCrircleInd, numVertex+1, 5000, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 }
 
-void Overlay::setScreenSize(fVec2 screensize)
+void Overlay::UpdateScreen(fVec2 screensize)
 {
 	screen = screensize;
-	D3D11_VIEWPORT viewport;
-	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
 	viewport.Width = screen.x;
 	viewport.Height = screen.y;
 
+	SafeDelete(backBuffer);
+	SafeDelete(depthStencil);
+	SafeDelete(depthStencilView);
+	CheckFAILED(swapChain->ResizeBuffers(0, static_cast<UINT>(screen.x), static_cast<UINT>(screen.y), DXGI_FORMAT_R8G8B8A8_UNORM, 0));
 
-	if (SUCCEEDED(backBuffer->Release()) && 
-		SUCCEEDED(swapChain->ResizeBuffers(0,static_cast<UINT>( screen.x),
-			static_cast<UINT>(screen.y), DXGI_FORMAT_R8G8B8A8_UNORM, 0)))
-	{
-		ID3D11Texture2D* pBackBuffer;
-		swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)& pBackBuffer);
 
-		// use the back buffer address to create the render target
-		dev->CreateRenderTargetView(pBackBuffer, NULL, &backBuffer);
-		pBackBuffer->Release();
-		devcon->OMSetRenderTargets(1, &backBuffer, nullptr);
+	CreateBackBuffer();
+	CreateDpethStencil();
+	CreateDepthStencilView();
+	devcon->OMSetRenderTargets(1, &backBuffer,depthStencilView);
 
-	}
 	devcon->RSSetViewports(1, &viewport);
 
 }
@@ -240,6 +284,7 @@ void Overlay::setScreenSize(fVec2 screensize)
 void Overlay::ClearTargetView(fVec4 color)
 {
 	devcon->ClearRenderTargetView(backBuffer, color.ToPointer());
+	devcon->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 }
 
 void Overlay::Draw(bool cleanAfterDraw)
