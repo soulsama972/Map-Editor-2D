@@ -42,6 +42,7 @@ private:
 	void CreateBackBuffer();
 	void CreateDpethStencil();
 	void CreateDepthStencilView();
+	void CreateRasterizer(D3D11_FILL_MODE fillMode,D3D11_CULL_MODE cullMode,bool multiSample = true,bool antialiasedLine = true);
 public:
 	bool rdy = false;
 	HWND hwnd = 0;
@@ -53,6 +54,7 @@ private:
 	ID3D11RenderTargetView* backBuffer = nullptr;
 	ID3D11DepthStencilState* depthStencil = nullptr;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
+	ID3D11RasterizerState* raster = nullptr;
 	Model11<VertexInstance>rect;
 	Model11<VertexInstance>line;
 	Model11<VertexInstance>circle;

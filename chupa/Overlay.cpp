@@ -1,6 +1,6 @@
 #include "Overlay.hpp"
 
-#define SafeDelete(x) if (x) {x->Release(); x = nullptr;}
+#define SafeDelete(x) if (x != nullptr) {x->Release(); x = nullptr;}
 #define CheckFAILED(x) if(FAILED(x)) { MessageBoxA(NULL,std::to_string(__LINE__).c_str(),__FILE__,MB_OK); exit(0);}
 Overlay * Overlay::pThis = 0;
 LRESULT Overlay::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -120,6 +120,14 @@ void Overlay::CreateDepthStencilView()
 	SafeDelete(pDepthStencil);
 }
 
+void Overlay::CreateRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, bool multiSample, bool antialiasedLine)
+{
+	CD3D11_RASTERIZER_DESC rastDesc(fillMode, cullMode, FALSE,
+		D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
+		D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, multiSample, antialiasedLine);
+	CheckFAILED(dev->CreateRasterizerState(&rastDesc, &raster));
+}
+
 
 
 Overlay::Overlay(int with,int height)
@@ -161,6 +169,7 @@ Overlay::~Overlay()
 	SafeDelete(swapChain);
 	SafeDelete(depthStencil);
 	SafeDelete(depthStencilView);
+	SafeDelete(raster);
 	line.CleanUp();
 	rect.CleanUp();
 	circle.CleanUp();
@@ -176,6 +185,8 @@ void Overlay::InitD3D()
 
 	CreateDepthStencilView();
 
+	CreateRasterizer(D3D11_FILL_MODE::D3D11_FILL_SOLID, D3D11_CULL_NONE);
+
 	rdy = true;
 
 	// bind depth state
@@ -183,6 +194,9 @@ void Overlay::InitD3D()
 
 	// bind depth stensil view to OM
 	devcon->OMSetRenderTargets(1u, &backBuffer, depthStencilView);
+
+	// bind raster
+	devcon->RSSetState(raster);
 
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
@@ -244,7 +258,7 @@ void Overlay::InitShapes()
 		else if (i % 3 == 2)
 			indircle[i] = indircle[i - 1] + 1;
 	}
-	fCircle.InitBuffer(dev, devcon, VertexCircle, numVertex, indircle, numVertex*3, 5000, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	fCircle.InitBuffer(dev, devcon, VertexCircle, numVertex, indircle, (numVertex-1)*3, 5000, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	
 	
 	//hallow circle
@@ -289,10 +303,18 @@ void Overlay::ClearTargetView(fVec4 color)
 
 void Overlay::Draw(bool cleanAfterDraw)
 {
+	D3D11_RASTERIZER_DESC desc;
+	ID3D11RasterizerState* r;
+	raster->GetDesc(&desc);
+	desc.CullMode = D3D11_CULL_BACK;
+	CheckFAILED(dev->CreateRasterizerState(&desc, &r));
 	rect.Draw();
-	line.Draw();
 	circle.Draw();
 	fCircle.Draw();
+	devcon->RSSetState(r);
+	line.Draw();
+	devcon->RSSetState(raster);
+	SafeDelete(r);
 	if (cleanAfterDraw)
 	{
 		rect.ClearInstance();
