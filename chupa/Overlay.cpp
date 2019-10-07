@@ -295,6 +295,8 @@ void Overlay::InitShapes()
 
 void Overlay::UpdateScreen(fVec2 screensize)
 {
+	if (screensize.GetLength() == 0)
+		return;
 	screen = screensize;
 	viewport.Width = screen.x;
 	viewport.Height = screen.y;

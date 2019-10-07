@@ -12,20 +12,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 	if (overlay)
 	{	
 		MSG msg;
-		overlay->InsertRect({200-10,10}, {200 + 140,10}, fVec4(0, 0, 0, 1));
-		//overlay->InsertRect({ 200 - 10,320 + 20 }, { 200 - 10 + 140 ,20 }, fVec4(0, 0, 0, 1));
+		int th = 5;
+		int  scale = 20;
+		vec2<int> pos = vec2<int>(200, 10);
+		overlay->InsertRect({ pos.x,pos.y}, {scale * 17 +10,th }, fVec4(0, 0, 0, 1));//top
+		overlay->InsertRect({ 200 ,scale * 17 + th }, { scale * 17 +10,th }, fVec4(0, 0, 0, 1));//bot
 		
-		overlay->InsertRect({ 200 - 10,20 }, { 10 ,10 +320}, fVec4(0, 0, 0, 1));
-		overlay->InsertRect({ 200  + 320,20 }, { 10 ,10 + 320 }, fVec4(0, 0, 0, 1));
+		overlay->InsertRect({ 200-th,10 }, { th ,scale * 17 }, fVec4(0, 0, 0, 1));//left
+		overlay->InsertRect({ 200  + scale * 17 + 10,10 }, { th ,scale * 17 }, fVec4(0, 0, 0, 1));//right
 
 		overlay->InsertRect({ 200 + 160,500 }, { 5 ,60 }, fVec4(0, 0, 0, 1));
 		overlay->InsertRect({ 200 + 160,500 }, { 5 ,60 }, fVec4(0, 0, 0, 1));
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 9; i++)
 		{
-			for (int j = 0; j < 8; j++)
-			{
-				int  scale = 40;
-				fVec2  pos(200 + j * scale,20 + i * scale);
+			for (int j = 0; j < 17; j++)
+			{				
+				fVec2  pos(i % 2 == 0 ? 200 + j * scale : 210 + j * scale,20 + i * scale);
 				fVec4 color;
 				int rng = rand() % 3;
 				if (rng == 1)
