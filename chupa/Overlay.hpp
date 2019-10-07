@@ -62,7 +62,7 @@ private:
 	void CreateRasterizer(D3D11_FILL_MODE fillMode,D3D11_CULL_MODE cullMode,bool multiSample = true,bool antialiasedLine = true);
 public:
 	bool rdy = false;
-	HWND hwnd = 0;
+	Timer timer;
 private:
 	fVec2 screen;
 	ID3D11Device* dev = nullptr;
@@ -77,6 +77,7 @@ private:
 	Model11<VertexInstance>circle;
 	Model11<VertexInstance>fCircle;
 	HINSTANCE hInstance = 0;
+	HWND hwnd = 0;
 	D3D11_VIEWPORT viewport;
 	static Overlay* pThis;
 };

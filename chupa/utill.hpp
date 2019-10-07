@@ -4,7 +4,7 @@
 #include<ctime>
 #include <chrono>
 #include<Windows.h>
-
+#include<string>
 
 #define SafeDelete(x) if (x != nullptr) {x->Release(); x = nullptr;}
 #define CheckFAILED(x) if(FAILED(x)) { MessageBoxA(NULL,std::to_string(__LINE__).c_str(),__FILE__,MB_OK); exit(0);}
@@ -18,6 +18,7 @@ public:
 	bool Start();
 private:
 	bool isrunning = false;
+	uintptr_t fps;
 #ifdef _WIN32
 	std::chrono::time_point<std::chrono::steady_clock> start;
 	std::chrono::time_point<std::chrono::steady_clock> stop;
