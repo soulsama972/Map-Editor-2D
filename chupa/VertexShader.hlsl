@@ -1,3 +1,10 @@
+//cbuffer matrixType
+//{
+//	matrix proj;
+//	matrix view;
+//	matrix q;
+//};
+
 struct VertexInputType
 {
 	float4 position : POSITION;
@@ -30,8 +37,9 @@ PixelInputType main(VertexInputType input)
 		{ 0, 0, 0, 1 }
 	};
 	input.position.w = 1.0f;
-	matrix world = mul(translate,mScale);
-	output.position = mul(world,input.position);
+	output.position = mul(mul(translate, mScale),input.position);
+	//output.position = mul(view, output.position);
+	//output.position = mul(proj, output.position);
 	output.color = input.color;
 
 

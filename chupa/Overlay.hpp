@@ -1,29 +1,42 @@
 #pragma once
 #include"Model.hpp"
+#include<D3DX11.h>
+#include<D3D11.h>	
+#include <D3DX10math.h>
 
+#pragma comment(lib,"d3d11.lib")
+#pragma comment(lib,"d3dx11.lib")
 
+#pragma comment(lib,"d3d10.lib")
+#pragma comment(lib,"d3dx10.lib")
 class Overlay
 {
+private:
+	//struct CONSTBUFFER
+	//{
+	//	D3DXMATRIX proj;
+	//	D3DXMATRIX view;
+	//	D3DXMATRIX world;
+	//};
 public:
 	static LRESULT CALLBACK WinProc(HWND, UINT, WPARAM, LPARAM);
 
-public:
 	Overlay(int with, int height);
 	~Overlay();
-public:
+
 	void InitD3D();
 	
 	void ClearTargetView(fVec4 color);
 	void Draw(bool cleanAfterDraw = true);
 	void Render();
 
-public:
 	void UpdateScreen(fVec2 screensize);
 
-public:
 	void InsertLine(fVec2 p1, fVec2 p2, fVec4 color);
 	void InsertCircle(fVec2 pos, float rad, fVec4 color,bool filled = true);
 	void InsertRect(fVec2 pos, fVec2 size, fVec4 color);
+
+	void SetRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, bool multiSample = true, bool antialiasedLine = true);
 private:
 	inline fVec2 GetScale(fVec2 s)
 	{
@@ -34,10 +47,10 @@ private:
 	{
 		return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
 	}
-private:
+
 	void InitShapes();
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-private:
+
 	void CreateSwapChain();
 	void CreateBackBuffer();
 	void CreateDpethStencil();
@@ -59,10 +72,7 @@ private:
 	Model11<VertexInstance>line;
 	Model11<VertexInstance>circle;
 	Model11<VertexInstance>fCircle;
-
 	HINSTANCE hInstance = 0;
 	D3D11_VIEWPORT viewport;
 	static Overlay* pThis;
 };
-
-extern Overlay *overlay;

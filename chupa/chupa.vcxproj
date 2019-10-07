@@ -74,7 +74,7 @@
     <LibraryPath>E:\projects 2019\static lib\64bit;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\projects 2019\static lib\include;D:\static lib\include;$(IncludePath)</IncludePath>
+    <IncludePath>D:\static lib\include_64bit;$(IncludePath)</IncludePath>
     <LibraryPath>E:\projects 2019\static lib\64bit;D:\static lib\64bit;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -30,6 +30,55 @@ LRESULT Overlay::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
+
+Overlay::Overlay(int with, int height)
+{
+	pThis = this;
+	hInstance = GetModuleHandle(nullptr);
+	screen = fVec2(with, height);
+	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+	WNDCLASSEX wc = { 0 };
+
+	wc.cbSize = sizeof(wc);
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = Overlay::WinProc;
+	wc.hInstance = hInstance;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.lpszClassName = L"WindowClass";
+
+	RegisterClassEx(&wc);
+	RECT r;
+	SetRect(&r, 0, 0, static_cast<int>(screen.x), static_cast<int>(screen.y));
+	AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
+
+	hwnd = CreateWindowEx(NULL, L"WindowClass", L"chupa", WS_OVERLAPPEDWINDOW,
+		0, 0, r.right - r.left, r.bottom - r.top, NULL, NULL, hInstance, NULL);
+
+
+	ShowWindow(hwnd, SW_SHOW);
+	InitD3D();
+	InitShapes();
+
+}
+
+Overlay::~Overlay()
+{
+	UnregisterClass(L"WindowClass", hInstance);
+	SafeDelete(backBuffer);
+	SafeDelete(dev);
+	SafeDelete(devcon);
+	SafeDelete(swapChain);
+	SafeDelete(depthStencil);
+	SafeDelete(depthStencilView);
+	SafeDelete(raster);
+	line.CleanUp();
+	rect.CleanUp();
+	circle.CleanUp();
+	fCircle.CleanUp();
+}
+
+
+
 void Overlay::CreateSwapChain()
 {
 	// create a struct to hold information about the swap chain
@@ -91,6 +140,24 @@ void Overlay::CreateDpethStencil()
 	dsDesc.DepthEnable = TRUE;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	//// Stencil test parameters
+		dsDesc.StencilEnable = true;
+	dsDesc.StencilReadMask = 0xFF;
+	dsDesc.StencilWriteMask = 0xFF;
+
+	// Stencil operations if pixel is front-facing
+	dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Stencil operations if pixel is back-facing
+	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
 	CheckFAILED(dev->CreateDepthStencilState(&dsDesc, &depthStencil));
 }
 
@@ -129,52 +196,6 @@ void Overlay::CreateRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMod
 }
 
 
-
-Overlay::Overlay(int with,int height)
-{
-	pThis = this;
-	hInstance = GetModuleHandle(nullptr);
-	screen = fVec2(with, height);
-	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
-	WNDCLASSEX wc = { 0 };
-
-	wc.cbSize = sizeof(wc);
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = Overlay::WinProc;
-	wc.hInstance = hInstance;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.lpszClassName = L"WindowClass";
-
-	RegisterClassEx(&wc);
-	RECT r;
-	SetRect(&r, 0, 0, static_cast<int>(screen.x), static_cast<int>(screen.y));
-	AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
-
-	hwnd = CreateWindowEx(NULL, L"WindowClass", L"chupa", WS_OVERLAPPEDWINDOW,
-		0, 0,r.right - r.left,r.bottom - r.top,NULL,NULL, hInstance, NULL);
-
-
-	ShowWindow(hwnd,SW_SHOW);
-	InitD3D();
-	InitShapes();
-
-}
-
-Overlay::~Overlay()
-{
-	UnregisterClass(L"WindowClass", hInstance);
-	SafeDelete(backBuffer);
-	SafeDelete(dev);
-	SafeDelete(devcon);
-	SafeDelete(swapChain);
-	SafeDelete(depthStencil);
-	SafeDelete(depthStencilView);
-	SafeDelete(raster);
-	line.CleanUp();
-	rect.CleanUp();
-	circle.CleanUp();
-}
-
 void Overlay::InitD3D()
 {
 	CreateSwapChain();
@@ -185,8 +206,7 @@ void Overlay::InitD3D()
 
 	CreateDepthStencilView();
 
-	CreateRasterizer(D3D11_FILL_MODE::D3D11_FILL_SOLID, D3D11_CULL_NONE);
-
+	SetRasterizer(D3D11_FILL_MODE::D3D11_FILL_SOLID, D3D11_CULL_NONE);
 	rdy = true;
 
 	// bind depth state
@@ -195,11 +215,11 @@ void Overlay::InitD3D()
 	// bind depth stensil view to OM
 	devcon->OMSetRenderTargets(1u, &backBuffer, depthStencilView);
 
-	// bind raster
-	devcon->RSSetState(raster);
 
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
+	viewport.MinDepth = 0;
+	viewport.MaxDepth = 0;
 	viewport.Width = screen.x;
 	viewport.Height = screen.y;
 	devcon->RSSetViewports(1, &viewport);
@@ -303,18 +323,11 @@ void Overlay::ClearTargetView(fVec4 color)
 
 void Overlay::Draw(bool cleanAfterDraw)
 {
-	D3D11_RASTERIZER_DESC desc;
-	ID3D11RasterizerState* r;
-	raster->GetDesc(&desc);
-	desc.CullMode = D3D11_CULL_BACK;
-	CheckFAILED(dev->CreateRasterizerState(&desc, &r));
+	line.Draw();
 	rect.Draw();
 	circle.Draw();
 	fCircle.Draw();
-	devcon->RSSetState(r);
-	line.Draw();
-	devcon->RSSetState(raster);
-	SafeDelete(r);
+
 	if (cleanAfterDraw)
 	{
 		rect.ClearInstance();
@@ -361,6 +374,12 @@ void Overlay::InsertRect(fVec2 pos, fVec2 size, fVec4 color)
 	rect.AddInstance(in);
 }
 
+void Overlay::SetRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, bool multiSample, bool antialiasedLine)
+{
+	SafeDelete(raster);
+	CreateRasterizer(fillMode, cullMode, multiSample, antialiasedLine);
+	devcon->RSSetState(raster);
+}
 
 
 
