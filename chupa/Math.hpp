@@ -1,13 +1,14 @@
 #pragma once
 #include<cmath>
 
+
 #define PI 3.1415926535897932384626433832795f
 class Matrix4x4
 {
 public:
 #pragma warning (push)
 #pragma warning (disable : 26495)
-	Matrix4x4() { MatrixIdentity(); }
+	Matrix4x4() { Identity(); }
 	~Matrix4x4() { };
 	Matrix4x4(float* viewMatrix)
 #pragma warning (pop)
@@ -65,7 +66,14 @@ public:
 		_44 /= v;
 	}
 
-	inline void MatrixRotX(float Angle)
+	inline Matrix4x4 operator * (Matrix4x4 m)
+	{
+		Matrix4x4 mm;
+		mm.Mul(*this, m);
+		return mm;
+	}
+
+	inline void RotX(float Angle)
 	{
 		float cosAng = cosf(Angle);
 		float sinAng = sinf(Angle);
@@ -77,7 +85,7 @@ public:
 
 	}
 
-	inline void MatrixRotY(float Angle)
+	inline void RotY(float Angle)
 	{
 		float cosAng = cosf(Angle);
 		float sinAng = sinf(Angle);
@@ -89,7 +97,7 @@ public:
 
 	}
 
-	inline void MatrixRotZ(float Angle)
+	inline void RotZ(float Angle)
 	{
 		float cosAng = cosf(Angle);
 		float sinAng = sinf(Angle);
@@ -100,7 +108,7 @@ public:
 		_21 = -sinAng;
 	}
 
-	inline void MatrixIdentity()
+	inline void Identity()
 	{
 		_11 = 1.0f;
 		_12 = 0.0f;
@@ -169,7 +177,7 @@ public:
 		_44 = viewMatrix[15];
 	}
 
-	inline void MatrixMultiply(const Matrix4x4 src1, const Matrix4x4 src2)
+	inline void Mul(const Matrix4x4 src1, const Matrix4x4 src2)
 	{
 		_11 = src1._11 * src2._11 + src1._12 * src2._21 + src1._13 * src2._31 + src1._14 * src2._41;
 		_12 = src1._11 * src2._12 + src1._12 * src2._22 + src1._13 * src2._32 + src1._14 * src2._42;
@@ -189,6 +197,12 @@ public:
 		_44 = src1._41 * src2._14 + src1._42 * src2._24 + src1._43 * src2._34 + src1._44 * src2._44;
 	}
 
+	inline void Translate(float t[3])
+	{
+		this->_14 = t[0];
+		this->_24 = t[1];
+		this->_34 = t[2];
+	}
 
 };
 
@@ -371,6 +385,7 @@ public:
 		this->z = static_cast<T>(z);
 		this->w = static_cast<T>(w);
 	}
+
 	inline T GetLength()
 	{
 		return x * x + y * y + z * z + w * w;
@@ -420,6 +435,7 @@ public:
 		return reinterpret_cast<T*>(this);
 	}
 };
+
 
 using fVec2 = vec2<float>;
 using fVec3 = vec3<float>;

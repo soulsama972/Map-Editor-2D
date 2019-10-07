@@ -15,14 +15,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 		int th = 5;
 		int  scale = 20;
 		vec2<int> pos = vec2<int>(200, 10);
-		overlay->InsertRect({ pos.x,pos.y}, {scale * 17 +10,th }, fVec4(0, 0, 0, 1));//top
-		overlay->InsertRect({ 200 ,scale * 17 + th }, { scale * 17 +10,th }, fVec4(0, 0, 0, 1));//bot
+		overlay->InsertRect({ pos.x,pos.y}, {scale * 17 +10,th }, fVec4(1, 1, 1, 1));//top
+		overlay->InsertRect({ 200 ,scale * 17 + th }, { scale * 17 +10,th }, fVec4(1, 1, 1, 1));//bot
 		
-		overlay->InsertRect({ 200-th,10 }, { th ,scale * 17 }, fVec4(0, 0, 0, 1));//left
-		overlay->InsertRect({ 200  + scale * 17 + 10,10 }, { th ,scale * 17 }, fVec4(0, 0, 0, 1));//right
+		overlay->InsertRect({ 200-th,10 }, { th ,scale * 17 }, fVec4(1, 1, 1, 1));//left
+		overlay->InsertRect({ 200  + scale * 17 + 10,10 }, { th ,scale * 17 }, fVec4(1, 1, 1, 1));//right
 
-		overlay->InsertRect({ 200 + 160,500 }, { 5 ,60 }, fVec4(0, 0, 0, 1));
-		overlay->InsertRect({ 200 + 160,500 }, { 5 ,60 }, fVec4(0, 0, 0, 1));
+		overlay->InsertRect({ 200 + 160,500 }, { 5 ,60 }, fVec4(1, 1, 1, 1));
+		overlay->InsertRect({ 200 + 160,500 }, { 5 ,60 }, fVec4(1, 1, 1, 1));
 		for (int i = 0; i < 9; i++)
 		{
 			for (int j = 0; j < 17; j++)
@@ -54,7 +54,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 			else
 			{
 				
-				overlay->ClearTargetView(fVec4(0.0, 0.5, 1.0, 1.0));
+				overlay->ClearTargetView(fVec4(0, 0, 0, 0));
+
 				overlay->Draw(false);
 				overlay->timer.Restart();
 				overlay->Render();

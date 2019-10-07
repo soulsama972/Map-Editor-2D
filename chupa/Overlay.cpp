@@ -218,7 +218,7 @@ void Overlay::InitD3D()
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.MinDepth = 0;
-	viewport.MaxDepth = 0;
+	viewport.MaxDepth = 1;
 	viewport.Width = screen.x;
 	viewport.Height = screen.y;
 	devcon->RSSetViewports(1, &viewport);
@@ -230,10 +230,10 @@ void Overlay::InitShapes()
 	//rect
 	VertexType vertex[] =
 	{
-		{{-1.0f,-1.0f,1.0f}},
-		{{-1.0f,1.0f,1.0f}},
-		{{1.0f,1.0f,1.0f}},
-		{{1.0f,-1.0f,1.0f}},
+		{{-1.0f,-1.0f,0.0f}},
+		{{-1.0f,1.0f,0.0f}},
+		{{1.0f,1.0f,0.0f}},
+		{{1.0f,-1.0f,0.0f}},
 	};
 
 	unsigned int ind[] =
@@ -245,8 +245,8 @@ void Overlay::InitShapes()
 	//line
 	VertexType VertexLine[] =
 	{
-		{fVec3(-1.0f,1.0f,1.0f)},
-		{fVec3(1.0f,-1.0f,1.0f)},
+		{fVec3(-1.0f,1.0f,0.0f)},
+		{fVec3(1.0f,-1.0f,0.0f)},
 	};
 	unsigned int indLine[] =
 	{
@@ -263,7 +263,7 @@ void Overlay::InitShapes()
 	for (int i = 0; i < numVertex; i++)
 	{
 		float Theta = i * doublePi / numPoint;
-		VertexCircle[i].position = fVec3(cosf(Theta), sinf(Theta), 1.0f);
+		VertexCircle[i].position = fVec3(cosf(Theta), sinf(Theta), 0.0f);
 	}
 	for (int i = 0; i < (numVertex-1) * 3; i++)
 	{
@@ -345,21 +345,36 @@ void Overlay::Render()
 
 void Overlay::InsertLine(fVec2 p1, fVec2 p2, fVec4 color)
 {
+	Matrix4x4 s;
 	VertexInstance in;
 	in.color = color;
-	in.size = GetScale(p2 -p1);
-	in.position = GetTransalte(p1, p2 - p1);
+	fVec2 scale = GetScale(p2 -p1);
+	fVec2 translate = GetTransalte(p1, p2 - p1);
+
+	in.matrix.Translate(fVec3(translate.x, translate.y, 0.0f).ToPointer());
+	s._11 = scale.x;
+	s._22 = scale.y;
+
+	in.matrix = in.matrix * s;
+
 	line.AddInstance(in);
 }
 
 void Overlay::InsertCircle(fVec2 pos, float rad, fVec4 color, bool filled)
 {
+	Matrix4x4 s;
 	fVec2  c = fVec2(rad, rad);
 	VertexInstance in;
 	in.color = color;
+	fVec2 scale = GetScale(c);
+	fVec2 translate = GetTransalte(pos,c);
 
-	in.size = GetScale(c);
-	in.position = GetTransalte(pos,c);
+	in.matrix.Translate(fVec3(translate.x, translate.y, 0.0f).ToPointer());
+	s._11 = scale.x;
+	s._22 = scale.y;
+
+	in.matrix = in.matrix * s;
+
 	if(filled)
 		fCircle.AddInstance(in);
 	else
@@ -368,10 +383,17 @@ void Overlay::InsertCircle(fVec2 pos, float rad, fVec4 color, bool filled)
 
 void Overlay::InsertRect(fVec2 pos, fVec2 size, fVec4 color)
 {
+	Matrix4x4 s;
 	VertexInstance in;
 	in.color = color;
-	in.size = GetScale(size);
-	in.position = GetTransalte(pos, size);
+
+	fVec2 scale = GetScale(size);
+	fVec2 translate = GetTransalte(pos, size);
+
+	in.matrix.Translate(fVec3(translate.x, translate.y, 0.0f).ToPointer());
+	s._11 = scale.x;
+	s._22 = scale.y;
+	in.matrix = in.matrix * s;
 	rect.AddInstance(in);
 }
 

@@ -15,13 +15,6 @@
 #pragma comment(lib,"d3dx10.lib")
 class Overlay
 {
-private:
-	//struct CONSTBUFFER
-	//{
-	//	D3DXMATRIX proj;
-	//	D3DXMATRIX view;
-	//	D3DXMATRIX world;
-	//};
 public:
 	static LRESULT CALLBACK WinProc(HWND, UINT, WPARAM, LPARAM);
 

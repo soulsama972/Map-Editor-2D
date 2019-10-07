@@ -25,9 +25,8 @@ struct VertexType
 
 struct VertexInstance
 {
-	fVec2 position;
-	fVec2 size;
 	fVec4 color;
+	Matrix4x4 matrix;
 };
 template<typename T>
 class Model11
@@ -159,7 +158,6 @@ void Model11<T>::InitializeShaders()
 	ID3D10Blob* vertexShaderBuffer = 0;
 	ID3D10Blob* pixelShaderBuffer = 0;
 	ID3D10Blob* errorMessage = 0;
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[4];
 	unsigned int numElements = 0;
 
 	auto OutputShaderErrorMessage = [](ID3D10Blob * errorMessage, HWND hwnd)
@@ -223,6 +221,7 @@ void Model11<T>::InitializeShaders()
 
 	// Create the vertex input layout description.
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[6];
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
 	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
@@ -231,29 +230,29 @@ void Model11<T>::InitializeShaders()
 	polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[0].InstanceDataStepRate = 0;
 
-	polygonLayout[1].SemanticName = "TEXCOORD";
+	polygonLayout[1].SemanticName = "COLOR";
 	polygonLayout[1].SemanticIndex = 0;
-	polygonLayout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	polygonLayout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	polygonLayout[1].InputSlot = 1;
 	polygonLayout[1].AlignedByteOffset = 0;
 	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
 	polygonLayout[1].InstanceDataStepRate = 1;
 
-	polygonLayout[2].SemanticName = "TEXCOORD";
-	polygonLayout[2].SemanticIndex = 1;
-	polygonLayout[2].Format = DXGI_FORMAT_R32G32_FLOAT;
+	polygonLayout[2].SemanticName = "world";
+	polygonLayout[2].SemanticIndex = 0;
+	polygonLayout[2].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	polygonLayout[2].InputSlot = 1;
 	polygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 	polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
 	polygonLayout[2].InstanceDataStepRate = 1;
 
-	polygonLayout[3].SemanticName = "COLOR";
-	polygonLayout[3].SemanticIndex = 0;
-	polygonLayout[3].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	polygonLayout[3].InputSlot = 1;
-	polygonLayout[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	polygonLayout[3].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
-	polygonLayout[3].InstanceDataStepRate = 1;
+	polygonLayout[3] = polygonLayout[2];
+	polygonLayout[4] = polygonLayout[2];
+	polygonLayout[5] = polygonLayout[2];
+
+	polygonLayout[3].SemanticIndex = 1;
+	polygonLayout[4].SemanticIndex = 2;
+	polygonLayout[5].SemanticIndex = 3;
 
 
 	// Get a count of the elements in the layout.
@@ -275,7 +274,7 @@ void Model11<T>::Model11::CleanUp()
 
 	if (vInstance)
 	{
-		delete vInstance;
+		delete[] vInstance;
 		vInstance = 0;
 	}
 
