@@ -2,6 +2,8 @@
 #include"utill.hpp"
 
 
+#pragma warning (push)
+#pragma warning (disable : 28251)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow)
 {
@@ -48,3 +50,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 	delete overlay;
 	return 0;
 }
+
+#pragma warning(pop)

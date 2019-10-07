@@ -40,9 +40,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Model.cpp">
-      <Filter>directx</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="utill.cpp">
       <Filter>util</Filter>

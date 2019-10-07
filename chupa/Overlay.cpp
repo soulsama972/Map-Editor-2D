@@ -1,7 +1,6 @@
 #include "Overlay.hpp"
 
-#define SafeDelete(x) if (x != nullptr) {x->Release(); x = nullptr;}
-#define CheckFAILED(x) if(FAILED(x)) { MessageBoxA(NULL,std::to_string(__LINE__).c_str(),__FILE__,MB_OK); exit(0);}
+
 Overlay * Overlay::pThis = 0;
 LRESULT Overlay::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

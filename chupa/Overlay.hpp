@@ -1,8 +1,12 @@
 #pragma once
 #include"Model.hpp"
-#include<D3DX11.h>
-#include<D3D11.h>	
-#include <D3DX10math.h>
+#include"utill.hpp"
+#pragma warning (push)
+#pragma warning (disable : 26495)
+#pragma warning (disable : 4005)
+
+#pragma warning(pop)
+
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"d3dx11.lib")

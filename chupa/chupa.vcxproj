@@ -145,7 +145,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="utill.cpp" />
   </ItemGroup>

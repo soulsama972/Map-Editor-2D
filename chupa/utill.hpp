@@ -1,10 +1,13 @@
+#pragma once
+#include <chrono>
 #include<iostream>
 #include<ctime>
 #include <chrono>
 #include<Windows.h>
-#pragma once
-#include <chrono>
 
+
+#define SafeDelete(x) if (x != nullptr) {x->Release(); x = nullptr;}
+#define CheckFAILED(x) if(FAILED(x)) { MessageBoxA(NULL,std::to_string(__LINE__).c_str(),__FILE__,MB_OK); exit(0);}
 class Timer
 {
 public:

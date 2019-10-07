@@ -3,7 +3,8 @@
 #include<iostream>
 #include<string>
 #include<fstream>
-
+#include"Math.hpp"
+#include"utill.hpp"
 #pragma warning (push)
 #pragma warning (disable : 26495)
 #pragma warning (disable : 4005)
@@ -13,7 +14,6 @@
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dx11.lib")
-#include"Math.hpp"
 
 
 
@@ -29,22 +29,17 @@ struct VertexInstance
 	fVec2 size;
 	fVec4 color;
 };
-
-void OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd);
-
 template<typename T>
 class Model11
 {
 public:
 	~Model11();
 
-	void InitBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
-		VertexType* vertex, UINT vertexLen, unsigned int* index, UINT indexLen, UINT instanceCount, D3D11_PRIMITIVE_TOPOLOGY topology);
+	void InitBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceContext,VertexType* vertex, UINT vertexLen, unsigned int* index, UINT indexLen, UINT instanceCount, D3D11_PRIMITIVE_TOPOLOGY topology);
 
 	void CleanUp();
 
 	void AddInstance(T in);
-	void ChangeInstance(UINT id, T in);
 	void UpdateModel();
 	void ClearInstance();
 	void Draw();
@@ -167,7 +162,40 @@ void Model11<T>::InitializeShaders()
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[4];
 	unsigned int numElements = 0;
 
-	result =  D3DX11CompileFromFileA("VertexShader.hlsl", 0, 0, "main", "vs_5_0", 0, 0, 0, &vertexShaderBuffer, &errorMessage, 0);
+	auto OutputShaderErrorMessage = [](ID3D10Blob * errorMessage, HWND hwnd)
+	{
+		char* compileErrors;
+		size_t bufferSize, i;
+		std::ofstream fout;
+
+
+		// Get a pointer to the error message text buffer.
+		compileErrors = (char*)(errorMessage->GetBufferPointer());
+
+		// Get the length of the message.
+		bufferSize = errorMessage->GetBufferSize();
+
+		// Open a file to write the error message to.
+		fout.open("shader-error.txt");
+
+		// Write out the error message.
+		for (i = 0; i < bufferSize; i++)
+		{
+			fout << compileErrors[i];
+		}
+
+		// Close the file.
+		fout.close();
+
+		// Release the error message.
+		errorMessage->Release();
+		errorMessage = 0;
+
+		// Pop a message up on the screen to notify the user to check the text file for compile errors.
+		MessageBox(hwnd, L"Error compiling shader.  Check shader-error.txt for message.", L"", MB_OK);
+	};
+
+	result = D3DX11CompileFromFileA("VertexShader.hlsl", 0, 0, "main", "vs_5_0", 0, 0, 0, &vertexShaderBuffer, &errorMessage, 0);
 	if (FAILED(result))
 	{
 		if (errorMessage)
@@ -191,15 +219,7 @@ void Model11<T>::InitializeShaders()
 		exit(-1);
 	}
 	// Create the pixel shader from the buffer.
-	result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader);
-	if (FAILED(result))
-	{
-		vertexShader->Release();
-		vertexShader = 0;
-		MessageBox(0, L"", L"create Shader pixel ", MB_OK);
-		exit(-1);
-	}
-
+	CheckFAILED(device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &pixelShader));
 
 	// Create the vertex input layout description.
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
@@ -240,62 +260,19 @@ void Model11<T>::InitializeShaders()
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
 	// Create the vertex input layout.
-	result = device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(),
-		vertexShaderBuffer->GetBufferSize(), &layout);
-	if (FAILED(result))
-	{
-		vertexShaderBuffer->Release();
-		vertexShaderBuffer = 0;
-
-		pixelShaderBuffer->Release();
-		pixelShaderBuffer = 0;
-		MessageBox(0, L"", L"create Inputlayout  ", MB_OK);
-		exit(-1);
-	}
-	vertexShaderBuffer->Release();
-	vertexShaderBuffer = 0;
-
-	pixelShaderBuffer->Release();
-	pixelShaderBuffer = 0;
-
+	CheckFAILED(device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(),vertexShaderBuffer->GetBufferSize(), &layout));
 }
 
 template<typename T>
 void Model11<T>::Model11::CleanUp()
 {
-	// Release the index buffer.
-	if (indexBuffer)
-	{
-		indexBuffer->Release();
-		indexBuffer = 0;
-	}
+	SafeDelete(indexBuffer);
+	SafeDelete(vertexBuffer);
+	SafeDelete(instanceBuffer);
+	SafeDelete(vertexShader);
+	SafeDelete(pixelShader);
+	SafeDelete(layout);
 
-	// Release the vertex buffer.
-	if (vertexBuffer)
-	{
-		vertexBuffer->Release();
-		vertexBuffer = 0;
-	}
-	if (instanceBuffer)
-	{
-		instanceBuffer->Release();
-		instanceBuffer = 0;
-	}
-	if (vertexShader)
-	{
-		vertexShader->Release();
-		vertexShader = 0;
-	}
-	if (pixelShader)
-	{
-		pixelShader->Release();
-		pixelShader = 0;
-	}
-	if (layout)
-	{
-		layout->Release();
-		layout = 0;
-	}
 	if (vInstance)
 	{
 		delete vInstance;
@@ -308,27 +285,11 @@ void Model11<T>::Model11::CleanUp()
 template<typename T>
 void Model11<T>::AddInstance(T in)
 {
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	VertexInstance* dataPtr;
-	unsigned int bufferNumber = 0;
 	if (vInstanceCount < vInstanceMax)
 	{
 		vInstance[vInstanceCount++] = in;
-
-		deviceContext->Map(instanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		dataPtr = (VertexInstance*)mappedResource.pData;
-
-		memcpy(dataPtr, vInstance, sizeof(VertexInstance) * vInstanceCount);
-
-		deviceContext->Unmap(instanceBuffer, 0);
+		UpdateModel();
 	}
-}
-
-template<typename T>
-void Model11<T>::ChangeInstance(UINT id, T in)
-{
-	if(id < vInstanceMax)
-		vInstance[id] = in;
 }
 
 template<typename T>
@@ -355,9 +316,6 @@ void Model11<T>::ClearInstance()
 template<typename T>
 void Model11<T>::Model11::Draw()
 {
-	if (vInstanceCount == 0)
-		return;
-
 	unsigned int stride[] = { sizeof(VertexType),sizeof(VertexInstance) };
 	unsigned int offset[] = { 0,0 };
 	ID3D11Buffer* bufferPointers[] = { vertexBuffer ,instanceBuffer };
