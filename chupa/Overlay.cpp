@@ -348,6 +348,8 @@ void Overlay::InsertLine(fVec2 p1, fVec2 p2, fVec4 color)
 	Matrix4x4 s;
 	VertexInstance in;
 	in.color = color;
+	in.normal = fVec3(0, 0, -1);
+
 	fVec2 scale = GetScale(p2 -p1);
 	fVec2 translate = GetTransalte(p1, p2 - p1);
 
@@ -366,6 +368,8 @@ void Overlay::InsertCircle(fVec2 pos, float rad, fVec4 color, bool filled)
 	fVec2  c = fVec2(rad, rad);
 	VertexInstance in;
 	in.color = color;
+	in.normal = fVec3(0.0, 0.4, -0.1);
+
 	fVec2 scale = GetScale(c);
 	fVec2 translate = GetTransalte(pos,c);
 
@@ -386,7 +390,7 @@ void Overlay::InsertRect(fVec2 pos, fVec2 size, fVec4 color)
 	Matrix4x4 s;
 	VertexInstance in;
 	in.color = color;
-
+	in.normal = fVec3(0, 0, -1);
 	fVec2 scale = GetScale(size);
 	fVec2 translate = GetTransalte(pos, size);
 

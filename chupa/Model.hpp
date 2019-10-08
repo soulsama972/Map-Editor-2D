@@ -27,6 +27,7 @@ struct VertexInstance
 {
 	fVec4 color;
 	Matrix4x4 matrix;
+	fVec3 normal;
 };
 template<typename T>
 class Model11
@@ -221,7 +222,7 @@ void Model11<T>::InitializeShaders()
 
 	// Create the vertex input layout description.
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[6];
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[7];
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
 	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
@@ -254,12 +255,22 @@ void Model11<T>::InitializeShaders()
 	polygonLayout[4].SemanticIndex = 2;
 	polygonLayout[5].SemanticIndex = 3;
 
+	polygonLayout[6].SemanticName = "normal";
+	polygonLayout[6].SemanticIndex = 0;
+	polygonLayout[6].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[6].InputSlot = 1;
+	polygonLayout[6].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	polygonLayout[6].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	polygonLayout[6].InstanceDataStepRate = 1;
+
 
 	// Get a count of the elements in the layout.
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
 	// Create the vertex input layout.
 	CheckFAILED(device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(),vertexShaderBuffer->GetBufferSize(), &layout));
+	SafeDelete(vertexShaderBuffer);
+	SafeDelete(pixelShaderBuffer);
 }
 
 template<typename T>
