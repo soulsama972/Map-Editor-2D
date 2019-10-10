@@ -1,17 +1,15 @@
-
 struct VertexInputType
 {
 	float4 position : POSITION;
 	float4 color : COLOR;
     matrix WVP : world;
-    float3 normal : normal;
 };
 
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
 	float4 color : COLOR;
-    float3 normal : normal;
+    float3 viewDirection : viewDir;
 };
 
 PixelInputType main(VertexInputType input)
@@ -21,14 +19,10 @@ PixelInputType main(VertexInputType input)
     output.position = mul(input.position, input.WVP);
 	output.color = input.color;
 
-    output.normal = mul(input.normal, (float3x3)input.WVP);
+ 
+    // Determine the viewing direction based on the position of the camera and the position of the vertex in the world. &&  Normalize the viewing direction vector.
+    output.viewDirection = normalize(input.position.xyz);
 	
-
-
-    // Normalize the normal vector.
-    output.normal = normalize(output.normal);
-
-	
-
+ 
 	return output;
 }

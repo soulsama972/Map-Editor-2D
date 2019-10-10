@@ -65,6 +65,7 @@ private:
 	ID3D11DepthStencilState* depthStencil = nullptr;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	ID3D11RasterizerState* raster = nullptr;
+	ID3D11Buffer* cameraBuffer = nullptr;
 	Model11<VertexInstance>rect;
 	Model11<VertexInstance>line;
 	Model11<VertexInstance>circle;

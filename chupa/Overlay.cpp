@@ -9,6 +9,7 @@ LRESULT Overlay::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 LRESULT Overlay::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	static fVec3 camPos = fVec3(0, 0, 0);
 	switch (msg)
 	{
 	case WM_DESTROY:
@@ -24,7 +25,6 @@ LRESULT Overlay::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			
 		}
 	}
-	break;
 	}
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
@@ -348,7 +348,6 @@ void Overlay::InsertLine(fVec2 p1, fVec2 p2, fVec4 color)
 	Matrix4x4 s;
 	VertexInstance in;
 	in.color = color;
-	in.normal = fVec3(0, 0, -1);
 
 	fVec2 scale = GetScale(p2 -p1);
 	fVec2 translate = GetTransalte(p1, p2 - p1);
@@ -368,8 +367,6 @@ void Overlay::InsertCircle(fVec2 pos, float rad, fVec4 color, bool filled)
 	fVec2  c = fVec2(rad, rad);
 	VertexInstance in;
 	in.color = color;
-	in.normal = fVec3(0.0, 0.4, -0.1);
-
 	fVec2 scale = GetScale(c);
 	fVec2 translate = GetTransalte(pos,c);
 
@@ -390,7 +387,6 @@ void Overlay::InsertRect(fVec2 pos, fVec2 size, fVec4 color)
 	Matrix4x4 s;
 	VertexInstance in;
 	in.color = color;
-	in.normal = fVec3(0, 0, -1);
 	fVec2 scale = GetScale(size);
 	fVec2 translate = GetTransalte(pos, size);
 
@@ -407,6 +403,7 @@ void Overlay::SetRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, 
 	CreateRasterizer(fillMode, cullMode, multiSample, antialiasedLine);
 	devcon->RSSetState(raster);
 }
+
 
 
 
