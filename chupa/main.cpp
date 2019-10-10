@@ -41,6 +41,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 			}
 		}
 
+	//	overlay->InsertCircle(fVec2(400,200), 200, fVec4(1,0,0,1));
+	//	overlay->InsertCircle(fVec2(000, 200), 200, fVec4(0, 0, 1, 1));
+
 		while (TRUE)
 		{		
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))

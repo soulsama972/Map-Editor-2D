@@ -46,7 +46,7 @@ public:
 	T* vInstance = 0;
 private:
 
-	void InitializeShaders();
+	void InitializeShaders(std::string vertexSrcFile, std::string vertexFunctionMainName, std::string pixelSrcFile, std::string pixelFunctionMainName);
 
 
 	ID3D11Buffer* vertexBuffer = 0;
@@ -77,7 +77,7 @@ void Model11<T>::InitBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	this->device = device;
 	this->deviceContext = deviceContext;
 
-	InitializeShaders();
+	InitializeShaders("VertexShader.hlsl","main","PixelShader.hlsl","main");
 
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc, instanceBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
@@ -152,7 +152,7 @@ void Model11<T>::InitBuffer(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 }
 
 template<typename T>
-void Model11<T>::InitializeShaders()
+void Model11<T>::InitializeShaders(std::string vertexSrcFile, std::string vertexFunctionMainName, std::string pixelSrcFile, std::string pixelFunctionMainName)
 {
 	HRESULT result = 0;
 	ID3D10Blob* vertexShaderBuffer = 0;
@@ -192,8 +192,7 @@ void Model11<T>::InitializeShaders()
 		// Pop a message up on the screen to notify the user to check the text file for compile errors.
 		MessageBox(hwnd, L"Error compiling shader.  Check shader-error.txt for message.", L"", MB_OK);
 	};
-
-	result = D3DX11CompileFromFileA("VertexShader.hlsl", 0, 0, "main", "vs_5_0", 0, 0, 0, &vertexShaderBuffer, &errorMessage, 0);
+	result = D3DX11CompileFromFileA(vertexSrcFile.c_str(), 0, 0,vertexFunctionMainName.c_str(), "vs_5_0", 0, 0, 0, &vertexShaderBuffer, &errorMessage, 0);
 	if (FAILED(result))
 	{
 		if (errorMessage)
@@ -203,7 +202,7 @@ void Model11<T>::InitializeShaders()
 		exit(-1);
 	}
 
-	result = D3DX11CompileFromFileA("PixelShader.hlsl", 0, 0, "main", "ps_5_0", 0, 0, 0, &pixelShaderBuffer, &errorMessage, 0);
+	result = D3DX11CompileFromFileA(pixelSrcFile.c_str(), 0, 0,pixelFunctionMainName.c_str(), "ps_5_0", 0, 0, 0, &pixelShaderBuffer, &errorMessage, 0);
 	if (FAILED(result))
 	{
 
