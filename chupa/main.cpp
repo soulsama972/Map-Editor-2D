@@ -1,12 +1,14 @@
 #include"Overlay.hpp"
-
+#include"Window.hpp"
 #include<random>
 #pragma warning (push)
 #pragma warning (disable : 28251)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow)
 {
+	Window* window = new Window(L"test", 800, 600);
 	Overlay *overlay = new Overlay(800,600);
+	
 	srand(static_cast<unsigned int>(time(NULL)));
 	overlay->timer.Start();
 	if (overlay)
@@ -33,17 +35,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 				if (rng == 1)
 					color = fVec4(1, 0, 0, 1);
 				else if (rng == 2)
-					color = fVec4(0, 1, 0, 1);
+					color = fVec4(0.0, 0.7, 0.0, 1.0);
 				else
 					color = fVec4(0, 0, 1, 1);
 
 				overlay->InsertCircle(pos, scale, color);
 			}
 		}
-
-	//	overlay->InsertCircle(fVec2(400,200), 200, fVec4(1,0,0,1));
-	//	overlay->InsertCircle(fVec2(000, 200), 200, fVec4(0, 0, 1, 1));
-
 		while (TRUE)
 		{		
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -56,16 +54,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 			}
 			else
 			{
-				
-				overlay->ClearTargetView(fVec4(0, 0, 0, 0));
+
+				overlay->ClearTargetView(fVec4(0.3f, 0.3f, 0.3f, 1.0f));
 
 				overlay->Draw(false);
 				overlay->timer.Restart();
 				overlay->Render();
-
 			}
 		}	
 	}
+	delete window;
 	delete overlay;
 	return 0;
 }

@@ -16,6 +16,9 @@
     <Filter Include="shader">
       <UniqueIdentifier>{5b1d5bf6-4560-4f5a-9dd1-2bd0943a3987}</UniqueIdentifier>
     </Filter>
+    <Filter Include="games\bubble">
+      <UniqueIdentifier>{19d1e758-d93d-4e35-8250-33b8149b8f49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.hpp">
@@ -29,6 +32,12 @@
     </ClInclude>
     <ClInclude Include="Overlay.hpp">
       <Filter>directx</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.hpp">
+      <Filter>directx</Filter>
+    </ClInclude>
+    <ClInclude Include="BubbleShooter.hpp">
+      <Filter>games\bubble</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +55,12 @@
     </ClCompile>
     <ClCompile Include="Overlay.cpp">
       <Filter>directx</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>directx</Filter>
+    </ClCompile>
+    <ClCompile Include="BubbleShooter.cpp">
+      <Filter>games\bubble</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

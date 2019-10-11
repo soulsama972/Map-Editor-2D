@@ -138,15 +138,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BubbleShooter.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Model.hpp" />
     <ClInclude Include="Overlay.hpp" />
     <ClInclude Include="utill.hpp" />
+    <ClInclude Include="Window.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BubbleShooter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="utill.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">

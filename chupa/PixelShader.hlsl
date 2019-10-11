@@ -8,7 +8,7 @@ struct PixelInputType
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-    float3 lightDirection = float3(-1, 1, 0.7);
+    float3 lightDirection = float3(-20, 20, 1.0f);
 
     float4 diffuseColor = float4(1.0f, 1.0f,1.0f, 1.0f);
 
@@ -39,7 +39,7 @@ float4 main(PixelInputType input) : SV_TARGET
         reflection = normalize(2 * lightIntensity * normal - lightDir);
       		
     // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
-        specular = pow(saturate(dot(reflection, input.viewDirection)),1.6f);
+        specular = pow(saturate(dot(reflection, input.viewDirection)),8.0f);
         lightColor = lightColor * specular;
     }
 	// Multiply the texture pixel and the input color to get the textured result.

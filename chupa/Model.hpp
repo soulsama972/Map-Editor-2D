@@ -8,8 +8,8 @@
 #pragma warning (push)
 #pragma warning (disable : 26495)
 #pragma warning (disable : 4005)
-#include<d3d11.h>
-#include<D3DX11.h>
+#include"directx/D3D11.h"
+#include"directx/D3DX11.h"
 
 #pragma warning(pop)
 

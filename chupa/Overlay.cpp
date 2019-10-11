@@ -9,7 +9,6 @@ LRESULT Overlay::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 LRESULT Overlay::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	static fVec3 camPos = fVec3(0, 0, 0);
 	switch (msg)
 	{
 	case WM_DESTROY:
