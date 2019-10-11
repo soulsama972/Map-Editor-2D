@@ -7,7 +7,7 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow)
 {
 	Overlay *overlay = new Overlay(800,600);
-	srand(time(NULL));
+	srand(static_cast<unsigned int>(time(NULL)));
 	overlay->timer.Start();
 	if (overlay)
 	{	

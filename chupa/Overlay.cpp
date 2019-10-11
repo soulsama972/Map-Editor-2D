@@ -70,10 +70,6 @@ Overlay::~Overlay()
 	SafeDelete(depthStencil);
 	SafeDelete(depthStencilView);
 	SafeDelete(raster);
-	line.CleanUp();
-	rect.CleanUp();
-	circle.CleanUp();
-	fCircle.CleanUp();
 }
 
 
@@ -118,7 +114,7 @@ void Overlay::CreateSwapChain()
 		&swapChain,
 		&dev,
 		NULL,
-		&devcon));
+		&devcon))
 }
 
 void Overlay::CreateBackBuffer()
@@ -128,7 +124,7 @@ void Overlay::CreateBackBuffer()
 	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)& pBackBuffer);
 
 	// use the back buffer address to create the render target
-	CheckFAILED(dev->CreateRenderTargetView(pBackBuffer, NULL, &backBuffer));
+	CheckFAILED(dev->CreateRenderTargetView(pBackBuffer, NULL, &backBuffer))
 	pBackBuffer->Release();
 }
 
@@ -157,7 +153,7 @@ void Overlay::CreateDpethStencil()
 	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-	CheckFAILED(dev->CreateDepthStencilState(&dsDesc, &depthStencil));
+	CheckFAILED(dev->CreateDepthStencilState(&dsDesc, &depthStencil))
 }
 
 void Overlay::CreateDepthStencilView()
@@ -175,14 +171,14 @@ void Overlay::CreateDepthStencilView()
 	descDepth.SampleDesc.Quality = 0u;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	CheckFAILED(dev->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
+	CheckFAILED(dev->CreateTexture2D(&descDepth, nullptr, &pDepthStencil))
 
 	// create view of depth stensil texture
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
 	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 	descDSV.Texture2D.MipSlice = 0u;
-	CheckFAILED(dev->CreateDepthStencilView(pDepthStencil, &descDSV, &depthStencilView));
+	CheckFAILED(dev->CreateDepthStencilView(pDepthStencil, &descDSV, &depthStencilView))
 	SafeDelete(pDepthStencil);
 }
 
@@ -191,7 +187,7 @@ void Overlay::CreateRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMod
 	CD3D11_RASTERIZER_DESC rastDesc(fillMode, cullMode, FALSE,
 		D3D11_DEFAULT_DEPTH_BIAS, D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
 		D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, multiSample, antialiasedLine);
-	CheckFAILED(dev->CreateRasterizerState(&rastDesc, &raster));
+	CheckFAILED(dev->CreateRasterizerState(&rastDesc, &raster))
 }
 
 
@@ -227,6 +223,40 @@ void Overlay::InitD3D()
 
 void Overlay::InitShapes()
 {
+	
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[6];
+	polygonLayout[0].SemanticName = "POSITION";
+	polygonLayout[0].SemanticIndex = 0;
+	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[0].InputSlot = 0;
+	polygonLayout[0].AlignedByteOffset = 0;
+	polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	polygonLayout[0].InstanceDataStepRate = 0;
+
+	polygonLayout[1].SemanticName = "COLOR";
+	polygonLayout[1].SemanticIndex = 0;
+	polygonLayout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	polygonLayout[1].InputSlot = 1;
+	polygonLayout[1].AlignedByteOffset = 0;
+	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	polygonLayout[1].InstanceDataStepRate = 1;
+
+	polygonLayout[2].SemanticName = "world";
+	polygonLayout[2].SemanticIndex = 0;
+	polygonLayout[2].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	polygonLayout[2].InputSlot = 1;
+	polygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	polygonLayout[2].InstanceDataStepRate = 1;
+
+	polygonLayout[3] = polygonLayout[2];
+	polygonLayout[4] = polygonLayout[2];
+	polygonLayout[5] = polygonLayout[2];
+
+	polygonLayout[3].SemanticIndex = 1;
+	polygonLayout[4].SemanticIndex = 2;
+	polygonLayout[5].SemanticIndex = 3;
+
 	//rect
 	VertexType vertex[] =
 	{
@@ -241,25 +271,29 @@ void Overlay::InitShapes()
 		0,1,2,
 		0,2,3
 	};
-	rect.InitBuffer(dev, devcon, vertex, 4, ind, 6, 5000, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	rect.InitBuffer(dev, devcon,vertex,ind,4,6,5000,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,sizeof(VertexType),sizeof(VertexInstance));
+	rect.InitializeShaders("VertexShader.hlsl", "main", "PixelShader.hlsl", "main", polygonLayout, 6);
 	//line
 	VertexType VertexLine[] =
 	{
 		{fVec3(-1.0f,1.0f,0.0f)},
 		{fVec3(1.0f,-1.0f,0.0f)},
 	};
-	unsigned int indLine[] =
+	unsigned int indexLine[] =
 	{
 		0,1
 	};
-	line.InitBuffer(dev, devcon, VertexLine, 2, ind, 2, 5000, D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+
+	line.InitBuffer(dev, devcon, VertexLine, indexLine, 2, 2, 5000, D3D11_PRIMITIVE_TOPOLOGY_LINELIST, sizeof(VertexType), sizeof(VertexInstance));
+	line.InitializeShaders("VertexShader.hlsl", "main", "PixelShader.hlsl", "main", polygonLayout, 6);
+
 	//filled circle
 	const int numPoint = 72;
 	const int numVertex = numPoint;
 	float doublePi = 2.0f * PI;
 
 	VertexType VertexCircle[numVertex];
-	unsigned int indircle[(numVertex -1)* 3];
+	unsigned int indexCircle[(numVertex -1)* 3];
 	for (int i = 0; i < numVertex; i++)
 	{
 		float Theta = i * doublePi / numPoint;
@@ -268,29 +302,33 @@ void Overlay::InitShapes()
 	for (int i = 0; i < (numVertex-1) * 3; i++)
 	{
 		if(i < 3)
-			indircle[i] = i;
+			indexCircle[i] = i;
 
 		else if (i % 3 == 0)
-			indircle[i] = 0;
+			indexCircle[i] = 0;
 		else if (i % 3 == 1)
-			indircle[i] = indircle[i-2];
+			indexCircle[i] = indexCircle[i-2];
 		else if (i % 3 == 2)
-			indircle[i] = indircle[i - 1] + 1;
+			indexCircle[i] = indexCircle[i - 1] + 1;
 	}
-	fCircle.InitBuffer(dev, devcon, VertexCircle, numVertex, indircle, (numVertex-1)*3, 5000, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	
-	
+	fCircle.InitBuffer(dev, devcon, VertexCircle, indexCircle, numVertex, (numVertex - 1) * 3, 5000, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, sizeof(VertexType), sizeof(VertexInstance));
+	fCircle.InitializeShaders("VertexShader.hlsl", "main", "PixelShader.hlsl", "main", polygonLayout, 6);
+
 	//hallow circle
 
-	unsigned int hallowCrircleInd[numVertex+1];
+	unsigned int hallowCrircleIndex[numVertex+1];
 	for (int i = 0; i < numVertex; i++)
 	{
 		float Theta = i * doublePi / numPoint;
 		VertexCircle[i].position = fVec3(cosf(Theta), sinf(Theta), 1.0f);
-		hallowCrircleInd[i] = i;
+		hallowCrircleIndex[i] = i;
 	}	
-	hallowCrircleInd[numVertex] = 0;
-	circle.InitBuffer(dev, devcon, VertexCircle, numVertex, hallowCrircleInd, numVertex+1, 5000, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+	hallowCrircleIndex[numVertex] = 0;
+
+	circle.InitBuffer(dev, devcon, VertexCircle, hallowCrircleIndex, numVertex, numVertex+1, 5000, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, sizeof(VertexType), sizeof(VertexInstance));
+	circle.InitializeShaders("VertexShader.hlsl", "main", "PixelShader.hlsl", "main", polygonLayout, 6);
+
+	
 }
 
 void Overlay::UpdateScreen(fVec2 screensize)
@@ -304,7 +342,7 @@ void Overlay::UpdateScreen(fVec2 screensize)
 	SafeDelete(backBuffer);
 	SafeDelete(depthStencil);
 	SafeDelete(depthStencilView);
-	CheckFAILED(swapChain->ResizeBuffers(0, static_cast<UINT>(screen.x), static_cast<UINT>(screen.y), DXGI_FORMAT_R8G8B8A8_UNORM, 0));
+	CheckFAILED(swapChain->ResizeBuffers(0, static_cast<UINT>(screen.x), static_cast<UINT>(screen.y), DXGI_FORMAT_R8G8B8A8_UNORM, 0))
 
 
 	CreateBackBuffer();
