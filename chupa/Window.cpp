@@ -1,75 +1,48 @@
 #include "Window.hpp"
 
-Window* Window::winProc = 0;
-
-
-LRESULT Window::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+class Map
 {
-	return DefWindowProc(hwnd, msg, wParam, lParam);
+public:
+	void AddInstance(HWND hwnd, Window* window)
+	{
+		if (currentCount < maxInstance)
+		{
+			this->hwnd[currentCount] = hwnd;
+			this->window[currentCount] = window;
+			currentCount++;
+
+		}
+	}
+
+	inline Window* GetWindow(HWND hwnd)
+	{
+		for (int i = 0; i < 100; i++)
+		{
+			if (hwnd == this->hwnd[i])
+				return window[i];
+		}
+		return 0;
+	}
+private:
+
+	int currentCount = 0;
+	int maxInstance = 100;
+	HWND hwnd[100];
+	Window* window[100];
+};
+
+Map map;
+
+LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	Window * win = map.GetWindow(hwnd);
+	if (win)
+		return win->WndProc(hwnd, msg, wParam, lParam);
+	else
+		return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 
-LRESULT Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	return DefWindowProc(hwnd, msg, wParam, lParam);
-}
-
-
-Window::Window(const wchar_t* ClassName, int width, int height)
-{
-	hInstance = GetModuleHandle(nullptr);
-	screen = fVec2(width, height);
-	this->className = const_cast<wchar_t*>(ClassName);
-
-	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
-	WNDCLASSEX wc = { 0 };
-
-	wc.cbSize = sizeof(wc);
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = Window::WinProc;
-	wc.hInstance = hInstance;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.lpszClassName = ClassName;
-
-	RegisterClassEx(&wc);
-	RECT r;
-	SetRect(&r, 0, 0, static_cast<int>(screen.x), static_cast<int>(screen.y));
-	AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
-
-	hwnd = CreateWindowExW(NULL, ClassName, L"chupa", WS_OVERLAPPEDWINDOW,
-		0, 0, r.right - r.left, r.bottom - r.top, NULL, NULL, hInstance, NULL);
-
-	ShowWindow(hwnd, SW_SHOW);
-	InitD3D();
-}
-
-Window::Window(const wchar_t* ClassName, vec2<float> screenRes)
-{
-	hInstance = GetModuleHandle(nullptr);
-	screen = screenRes;
-	this->className = const_cast<wchar_t*>(ClassName);
-	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
-	WNDCLASSEX wc = { 0 };
-
-	wc.cbSize = sizeof(wc);
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = Window::WinProc;
-	wc.hInstance = hInstance;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.lpszClassName = ClassName;
-
-	RegisterClassEx(&wc);
-	RECT r;
-	SetRect(&r, 0, 0, static_cast<int>(screen.x), static_cast<int>(screen.y));
-	AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
-
-	hwnd = CreateWindowEx(NULL, ClassName, L"chupa", WS_OVERLAPPEDWINDOW,
-		0, 0, r.right - r.left, r.bottom - r.top, NULL, NULL, hInstance, NULL);
-
-
-	ShowWindow(hwnd, SW_SHOW);
-	InitD3D();
-}
 
 Window::~Window()
 {
@@ -83,15 +56,87 @@ Window::~Window()
 	SafeDelete(raster);
 }
 
+void Window::Init(const wchar_t* className, int width, int height)
+{
+	hInstance = GetModuleHandle(nullptr);
+	screen = fVec2(width, height);
+	this->className = const_cast<wchar_t*>(className);
+	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+	WNDCLASSEX wc = { 0 };
+
+	wc.cbSize = sizeof(wc);
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = WinProc;
+	wc.hInstance = hInstance;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.lpszClassName = className;
+
+	RegisterClassEx(&wc);
+	RECT r;
+	SetRect(&r, 0, 0, static_cast<int>(screen.x), static_cast<int>(screen.y));
+	AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
+
+	hwnd = CreateWindowExW(NULL, className, L"chupa", WS_OVERLAPPEDWINDOW,
+		0, 0, r.right - r.left, r.bottom - r.top, NULL, NULL, hInstance, NULL);
+
+	ShowWindow(hwnd, SW_SHOW);
+	InitD3D();
+	map.AddInstance(hwnd, this);
+}
+
+void Window::Init(const wchar_t* className, vec2<float> screenRes)
+{
+	hInstance = GetModuleHandle(nullptr);
+	screen = screenRes;
+	this->className = const_cast<wchar_t*>(className);
+	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+	WNDCLASSEX wc = { 0 };
+
+	wc.cbSize = sizeof(wc);
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = WinProc;
+	wc.hInstance = hInstance;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.lpszClassName = className;
+
+	RegisterClassEx(&wc);
+	RECT r;
+	SetRect(&r, 0, 0, static_cast<int>(screen.x), static_cast<int>(screen.y));
+	AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
+
+	hwnd = CreateWindowEx(NULL, className, L"chupa", WS_OVERLAPPEDWINDOW,
+		0, 0, r.right - r.left, r.bottom - r.top, NULL, NULL, hInstance, NULL);
+
+
+	ShowWindow(hwnd, SW_SHOW);
+	InitD3D();
+	map.AddInstance(hwnd, this);
+}
+
+LRESULT Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch (msg)
+	{
+	case WM_MOUSEMOVE:
+	{
+		int xPos = GET_X_LPARAM(lParam);
+		int yPos = GET_Y_LPARAM(lParam);
+	}
+	break;
+	default:
+		break;
+	}
+	return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+
+
 void Window::ClearTargetView(fVec4 color)
 {
 	devcon->ClearRenderTargetView(backBuffer, color.ToPointer());
 	devcon->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 }
 
-void Window::Draw(bool cleanAfterDraw)
-{
-}
 
 void Window::Render(bool sync)
 {
@@ -263,8 +308,6 @@ void Window::CreateRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode
 		D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS, TRUE, FALSE, multiSample, antialiasedLine);
 	CheckFAILED(dev->CreateRasterizerState(&rastDesc, &raster))
 }
-
-
 
 void Window::SetRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, bool multiSample, bool antialiasedLine)
 {

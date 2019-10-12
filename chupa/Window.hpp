@@ -1,6 +1,4 @@
 #pragma once
-
-
 #pragma warning (push)
 #pragma warning (disable : 26495)
 #pragma warning (disable : 4005)
@@ -13,49 +11,41 @@
 
 #pragma comment(lib,"d3d10.lib")
 #pragma comment(lib,"d3dx10.lib")
-
+#include<windowsx.h>
 #include"Model.hpp"
+class Window;
 
 class Window
 {
 public:
-	static LRESULT CALLBACK WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	Window(const wchar_t * ClassName,int width,int height);
-	Window(const wchar_t* ClassName, vec2<float> screenRes);
+	Window() = default;
 	~Window();
 
-
 	void ClearTargetView(fVec4 color);
-	void Draw(bool cleanAfterDraw = true);
 	void Render(bool sync = false);
 
 	void UpdateScreen(fVec2 screensize);
-
 	void SetRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, bool multiSample = true, bool antialiasedLine = true);
-private:
-	void InitD3D();
 
-	inline fVec2 GetScale(fVec2 s)
-	{
-		return fVec2(s.x / screen.x, s.y / screen.y);
-	}
+	void Init(const wchar_t * className, int width, int height);
+	void Init(const wchar_t* className, vec2<float> screenRes);
 
-	inline fVec2 GetTransalte(fVec2 t, fVec2 c)
-	{
-		return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
-	}
 
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	Timer timer;
+private:
+
+	void InitD3D();
+
+	inline fVec2 GetScale(fVec2 s);
+
+	inline fVec2 GetTransalte(fVec2 t, fVec2 c);
 
 	void CreateSwapChain();
 	void CreateBackBuffer();
 	void CreateDpethStencil();
 	void CreateDepthStencilView();
-	void CreateRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, bool multiSample = true, bool antialiasedLine = true);
-public:
-
-	Timer timer;
-private:
+	void CreateRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, bool multiSample = true, bool antialiasedLine = true); 
 
 	fVec2 screen;
 	ID3D11Device* dev = nullptr;
@@ -68,8 +58,17 @@ private:
 	HINSTANCE hInstance = 0;
 	HWND hwnd = 0;
 	D3D11_VIEWPORT viewport;
-
+	
 	wchar_t* className;
-	static Window* winProc;
+
 };
 
+inline fVec2 Window::GetScale(fVec2 s)
+{
+	return fVec2(s.x / screen.x, s.y / screen.y);
+}
+
+inline fVec2 Window::GetTransalte(fVec2 t, fVec2 c)
+{
+	return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
+}

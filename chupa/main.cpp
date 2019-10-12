@@ -1,14 +1,23 @@
 #include"Overlay.hpp"
 #include"Window.hpp"
 #include<random>
+
 #pragma warning (push)
 #pragma warning (disable : 28251)
 
+class q  : public Window
+{
+public:
+	q();
+};
+q* qq;
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow)
 {
-	Window* window = new Window(L"test", 800, 600);
+	qq = new q();
+	qq->Init(L"test",800, 600);
 	Overlay *overlay = new Overlay(800,600);
-	
+
 	srand(static_cast<unsigned int>(time(NULL)));
 	overlay->timer.Start();
 	if (overlay)
@@ -42,6 +51,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 				overlay->InsertCircle(pos, scale, color);
 			}
 		}
+		overlay->InsertCircle({ 200,200 }, 300, { 0,0,1,1 });
 		while (TRUE)
 		{		
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -63,9 +73,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 			}
 		}	
 	}
-	delete window;
+	delete qq;
 	delete overlay;
 	return 0;
 }
 
 #pragma warning(pop)
+
+q::q()
+{
+
+}
