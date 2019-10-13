@@ -1,11 +1,28 @@
 #pragma once
+#include"Math.hpp"
 #include<Windows.h>
 #include<windowsx.h>
+
+class Map;
+
+enum MOUSE
+{
+	LEFT ,
+	MIDDLE,
+	RIGHT,
+
+};
 class EventHandler
 {
 public:
-	EventHandler();
-	~EventHandler();
+	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	EventHandler() = default;
+	~EventHandler() = default;
+
+	static Map map;
+private:
+	vec2<int> mousePos;
+	bool mouseDown[3] = { 0 };
 };
 
 class Map
@@ -22,7 +39,7 @@ public:
 		}
 	}
 
-	inline EventHandler* GetWindow(HWND hwnd)
+	inline EventHandler* GetWindow(HWND hwnd) const
 	{
 		for (int i = 0; i < 100; i++)
 		{

@@ -13,8 +13,8 @@
 #pragma comment(lib,"d3dx10.lib")
 
 #include"Model.hpp"
-class Event;
-class Window
+#include"EventHandler.hpp"
+class Window : private EventHandler
 {
 public:
 	Window() = default;
@@ -30,7 +30,6 @@ public:
 	void Init(const wchar_t* className, vec2<float> screenRes);
 
 
-	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	Timer timer;
 protected:
 
@@ -63,15 +62,6 @@ private:
 	wchar_t* className = 0;
 
 };
-
-class Event
-{
-
-private:
-	vec2<int> mousePos;
-
-};
-
 
 inline fVec2 Window::GetScale(fVec2 s)
 {

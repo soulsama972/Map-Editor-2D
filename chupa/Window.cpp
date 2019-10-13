@@ -1,17 +1,15 @@
 #include "Window.hpp"
 
 
-
 LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	Window * win = map.GetWindow(hwnd);
-	if (win)
-		return win->WndProc(hwnd, msg, wParam, lParam);
+	const Map* map = &EventHandler::map;
+	EventHandler* handler = map->GetWindow(hwnd);
+	if (handler)
+		return handler->WndProc(hwnd, msg, wParam, lParam);
 	else
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 }
-
-
 
 Window::~Window()
 {
@@ -82,21 +80,6 @@ void Window::Init(const wchar_t* className, vec2<float> screenRes)
 	map.AddInstance(hwnd, this);
 }
 
-LRESULT Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch (msg)
-	{
-	case WM_MOUSEMOVE:
-	{
-		int xPos = GET_X_LPARAM(lParam);
-		int yPos = GET_Y_LPARAM(lParam);
-	}
-	break;
-	default:
-		break;
-	}
-	return DefWindowProc(hwnd, msg, wParam, lParam);
-}
 
 
 
