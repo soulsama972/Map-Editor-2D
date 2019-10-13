@@ -23,6 +23,7 @@ public:
 private:
 	vec2<int> mousePos;
 	bool mouseDown[3] = { 0 };
+	bool windowFocus = false;
 };
 
 class Map
