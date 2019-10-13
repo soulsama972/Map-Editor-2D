@@ -11,10 +11,9 @@
 
 #pragma comment(lib,"d3d10.lib")
 #pragma comment(lib,"d3dx10.lib")
-#include<windowsx.h>
-#include"Model.hpp"
-class Window;
 
+#include"Model.hpp"
+class Event;
 class Window
 {
 public:
@@ -33,6 +32,8 @@ public:
 
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	Timer timer;
+protected:
+
 private:
 
 	void InitD3D();
@@ -57,11 +58,20 @@ private:
 	ID3D11RasterizerState* raster = nullptr;
 	HINSTANCE hInstance = 0;
 	HWND hwnd = 0;
-	D3D11_VIEWPORT viewport;
+	D3D11_VIEWPORT viewport = {0};
 	
-	wchar_t* className;
+	wchar_t* className = 0;
 
 };
+
+class Event
+{
+
+private:
+	vec2<int> mousePos;
+
+};
+
 
 inline fVec2 Window::GetScale(fVec2 s)
 {

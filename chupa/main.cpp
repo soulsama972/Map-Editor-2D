@@ -5,17 +5,14 @@
 #pragma warning (push)
 #pragma warning (disable : 28251)
 
-class q  : public Window
-{
-public:
-	q();
-};
-q* qq;
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow)
 {
-	qq = new q();
-	qq->Init(L"test",800, 600);
+	Window* win = new Window();
+	Window* win2 = new Window();
+	win->Init(L"123", 800, 600);
+	win2->Init(L"1234", 500, 500);
 	Overlay *overlay = new Overlay(800,600);
 
 	srand(static_cast<unsigned int>(time(NULL)));
@@ -48,7 +45,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 				else
 					color = fVec4(0, 0, 1, 1);
 
-				overlay->InsertCircle(pos, scale, color);
+				overlay->InsertCircle(pos, static_cast<float>(scale), color);
 			}
 		}
 		overlay->InsertCircle({ 200,200 }, 300, { 0,0,1,1 });
@@ -73,14 +70,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 			}
 		}	
 	}
-	delete qq;
+	delete win;
+	delete win2;
 	delete overlay;
 	return 0;
 }
 
 #pragma warning(pop)
 
-q::q()
-{
 
-}

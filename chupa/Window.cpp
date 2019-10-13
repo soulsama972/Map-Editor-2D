@@ -1,37 +1,6 @@
 #include "Window.hpp"
 
-class Map
-{
-public:
-	void AddInstance(HWND hwnd, Window* window)
-	{
-		if (currentCount < maxInstance)
-		{
-			this->hwnd[currentCount] = hwnd;
-			this->window[currentCount] = window;
-			currentCount++;
 
-		}
-	}
-
-	inline Window* GetWindow(HWND hwnd)
-	{
-		for (int i = 0; i < 100; i++)
-		{
-			if (hwnd == this->hwnd[i])
-				return window[i];
-		}
-		return 0;
-	}
-private:
-
-	int currentCount = 0;
-	int maxInstance = 100;
-	HWND hwnd[100];
-	Window* window[100];
-};
-
-Map map;
 
 LRESULT WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {

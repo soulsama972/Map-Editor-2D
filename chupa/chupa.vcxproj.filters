@@ -19,6 +19,9 @@
     <Filter Include="games\bubble">
       <UniqueIdentifier>{19d1e758-d93d-4e35-8250-33b8149b8f49}</UniqueIdentifier>
     </Filter>
+    <Filter Include="directx\EventHandler">
+      <UniqueIdentifier>{67a6dcc9-97ff-4110-a08f-e14b619dc041}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.hpp">
@@ -38,6 +41,9 @@
     </ClInclude>
     <ClInclude Include="BubbleShooter.hpp">
       <Filter>games\bubble</Filter>
+    </ClInclude>
+    <ClInclude Include="EventHandler.hpp">
+      <Filter>directx\EventHandler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="BubbleShooter.cpp">
       <Filter>games\bubble</Filter>
+    </ClCompile>
+    <ClCompile Include="EventHandler.cpp">
+      <Filter>directx\EventHandler</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

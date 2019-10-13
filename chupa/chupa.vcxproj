@@ -139,6 +139,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BubbleShooter.hpp" />
+    <ClInclude Include="EventHandler.hpp" />
     <ClInclude Include="Math.hpp" />
     <ClInclude Include="Model.hpp" />
     <ClInclude Include="Overlay.hpp" />
@@ -147,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BubbleShooter.cpp" />
+    <ClCompile Include="EventHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="utill.cpp" />
