@@ -10,7 +10,9 @@
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow)
 {
 	Window* win = new Window();
+	Window* win2 = new Window();
 	win->Init(L"123", 800, 600);
+	win2->Init(L"1234", 500, 500);
 	Overlay *overlay = new Overlay(800,600);
 
 	srand(static_cast<unsigned int>(time(NULL)));
@@ -69,6 +71,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 		}	
 	}
 	delete win;
+	delete win2;
 	delete overlay;
 	return 0;
 }

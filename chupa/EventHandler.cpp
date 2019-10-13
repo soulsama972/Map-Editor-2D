@@ -6,31 +6,34 @@ LRESULT EventHandler::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-
-
+	case WM_SIZE:
+		screenResoltion.x = LOWORD(lParam);
+		screenResoltion.y = HIWORD(lParam);
+		OnResize(screenResoltion.x, screenResoltion.y);
+		break;
 	case WM_MOUSEMOVE:
 	{
 		mousePos.x = GET_X_LPARAM(lParam);
 		mousePos.y = GET_Y_LPARAM(lParam);
 	}break;
 	case WM_LBUTTONDOWN: 
-		mouseDown[LEFT] = true;
+		mouse[LEFT] = DOWN;
 		break;
 	case WM_LBUTTONUP:
-		mouseDown[LEFT] = false;
+		mouse[LEFT] = UP;
 		break;
 	case WM_RBUTTONDOWN: 
-		mouseDown[RIGHT] = true; 
+		mouse[RIGHT] = DOWN;
 		break;
 	case WM_RBUTTONUP:
-		mouseDown[RIGHT] = false; 
+		mouse[RIGHT] = UP;
 		break;
 
 	case WM_MBUTTONDOWN: 
-		mouseDown[MIDDLE] = true; 
+		mouse[MIDDLE] = DOWN;
 		break;
 	case WM_MBUTTONUP:
-		mouseDown[MIDDLE] = false;
+		mouse[MIDDLE] = UP;
 		break;
 	case WM_ACTIVATE:
 	{
@@ -38,21 +41,29 @@ LRESULT EventHandler::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 		case WA_ACTIVE://FOCUS
 		case WA_CLICKACTIVE:
-			windowFocus = true; break;
+			windowFocus = ON; 
+			break;
 		case WA_INACTIVE:
-			windowFocus = false; break;
+			windowFocus = OFF; 
+			break;
 		}
 	}break;
 
 	case WM_KEYDOWN:
 	{
-
+		if (wParam >= 8 && wParam < 255)
+			keyBoard[wParam] = DOWN;
 	}break;
-
+	case WM_KEYUP:
+	{
+		if (wParam >= 8 && wParam < 255)
+			keyBoard[wParam] = UP;
+	}break;
 	default:
 		break;
 	}
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
+
 
 

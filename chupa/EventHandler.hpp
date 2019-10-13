@@ -5,6 +5,17 @@
 
 class Map;
 
+
+enum
+{
+	UP,
+	DOWN,
+};
+enum
+{
+	OFF,
+	ON
+};
 enum MOUSE
 {
 	LEFT ,
@@ -18,12 +29,14 @@ public:
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	EventHandler() = default;
 	~EventHandler() = default;
-
+	virtual void OnResize(int width,int hegiht) = 0;
 	static Map map;
 private:
 	vec2<int> mousePos;
-	bool mouseDown[3] = { 0 };
+	vec2<int> screenResoltion;
+	bool mouse[3] = { OFF };
 	bool windowFocus = false;
+	bool keyBoard[255] = { DOWN };
 };
 
 class Map
