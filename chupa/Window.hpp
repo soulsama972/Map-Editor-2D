@@ -14,7 +14,7 @@
 
 #include"Model.hpp"
 #include"EventHandler.hpp"
-class Window : private EventHandler
+class Window : public EventHandler
 {
 public:
 	Window() = default;
@@ -23,17 +23,18 @@ public:
 	void ClearTargetView(fVec4 color);
 	void Render(bool sync = false);
 
-	void UpdateScreen(fVec2 screensize);
 	void SetRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, bool multiSample = true, bool antialiasedLine = true);
 
 	void Init(const wchar_t * className, int width, int height);
 	void Init(const wchar_t* className, vec2<float> screenRes);
+	void UpdateScreen(const fVec2& screensize);
 
+	ID3D11Device* GetDeovce() const;
 
 	Timer timer;
-protected:
-
 private:
+	void OnResize(int width,int height) override;
+	void OnQuitMsg() override;
 
 	void InitD3D();
 
@@ -56,7 +57,6 @@ private:
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	ID3D11RasterizerState* raster = nullptr;
 	HINSTANCE hInstance = 0;
-	HWND hwnd = 0;
 	D3D11_VIEWPORT viewport = {0};
 	
 	wchar_t* className = 0;
@@ -71,4 +71,9 @@ inline fVec2 Window::GetScale(fVec2 s)
 inline fVec2 Window::GetTransalte(fVec2 t, fVec2 c)
 {
 	return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
+}
+
+inline ID3D11Device* Window::GetDeovce()const
+{
+	return dev;
 }

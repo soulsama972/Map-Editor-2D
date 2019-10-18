@@ -214,18 +214,14 @@ void Model11<T>::InitializeShaders(const char* vertexSrcFile, const char* vertex
 template<typename T>
 void Model11<T>::Model11::CleanUp()
 {
-	SafeDelete(indexBuffer);
-	SafeDelete(vertexBuffer);
-	SafeDelete(instanceBuffer);
-	SafeDelete(vertexShader);
-	SafeDelete(pixelShader);
-	SafeDelete(layout);
+	SafeDelete(indexBuffer)
+	SafeDelete(vertexBuffer)
+	SafeDelete(instanceBuffer)
+	SafeDelete(vertexShader)
+	SafeDelete(pixelShader)
+	SafeDelete(layout)
+	SafeDeletePtr(instance)
 
-	if (instance)
-	{
-		delete[] instance;
-		instance = 0;
-	}
 
 }
 

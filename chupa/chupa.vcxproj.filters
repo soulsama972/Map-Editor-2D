@@ -53,6 +53,12 @@
     <FxCompile Include="VertexShader.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
+    <FxCompile Include="vBubbleShooter.hlsl">
+      <Filter>games\bubble</Filter>
+    </FxCompile>
+    <FxCompile Include="pBubbleShooter.hlsl">
+      <Filter>games\bubble</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

@@ -6,16 +6,28 @@ LRESULT EventHandler::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
+	case WM_DESTROY:
+	{
+		windowDestory = true;
+		OnQuitMsg();
+		map.DelInstance(hwnd);
+	}
+	break;
 	case WM_SIZE:
-		screenResoltion.x = LOWORD(lParam);
-		screenResoltion.y = HIWORD(lParam);
-		OnResize(screenResoltion.x, screenResoltion.y);
+
+		if (wParam != SIZE_MINIMIZED)
+		{
+			screenResoltion.x = LOWORD(lParam);
+			screenResoltion.y = HIWORD(lParam);
+			OnResize(screenResoltion.x, screenResoltion.y);
+		}
 		break;
 	case WM_MOUSEMOVE:
 	{
 		mousePos.x = GET_X_LPARAM(lParam);
 		mousePos.y = GET_Y_LPARAM(lParam);
 	}break;
+
 	case WM_LBUTTONDOWN: 
 		mouse[LEFT] = DOWN;
 		break;
@@ -63,6 +75,17 @@ LRESULT EventHandler::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+bool EventHandler::LoopEvent()
+{
+	MSG msg;
+	if (PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+	return !windowDestory;
 }
 
 

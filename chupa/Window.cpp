@@ -21,6 +21,7 @@ Window::~Window()
 	SafeDelete(depthStencil);
 	SafeDelete(depthStencilView);
 	SafeDelete(raster);
+	map.DelInstance(hwnd);
 }
 
 void Window::Init(const wchar_t* className, int width, int height)
@@ -95,9 +96,27 @@ void Window::Render(bool sync)
 	swapChain->Present(sync, 0);
 }
 
-void Window::UpdateScreen(fVec2 screensize)
+void Window::OnResize(int width, int height)
 {
-	screen = screensize;
+	UpdateScreen(fVec2(width, height));
+}
+
+void Window::OnQuitMsg()
+{
+	UnregisterClass(className, hInstance);
+	SafeDelete(backBuffer);
+	SafeDelete(dev);
+	SafeDelete(devcon);
+	SafeDelete(swapChain);
+	SafeDelete(depthStencil);
+	SafeDelete(depthStencilView);
+	SafeDelete(raster);
+}
+
+void Window::UpdateScreen(const fVec2& screensize)
+{
+	screen.x = screensize.x;
+	screen.y = screensize.y;
 	viewport.Width = screen.x;
 	viewport.Height = screen.y;
 
@@ -143,7 +162,6 @@ void Window::InitD3D()
 	viewport.Height = screen.y;
 	devcon->RSSetViewports(1, &viewport);
 }
-
 
 void Window::CreateSwapChain()
 {
