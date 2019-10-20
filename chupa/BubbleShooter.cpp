@@ -2,7 +2,7 @@
 
 
 
-BubbleShooter::BubbleShooter(ID3D11Device* pDev)
+BubbleShooter::BubbleShooter(ID3D11Device* pDev,fVec2* Screen)
 {
 
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[6];
@@ -38,7 +38,7 @@ BubbleShooter::BubbleShooter(ID3D11Device* pDev)
 	polygonLayout[4].SemanticIndex = 2;
 	polygonLayout[5].SemanticIndex = 3;
 
-
+	screen = Screen;
 	pDev->GetImmediateContext(&devcon);
 	devcon->GetDevice(&dev);
 
@@ -70,6 +70,34 @@ BubbleShooter::BubbleShooter(ID3D11Device* pDev)
 	circle.InitBuffer(dev, devcon, VertexCircle, indexCircle, numVertex, (numVertex - 1) * 3, 5000, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, sizeof(VertexType), sizeof(VertexInstance));
 	circle.InitializeShaders("vBubbleShooter.hlsl","main", "pBubbleShooter.hlsl", "main", polygonLayout,6);
 	
+	srand(static_cast<unsigned int>(time(NULL)));
+
+	colors[0] = blue;
+	colors[1] = red;
+	colors[2] = green;
+	colors[3] = yellow;
+	colors[4] = crystal;
+
+	for (int y = 0; y < 9; y++)
+	{
+		for (int x = 0; x < 17; x++)
+		{
+			if (y % 2 == 1)
+			{
+				bubble[y][x].color = colors[rand() % 5];
+				bubble[y][x].pos.x = x + 0.5;
+				bubble[y][x].pos.y = y;
+			}
+			else
+			{
+				bubble[y][x].color = colors[rand() % 5];
+				bubble[y][x].pos.x = x;
+				bubble[y][x].pos.y = y;
+			}
+			bubble[y][x].alive = true;
+		}
+	}
+
 }
 
 
@@ -80,24 +108,41 @@ BubbleShooter::~BubbleShooter()
 
 }
 
-void BubbleShooter::InsertCircle(fVec2 pos, float rad, fVec4 color, bool filled)
+void BubbleShooter::InsertCircle(fVec2 pos, float rad, fVec4 color)
 {
 	Matrix4x4 s;
 	fVec2  c = fVec2(rad, rad);
 	VertexInstance in;
 	in.color = color;
-	fVec2 scale = GetScale(c);
-	fVec2 translate = GetTransalte(pos, c);
+	fVec2 scale = GetScale(c,*screen);
+	fVec2 translate = GetTransalte(pos, c,*screen);
 
 	in.matrix.Translate(fVec3(translate.x, translate.y, 0.0f).ToPointer());
 	s._11 = scale.x;
 	s._22 = scale.y;
 
 	in.matrix = in.matrix * s;
+	circle.AddInstance(in);
 
-	if (filled)
-		fCircle.AddInstance(in);
-	else
-		circle.AddInstance(in);
+}
 
+void BubbleShooter::Draw()
+{
+	float deltaX = screen->x * 0.80f / 17;
+	float deltaY = screen->y  / 16;
+
+	float rad = (deltaX * deltaX + deltaY * deltaY) / sqrt(deltaX * deltaX + deltaY * deltaY)/2;
+	for (int y = 0; y < 16; y++)
+	{
+		for (int x = 0; x < 17; x++)
+		{
+			if (bubble[y][x].alive)
+			{
+				InsertCircle(fVec2(bubble[y][x].pos.x * deltaX, bubble[y][x].pos.y * deltaY), rad, bubble[y][x].color);
+			}
+		}
+	}
+
+	circle.Draw();
+	circle.ClearInstance();
 }

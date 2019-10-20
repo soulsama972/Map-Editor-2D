@@ -30,6 +30,7 @@ public:
 	void UpdateScreen(const fVec2& screensize);
 
 	ID3D11Device* GetDeovce() const;
+	fVec2* GetScreen();
 
 	Timer timer;
 private:
@@ -76,4 +77,9 @@ inline fVec2 Window::GetTransalte(fVec2 t, fVec2 c)
 inline ID3D11Device* Window::GetDeovce()const
 {
 	return dev;
+}
+
+inline fVec2* Window::GetScreen() 
+{
+	return &screen;
 }

@@ -8,16 +8,16 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow)
 {
-	srand(static_cast<unsigned int>(time(NULL)));
+	
 
 	Window bShooter;
 	
 	bShooter.Init(L"bubbleShooter", 800, 600);
-	BubbleShooter* b = new BubbleShooter(bShooter.GetDeovce());
-
+	BubbleShooter* b = new BubbleShooter(bShooter.GetDeovce(),bShooter.GetScreen());
 	while (bShooter.LoopEvent())
 	{
 		bShooter.ClearTargetView({ 0.2,0.2,0.2,1.0 });
+		b->Draw();
 		bShooter.Render();
 	}
 	return 0;

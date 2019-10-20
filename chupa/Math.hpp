@@ -467,3 +467,13 @@ inline bool WorldToScreen(float* viewMatrix, fVec3 pos, fVec2& newPos, fVec2 scr
 
 	return true;
 }
+
+inline fVec2 GetScale(fVec2 s,fVec2 screen)
+{
+	return fVec2(s.x / screen.x, s.y / screen.y);
+}
+
+inline fVec2 GetTransalte(fVec2 t, fVec2 c, fVec2 screen)
+{
+	return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
+}

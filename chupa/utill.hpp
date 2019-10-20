@@ -24,6 +24,9 @@ inline void * ForceCast(T t)
 	return u.v;
 }
 
+
+
+
 class Timer
 {
 public:
