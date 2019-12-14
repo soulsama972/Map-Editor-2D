@@ -43,10 +43,11 @@ public:
 	void ClearInstance();
 	void Draw();
 
-	T* instance = 0;
+	T* instance = nullptr;
 
 	void InitBuffer(ID3D11Device* dev, ID3D11DeviceContext* devcon, void* pVertex, void* pIndex, UINT vertexLen, UINT indexLen, UINT maxInstance,D3D11_PRIMITIVE_TOPOLOGY topology, UINT vertexByteWidth, UINT instanceByteWidth);
 	void InitializeShaders(const char* vertexSrcFile, const char* vertexFunctionMainName, const char* pixelSrcFile, const char* pixelFunctionMainName, D3D11_INPUT_ELEMENT_DESC* InputElementDesc, UINT32 InputElementDescCount);
+
 
 private:
 
@@ -220,7 +221,7 @@ void Model11<T>::Model11::CleanUp()
 	SafeDelete(vertexShader)
 	SafeDelete(pixelShader)
 	SafeDelete(layout)
-	SafeDeletePtr(instance)
+	SafeDeletePtrArr(instance)
 
 
 }

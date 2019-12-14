@@ -13,6 +13,7 @@
 #pragma comment(lib,"d3dx10.lib")
 
 #include"Model.hpp"
+
 #include"EventHandler.hpp"
 
 class Window : public EventHandler
@@ -32,6 +33,8 @@ public:
 	void UpdateScreen(const fVec2& screensize);
 
 	ID3D11Device* GetDevice() const;
+
+	ID3D11DeviceContext *GetContext()const;
 
 private:
 	void OnResize(int width,int height) override;
@@ -77,5 +80,10 @@ inline fVec2 Window::GetTransalte(fVec2 t, fVec2 c)
 inline ID3D11Device* Window::GetDevice()const
 {
 	return dev;
+}
+
+inline ID3D11DeviceContext* Window::GetContext() const
+{
+	return devcon;
 }
 

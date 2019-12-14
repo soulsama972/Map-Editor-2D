@@ -16,6 +16,9 @@
     <Filter Include="directx\EventHandler">
       <UniqueIdentifier>{67a6dcc9-97ff-4110-a08f-e14b619dc041}</UniqueIdentifier>
     </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{19987628-ff6c-47fd-b84c-f2f88929df4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.hpp">
@@ -36,6 +39,24 @@
     <ClInclude Include="EventHandler.hpp">
       <Filter>directx\EventHandler</Filter>
     </ClInclude>
+    <ClInclude Include="Entity.hpp">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.hpp">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="World.hpp">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="StartScreen.hpp">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.hpp">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="Textrue2D.hpp">
+      <Filter>directx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
@@ -44,9 +65,14 @@
     <FxCompile Include="VertexShader.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
+    <FxCompile Include="Textrue2DPs.hlsl">
+      <Filter>shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Textrue2DVs.hlsl">
+      <Filter>shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="utill.cpp">
       <Filter>util</Filter>
     </ClCompile>
@@ -58,6 +84,27 @@
     </ClCompile>
     <ClCompile Include="EventHandler.cpp">
       <Filter>directx\EventHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="StartScreen.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="Textrue2D.cpp">
+      <Filter>directx</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
