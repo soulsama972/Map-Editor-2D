@@ -31,7 +31,14 @@ public:
 	void Init(const wchar_t* className, vec2<float> screenRes);
 	void UpdateScreen(const fVec2& screensize);
 
+<<<<<<< HEAD
 	ID3D11Device* GetDevice() const;
+=======
+	ID3D11Device* GetDeovce() const;
+	fVec2* GetScreen();
+
+	Timer timer;
+>>>>>>> a1299912828782dc60d5cdf84eb7dfba028dd530
 private:
 	void OnResize(int width,int height) override;
 	void OnQuitMsg() override;
@@ -76,4 +83,9 @@ inline fVec2 Window::GetTransalte(fVec2 t, fVec2 c)
 inline ID3D11Device* Window::GetDevice()const
 {
 	return dev;
+}
+
+inline fVec2* Window::GetScreen() 
+{
+	return &screen;
 }
