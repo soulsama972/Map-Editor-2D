@@ -55,7 +55,6 @@ private:
 	void CreateRasterizer(D3D11_FILL_MODE fillMode,D3D11_CULL_MODE cullMode,bool multiSample = true,bool antialiasedLine = true);
 public:
 	bool rdy = false;
-	Timer timer;
 private:
 	fVec2 screen;
 	ID3D11Device* dev = nullptr;

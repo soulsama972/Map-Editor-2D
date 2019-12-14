@@ -15,7 +15,7 @@ enum MOUSE
 
 };
 
-enum Key
+enum  Key
 {
 	Key_BACK = 0x8,
 	Key_TAB,
@@ -121,7 +121,7 @@ public:
 			return false;
 	}
 
-	inline bool IsMouseClick(MOUSE m)
+	inline bool IsMouseClick(MOUSE  m)
 	{
 		if (m >= LEFT && m <= RIGHT)
 			return mouse[m];

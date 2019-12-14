@@ -1,7 +1,6 @@
 #include "BubbleShooter.hpp"
 
 
-
 BubbleShooter::BubbleShooter(ID3D11Device* pDev)
 {
 

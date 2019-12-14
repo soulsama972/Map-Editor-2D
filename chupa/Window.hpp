@@ -14,6 +14,7 @@
 
 #include"Model.hpp"
 #include"EventHandler.hpp"
+
 class Window : public EventHandler
 {
 public:
@@ -21,6 +22,7 @@ public:
 	~Window();
 
 	void ClearTargetView(fVec4 color);
+
 	void Render(bool sync = false);
 
 	void SetRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, bool multiSample = true, bool antialiasedLine = true);
@@ -29,9 +31,7 @@ public:
 	void Init(const wchar_t* className, vec2<float> screenRes);
 	void UpdateScreen(const fVec2& screensize);
 
-	ID3D11Device* GetDeovce() const;
-
-	Timer timer;
+	ID3D11Device* GetDevice() const;
 private:
 	void OnResize(int width,int height) override;
 	void OnQuitMsg() override;
@@ -73,7 +73,7 @@ inline fVec2 Window::GetTransalte(fVec2 t, fVec2 c)
 	return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
 }
 
-inline ID3D11Device* Window::GetDeovce()const
+inline ID3D11Device* Window::GetDevice()const
 {
 	return dev;
 }

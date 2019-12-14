@@ -4,9 +4,6 @@
     <Filter Include="directx">
       <UniqueIdentifier>{2b0e3ccc-ec97-4b5d-b63a-828d7104124d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="games">
-      <UniqueIdentifier>{7b22c42d-62f3-48af-9ebd-61257bb0d8e0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="math">
       <UniqueIdentifier>{a855cbe2-6dfc-47ae-b37f-61ae991f0387}</UniqueIdentifier>
     </Filter>
@@ -15,9 +12,6 @@
     </Filter>
     <Filter Include="shader">
       <UniqueIdentifier>{5b1d5bf6-4560-4f5a-9dd1-2bd0943a3987}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="games\bubble">
-      <UniqueIdentifier>{19d1e758-d93d-4e35-8250-33b8149b8f49}</UniqueIdentifier>
     </Filter>
     <Filter Include="directx\EventHandler">
       <UniqueIdentifier>{67a6dcc9-97ff-4110-a08f-e14b619dc041}</UniqueIdentifier>
@@ -39,9 +33,6 @@
     <ClInclude Include="Window.hpp">
       <Filter>directx</Filter>
     </ClInclude>
-    <ClInclude Include="BubbleShooter.hpp">
-      <Filter>games\bubble</Filter>
-    </ClInclude>
     <ClInclude Include="EventHandler.hpp">
       <Filter>directx\EventHandler</Filter>
     </ClInclude>
@@ -52,12 +43,6 @@
     </FxCompile>
     <FxCompile Include="VertexShader.hlsl">
       <Filter>shader</Filter>
-    </FxCompile>
-    <FxCompile Include="vBubbleShooter.hlsl">
-      <Filter>games\bubble</Filter>
-    </FxCompile>
-    <FxCompile Include="pBubbleShooter.hlsl">
-      <Filter>games\bubble</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,9 +55,6 @@
     </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>directx</Filter>
-    </ClCompile>
-    <ClCompile Include="BubbleShooter.cpp">
-      <Filter>games\bubble</Filter>
     </ClCompile>
     <ClCompile Include="EventHandler.cpp">
       <Filter>directx\EventHandler</Filter>
