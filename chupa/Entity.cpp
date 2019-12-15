@@ -6,7 +6,7 @@ Entity::Entity(float objHight, float objWidth, bool isDestroyable, bool isAlive,
 	setObjWidth(objWidth);
 	setIsDestroyable(isDestroyable);
 	this->isAlive = isAlive;
-	this->entityPhysics = entityPhysics;
+	//this->entityPhysics = &entityPhysics;
 
 	
 }
