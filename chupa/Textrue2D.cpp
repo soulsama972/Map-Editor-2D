@@ -1,9 +1,16 @@
 #include "Textrue2D.hpp"
+Window* Textrue2D::window = nullptr;
 
-Textrue2D::Textrue2D(std::string src,ID3D11Device * dev,ID3D11DeviceContext* devcon)
+Textrue2D::~Textrue2D()
 {
+	SafeDelete(this->sampleState);
+	SafeDelete(this->textrue);
+}
 
-	this->devcon = devcon;
+Textrue2D::Textrue2D(std::string src)
+{
+	const auto& devcon = window->GetContext();
+	const auto& dev = window->GetDevice();
 	TextrueVertex vertex[4];
 
 
@@ -86,24 +93,51 @@ Textrue2D::Textrue2D(std::string src,ID3D11Device * dev,ID3D11DeviceContext* dev
 	CheckFAILED(D3DX11CreateShaderResourceViewFromFileA(dev, src.c_str(), NULL, NULL, &textrue, NULL));
 }
 
-void Textrue2D::DrawObj(IRect rect, fVec2 Screen)
+void Textrue2D::AddInstance(IRect rect)
 {
 	TextrueInstanceType in;
 	in.matrix;
 	Matrix4x4 s;
-	fVec2 scale = GetScale(fVec2(rect.z,rect.w), Screen);
-	fVec2 translate = GetTransalte(fVec2(rect.x, rect.y),fVec2(rect.z,rect.w), Screen);
+	fVec2 scale = GetScale(fVec2(rect.z, rect.w), window->GetScreen());
+	fVec2 translate = GetTransalte(fVec2(rect.x, rect.y), fVec2(rect.z, rect.w), window->GetScreen());
 
 	in.matrix.Translate(fVec3(translate.x, translate.y, 0.0f).ToPointer());
 	s._11 = scale.x;
 	s._22 = scale.y;
 	in.matrix = in.matrix * s;
 
-	AddInstance(in);
+	Model11::AddInstance(in);
+}
+
+void Textrue2D::AddInstance(IRect* rect,int len)
+{
+	for (int i = 0; i < len; i++)
+	{
+		TextrueInstanceType in;
+		in.matrix;
+		Matrix4x4 s;
+		fVec2 scale = GetScale(fVec2(rect[i].z, rect[i].w), window->GetScreen());
+		fVec2 translate = GetTransalte(fVec2(rect[i].x, rect[i].y), fVec2(rect[i].z, rect[i].w), window->GetScreen());
+
+		in.matrix.Translate(fVec3(translate.x, translate.y, 0.0f).ToPointer());
+		s._11 = scale.x;
+		s._22 = scale.y;
+		in.matrix = in.matrix * s;
+
+		Model11::AddInstance(in);
+	}
+}
+
+
+void Textrue2D::Draw()
+{
+	const auto& devcon = window->GetContext();
 	devcon->PSSetShaderResources(0, 1, &textrue);
 	devcon->PSSetSamplers(0, 1, &sampleState);
-	Draw();
+	Model11::Draw();
 	devcon->PSSetShaderResources(0, 0,0);
 	devcon->PSSetSamplers(0, 0,0);
 	ClearInstance();
 }
+
+
