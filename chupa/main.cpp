@@ -18,9 +18,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 	
 	while (bShooter.LoopEvent())
 	{
-		bShooter.UpdateScreen({ 800,600 });
 		bShooter.ClearTargetView({ 0.2,0.2,0.2,1.0 });
-		t.DrawObj({ 0,0,400,200 }, { 800, 600 });
+		t.DrawObj({ 0,0,200,200 },bShooter.GetScreen());
 		bShooter.Render();
 	}
 	return 0;

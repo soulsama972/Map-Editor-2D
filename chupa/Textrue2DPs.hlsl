@@ -4,7 +4,7 @@ Texture2D shaderTexture;
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
-	float2 tex : TEXCOORD;
+	float2 tex : tex;
 };
 
 float4 main(PixelInputType input) : SV_TARGET

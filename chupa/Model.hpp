@@ -69,6 +69,8 @@ private:
 
 	UINT indexLen = 0;
 	UINT vertexLen = 0;
+	UINT vertexStride = 0;
+	UINT instanceStride = 0;
 	D3D11_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 };
 
@@ -92,13 +94,16 @@ void Model11<T>::InitBuffer(ID3D11Device* dev, ID3D11DeviceContext* devcon,void 
 
 	this->maxInstance = maxInstance;
 	this->instance = new T[maxInstance];
+
+	this->vertexStride = vertexByteWidth;
+	this->instanceStride = instanceByteWidth;
 	CheckAlloc(instance)
 
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc, instanceBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = vertexByteWidth * indexLen;
+	vertexBufferDesc.ByteWidth = vertexByteWidth * vertexLen;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -113,7 +118,7 @@ void Model11<T>::InitBuffer(ID3D11Device* dev, ID3D11DeviceContext* devcon,void 
 	CheckFAILED(dev->CreateBuffer(&vertexBufferDesc, &vertexData, &vertexBuffer))
 	
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = 4 * indexLen;
+	indexBufferDesc.ByteWidth = sizeof(unsigned int) * indexLen;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -255,7 +260,7 @@ void Model11<T>::ClearInstance()
 template<typename T>
 void Model11<T>::Model11::Draw()
 {
-	unsigned int stride[] = { sizeof(VertexType),sizeof(VertexInstance) };
+	unsigned int stride[] = { vertexStride,instanceStride };
 	unsigned int offset[] = { 0,0 };
 	ID3D11Buffer* bufferPointers[] = { vertexBuffer ,instanceBuffer };
 ;

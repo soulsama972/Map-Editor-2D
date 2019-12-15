@@ -36,6 +36,9 @@ public:
 
 	ID3D11DeviceContext *GetContext()const;
 
+	fVec2 GetScreen() const;
+
+
 private:
 	void OnResize(int width,int height) override;
 	void OnQuitMsg() override;
@@ -85,5 +88,10 @@ inline ID3D11Device* Window::GetDevice()const
 inline ID3D11DeviceContext* Window::GetContext() const
 {
 	return devcon;
+}
+
+inline fVec2 Window::GetScreen() const
+{
+	return screen;
 }
 
