@@ -9,7 +9,7 @@ public:
 protected:
 
 private:
-	Physics EntityPhysics;
+	//Physics EntityPhysics;
 	bool isAlive;
 	int healthPoint = 10;
 	int manaPoint = 0;
