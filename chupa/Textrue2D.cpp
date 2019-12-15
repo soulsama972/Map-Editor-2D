@@ -5,26 +5,17 @@ Textrue2D::Textrue2D(std::string src,ID3D11Device * dev,ID3D11DeviceContext* dev
 
 	this->devcon = devcon;
 	TextrueVertex vertex[4];
-	/*vertex[0].pos = fVec3(-1.0f, -1.0f, 0.0f);
+
+
+	vertex[0].pos = fVec3(-1.0f, -1.0f, 0.0f);
 	vertex[1].pos = fVec3(-1.0f, 1.0f, 0.0f);
 	vertex[2].pos = fVec3(1.0f, 1.0f, 0.0f);
-	vertex[3].pos = fVec3(1.0f, -1.0f, 0.0f);*/
+	vertex[3].pos = fVec3(1.0f, -1.0f, 0.0f);
 
-
-	vertex[0].pos = fVec3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	vertex[0].tex = fVec2(0.0f, 1.0f);
-
-	vertex[1].pos = fVec3(4.0f, 1.0f, 0.0f);  // Top middle.
-	vertex[1].tex = fVec2(0.0f, 0.0f);
-
-	vertex[2].pos = fVec3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	vertex[2].tex = fVec2(1.0f, 1.0f);
-
-
-	/*vertex[0].tex = fVec2(0,1);
-	vertex[1].tex = fVec2(1, 0);
-	vertex[2].tex = fVec2(1, 1);
-	vertex[3].tex = fVec2(0, 0);*/
+	vertex[0].tex = fVec2(0,1);
+	vertex[1].tex = fVec2(0, 0);
+	vertex[2].tex = fVec2(1, 0);
+	vertex[3].tex = fVec2(1, 1);
 
 	unsigned int ind[] =
 	{
@@ -42,7 +33,7 @@ Textrue2D::Textrue2D(std::string src,ID3D11Device * dev,ID3D11DeviceContext* dev
 	polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[0].InstanceDataStepRate = 0;
 
-	polygonLayout[1].SemanticName = "TEXCOORD";
+	polygonLayout[1].SemanticName = "tex";
 	polygonLayout[1].SemanticIndex = 0;
 	polygonLayout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	polygonLayout[1].InputSlot = 0;
@@ -68,7 +59,7 @@ Textrue2D::Textrue2D(std::string src,ID3D11Device * dev,ID3D11DeviceContext* dev
 
 
 
-	InitBuffer(dev, devcon, vertex, ind, 3, 3,6, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(TextrueVertex), sizeof(TextrueInstanceType));
+	InitBuffer(dev, devcon, vertex, ind,4,6,6, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(TextrueVertex), sizeof(TextrueInstanceType));
 
 	InitializeShaders("Textrue2DVs.hlsl", "main", "Textrue2DPs.hlsl", "main", polygonLayout, 6);
 
@@ -112,6 +103,7 @@ void Textrue2D::DrawObj(IRect rect, fVec2 Screen)
 	devcon->PSSetShaderResources(0, 1, &textrue);
 	devcon->PSSetSamplers(0, 1, &sampleState);
 	Draw();
-
+	devcon->PSSetShaderResources(0, 0,0);
+	devcon->PSSetSamplers(0, 0,0);
 	ClearInstance();
 }
