@@ -1,22 +1,20 @@
 #pragma once
-#include "Math.hpp"
-#include "Textrue2D.hpp"
-
 class Object
 {
 public:
-	Object(fVec2 size,bool isDestroyable);
+	Object(float objHight,float objWidth,bool isDestroyable);
 	Object() = default;
-	void SetSize(fVec2 size);
-	void SetIsDestroyable(bool isDestroyable);
+	void setObjHight(float objHight);
+	void setObjWidth(float objWidth);
+	void setIsDestroyable(float isDestroyable);
 protected:
 
 private:
-	
-	fVec2 size;
+	float objHight =0;
+	float objWidth =0;
 	bool isDestroyable = false;
-	Textrue2D* textrue = nullptr;
-	//Physics EntityPhysics;
+	/*drawable*/
+
 
 };
 

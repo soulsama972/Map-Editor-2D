@@ -18,13 +18,12 @@ class Textrue2D : private Model11<TextrueInstanceType>
 {
 public:
 	Textrue2D(std::string src,ID3D11Device* dev, ID3D11DeviceContext* devcon);
-	//static void Bind(Window* window);
+	
 	void DrawObj(IRect rect,fVec2 Screen);
 
 private:
 	ID3D11ShaderResourceView* textrue;
 	ID3D11SamplerState* sampleState;
 	ID3D11DeviceContext* devcon;
-	//Window *window;
 };
 

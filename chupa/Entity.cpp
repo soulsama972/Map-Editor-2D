@@ -1,8 +1,12 @@
 #include "Entity.hpp"
 
-Entity::Entity(fVec2 size, bool isDestroyable, bool isAlive, Physics entityPhysics)
+Entity::Entity(float objHight, float objWidth, bool isDestroyable, bool isAlive, Physics entityPhysics)
 {
-	SetSize(size);
-	SetIsDestroyable(isDestroyable);
+	setObjHight(objHight);
+	setObjWidth(objWidth);
+	setIsDestroyable(isDestroyable);
 	this->isAlive = isAlive;
+	//this->entityPhysics = &entityPhysics;
+
+	
 }

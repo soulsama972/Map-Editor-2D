@@ -1,18 +1,23 @@
 #include "Object.hpp"
 
-Object::Object(fVec2 size, bool isDestroyable)
+Object::Object(float objHight, float objWidth, bool isDestroyable)
 {
-	this->size = size;
+	this->objHight = objHight;
+	this->objWidth = objWidth;
 	this->isDestroyable = isDestroyable;
 }
 
-void Object::SetSize(fVec2 size)
+void Object::setObjHight(float objHight)
 {
-	this->size = size;
+	this->objHight = objHight;
 }
 
+void Object::setObjWidth(float objWidth)
+{
+	this->objWidth = objWidth;
+}
 
-void Object::SetIsDestroyable(bool isDestroyable)
+void Object::setIsDestroyable(float isDestroyable)
 {
 	this->isDestroyable = isDestroyable;
 }
