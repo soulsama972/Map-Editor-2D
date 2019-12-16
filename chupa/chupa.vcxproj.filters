@@ -106,5 +106,8 @@
     <ClCompile Include="Textrue2D.cpp">
       <Filter>directx</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
