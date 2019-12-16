@@ -10,8 +10,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 {
 
 	Window bShooter;
-	
-
+	Window bShooter2;
 	bShooter.Init(L"bubbleShooter", 800, 600);
 	Textrue2D t("b.png",bShooter.GetDevice(),bShooter.GetContext());
 
