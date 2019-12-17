@@ -1,10 +1,17 @@
 #include "Entity.hpp"
 
-Entity::Entity(bool isAlive, int healthPoint, int manaPoint)
+
+void Entity::init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics* physics, bool isDestroyable, bool isAlive, int healthPoint, int manaPoint)
 {
-	this->isAlive = isAlive;
-	this->healthPoint = healthPoint;
-	this->manaPoint = manaPoint;
+	SetSize(size);
+	SetTexture(texture);
+	SetPosition(position);
+	SetOrigin(origin);
+	SetPhysics(physics);
+	SetIsDestroyable(isDestroyable);
+	SetIsAlive(isAlive);
+	SetHealthPoint(healthPoint);
+	SetManaPoint(manaPoint);
 }
 
 void Entity::SetIsAlive(bool isAlive)
