@@ -80,10 +80,11 @@ LRESULT EventHandler::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 bool EventHandler::LoopEvent()
 {
 	MSG msg;
-	if (PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE))
+	
+	while (PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE))
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 	}
 	return !windowDestory;
 }

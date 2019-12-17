@@ -239,12 +239,12 @@ void Model11<T>::AddInstance(T in)
 	{
 		instance[instanceCount++] = in;
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		VertexInstance* dataPtr;
+		void* dataPtr;
 		unsigned int bufferNumber = 0;
 		devcon->Map(instanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		dataPtr = (VertexInstance*)mappedResource.pData;
+		dataPtr = mappedResource.pData;
 
-		memcpy(dataPtr, instance, sizeof(VertexInstance) * instanceCount);
+		memcpy(dataPtr, instance, instanceStride * instanceCount);
 
 		devcon->Unmap(instanceBuffer, 0);
 	}

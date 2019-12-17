@@ -19,6 +19,9 @@
     <Filter Include="game">
       <UniqueIdentifier>{19987628-ff6c-47fd-b84c-f2f88929df4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mapEditor">
+      <UniqueIdentifier>{860481d8-9c53-4b64-86ea-e7c35720d976}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.hpp">
@@ -60,6 +63,9 @@
     <ClInclude Include="Texture2D.hpp">
       <Filter>directx</Filter>
     </ClInclude>
+    <ClInclude Include="MapEditor.hpp">
+      <Filter>mapEditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
@@ -68,10 +74,10 @@
     <FxCompile Include="VertexShader.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="Textrue2DPs.hlsl">
+    <FxCompile Include="Texture2DVs.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="Textrue2DVs.hlsl">
+    <FxCompile Include="Texture2DPs.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
   </ItemGroup>
@@ -114,6 +120,9 @@
     </ClCompile>
     <ClCompile Include="Texture2D.cpp">
       <Filter>directx</Filter>
+    </ClCompile>
+    <ClCompile Include="MapEditor.cpp">
+      <Filter>mapEditor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
