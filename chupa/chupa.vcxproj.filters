@@ -19,6 +19,9 @@
     <Filter Include="game">
       <UniqueIdentifier>{19987628-ff6c-47fd-b84c-f2f88929df4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mapEditor">
+      <UniqueIdentifier>{35259485-7f4a-4b69-8953-eb37f99c1eda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math.hpp">
@@ -54,12 +57,10 @@
     <ClInclude Include="Physics.hpp">
       <Filter>game</Filter>
     </ClInclude>
-    <ClInclude Include="StaticObject.hpp">
-      <Filter>game</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture2D.hpp">
+    <ClInclude Include="Textrue2D.hpp">
       <Filter>directx</Filter>
     </ClInclude>
+    <ClInclude Include="Editor.hpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
@@ -106,17 +107,11 @@
     <ClCompile Include="Physics.cpp">
       <Filter>game</Filter>
     </ClCompile>
+    <ClCompile Include="Textrue2D.cpp">
+      <Filter>directx</Filter>
+    </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>game</Filter>
-    </ClCompile>
-    <ClCompile Include="Source.cpp">
-      <Filter>game</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticObject.cpp">
-      <Filter>game</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture2D.cpp">
-      <Filter>directx</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

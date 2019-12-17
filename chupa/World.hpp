@@ -13,7 +13,7 @@ public:
 protected:
 	
 private:
-	fVec2 screenMap;
+	fVec3 screenMap;
 	std::vector<Object> object;
 	std::vector<Entity> entity;
 
