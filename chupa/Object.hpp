@@ -1,27 +1,22 @@
 #pragma once
 #include "Math.hpp"
-#include "Physics.hpp"
-#include "StaticObject.hpp"
+#include "Textrue2D.hpp"
 
-
-class Object : public StaticObject
+class Object
 {
 public:
+	Object(fVec2 size,bool isDestroyable);
 	Object() = default;
-
-	void Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics* physics, bool isDestroyable);
-
-	//sets
+	void SetSize(fVec2 size);
 	void SetIsDestroyable(bool isDestroyable);
-	void SetPhysics(Physics* physics);
-
-	//gets
-	bool GetIsDestroyable();
-	Physics* GetPhysics();
 protected:
+
 private:
+	
+	fVec2 size;
 	bool isDestroyable = false;
-	Physics* physics = nullptr;
+	Textrue2D* textrue = nullptr;
+	//Physics EntityPhysics;
 
 };
 
