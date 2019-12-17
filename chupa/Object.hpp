@@ -13,9 +13,9 @@ public:
 
 	void Update(float deltaTime);
 	//bind
-	inline void Bind(Window* window)
+	inline static void Bind(Window* window)
 	{
-		this->window = window;
+		Object::window = window;
 	}
 	//sets
 	void SetIsDestroyable(bool isDestroyable);
