@@ -140,7 +140,10 @@ public:
 	}
 	static Map map;
 
-
+	inline vec2	<int> GetMousePos()
+	{
+		return mousePos;
+	}
 
 
 protected:

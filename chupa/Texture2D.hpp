@@ -19,10 +19,14 @@ class Texture2D : private Model11<TextrueInstanceType>
 {
 public:
 	~Texture2D();
-	Texture2D(std::string src);
+	Texture2D(std::string src, UINT MaxInstance);
 	void AddInstance(IRect rect);
 	void AddInstance(IRect* rect,int len);
-	void Draw();
+	void Draw(bool clearAfter = true);
+	inline void Clear()
+	{
+		ClearInstance();
+	}
 
 	inline static void Bind(Window* window)
 	{

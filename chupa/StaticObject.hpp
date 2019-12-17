@@ -1,6 +1,6 @@
 #pragma once
 #include "Math.hpp"
-#include "Textrue2D.hpp"
+#include "Texture2D.hpp"
 #include "Physics.hpp"
 class StaticObject
 {

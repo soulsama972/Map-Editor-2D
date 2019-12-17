@@ -7,7 +7,7 @@ Texture2D::~Texture2D()
 	SafeDelete(this->textrue);
 }
 
-Texture2D::Texture2D(std::string src)
+Texture2D::Texture2D(std::string src,UINT MaxInstance)
 {
 	const auto& devcon = window->GetContext();
 	const auto& dev = window->GetDevice();
@@ -66,7 +66,7 @@ Texture2D::Texture2D(std::string src)
 
 
 
-	InitBuffer(dev, devcon, vertex, ind,4,6,6, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(TextrueVertex), sizeof(TextrueInstanceType));
+	InitBuffer(dev, devcon, vertex, ind,4,6, MaxInstance, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(TextrueVertex), sizeof(TextrueInstanceType));
 
 	InitializeShaders("Texture2DVs.hlsl", "main", "Texture2DPs.hlsl", "main", polygonLayout, 6);
 
@@ -129,7 +129,7 @@ void Texture2D::AddInstance(IRect* rect,int len)
 }
 
 
-void Texture2D::Draw()
+void Texture2D::Draw(bool clearAfter)
 {
 	const auto& devcon = window->GetContext();
 	devcon->PSSetShaderResources(0, 1, &textrue);
@@ -137,7 +137,8 @@ void Texture2D::Draw()
 	Model11::Draw();
 	devcon->PSSetShaderResources(0, 0,0);
 	devcon->PSSetSamplers(0, 0,0);
-	ClearInstance();
+	if(clearAfter)
+		ClearInstance();
 }
 
 
