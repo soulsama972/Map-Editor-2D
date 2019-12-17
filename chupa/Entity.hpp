@@ -5,11 +5,20 @@
 class Entity : public Object
 {
 public:
-	Entity(fVec2 size, bool isDestroyable, bool isAlive, Physics EntityPhysics);
+	Entity(bool isAlive, int healthPoint, int manaPoint);
+
+	void SetIsAlive(bool isAlive);
+	void SetHealthPoint(int healthPoint);
+	void SetManaPoint(int manaPoint);
+
+	bool GetIsAlive();
+	int GetHealthPoint();
+	int GetManaPoint();
+
 protected:
 
 private:
-	bool isAlive;
+	bool isAlive = true;
 	int healthPoint = 10;
 	int manaPoint = 0;
 

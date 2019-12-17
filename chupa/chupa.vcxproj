@@ -148,7 +148,8 @@
     <ClInclude Include="Overlay.hpp" />
     <ClInclude Include="Physics.hpp" />
     <ClInclude Include="StartScreen.hpp" />
-    <ClInclude Include="Textrue2D.hpp" />
+    <ClInclude Include="StaticObject.hpp" />
+    <ClInclude Include="Texture2D.hpp" />
     <ClInclude Include="utill.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="World.hpp" />
@@ -161,8 +162,10 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="Source.cpp" />
     <ClCompile Include="StartScreen.cpp" />
-    <ClCompile Include="Textrue2D.cpp" />
+    <ClCompile Include="StaticObject.cpp" />
+    <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="utill.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="World.cpp" />

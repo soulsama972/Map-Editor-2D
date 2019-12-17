@@ -13,8 +13,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 	
 
 	bShooter.Init(L"bubbleShooter", 800, 600);
-	Textrue2D::Bind(&bShooter);
-	Textrue2D t("b.png");
+	Texture2D::Bind(&bShooter);
+	Texture2D t("b.png");
 
 	
 	while (bShooter.LoopEvent())

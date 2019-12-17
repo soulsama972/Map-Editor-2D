@@ -1,13 +1,13 @@
-#include "Textrue2D.hpp"
-Window* Textrue2D::window = nullptr;
+#include "Texture2D.hpp"
+Window* Texture2D::window = nullptr;
 
-Textrue2D::~Textrue2D()
+Texture2D::~Texture2D()
 {
 	SafeDelete(this->sampleState);
 	SafeDelete(this->textrue);
 }
 
-Textrue2D::Textrue2D(std::string src)
+Texture2D::Texture2D(std::string src)
 {
 	const auto& devcon = window->GetContext();
 	const auto& dev = window->GetDevice();
@@ -68,7 +68,7 @@ Textrue2D::Textrue2D(std::string src)
 
 	InitBuffer(dev, devcon, vertex, ind,4,6,6, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(TextrueVertex), sizeof(TextrueInstanceType));
 
-	InitializeShaders("Textrue2DVs.hlsl", "main", "Textrue2DPs.hlsl", "main", polygonLayout, 6);
+	InitializeShaders("Texture2DVs.hlsl", "main", "Texture2DPs.hlsl", "main", polygonLayout, 6);
 
 
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -93,7 +93,7 @@ Textrue2D::Textrue2D(std::string src)
 	CheckFAILED(D3DX11CreateShaderResourceViewFromFileA(dev, src.c_str(), NULL, NULL, &textrue, NULL));
 }
 
-void Textrue2D::AddInstance(IRect rect)
+void Texture2D::AddInstance(IRect rect)
 {
 	TextrueInstanceType in;
 	in.matrix;
@@ -109,7 +109,7 @@ void Textrue2D::AddInstance(IRect rect)
 	Model11::AddInstance(in);
 }
 
-void Textrue2D::AddInstance(IRect* rect,int len)
+void Texture2D::AddInstance(IRect* rect,int len)
 {
 	for (int i = 0; i < len; i++)
 	{
@@ -129,7 +129,7 @@ void Textrue2D::AddInstance(IRect* rect,int len)
 }
 
 
-void Textrue2D::Draw()
+void Texture2D::Draw()
 {
 	const auto& devcon = window->GetContext();
 	devcon->PSSetShaderResources(0, 1, &textrue);
