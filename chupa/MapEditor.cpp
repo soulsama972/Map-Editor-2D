@@ -21,10 +21,15 @@ bool MapEditor::Update()
 		{
 			tex->Clear();
 		}
-		if (window->IsMouseClick(MOUSE::LEFT))
+		if (window->IsMouseClick(MOUSE::LEFT) && !stillOn )
 		{
+			stillOn = true;
 			IRect pos = { window->GetMousePos().x,window->GetMousePos().y,100,100 };
 			tex->AddInstance(pos);
+		}
+		else if(!window->IsMouseClick(MOUSE::LEFT) && stillOn)
+		{
+			stillOn = false;
 		}
 		return true;
 	}

@@ -17,6 +17,7 @@ public:
 	bool Update();
 	void Save();
 private:
+	bool stillOn = false;
 	fVec3 size;
 	Window* window = nullptr;
 	Texture2D* tex = nullptr;
