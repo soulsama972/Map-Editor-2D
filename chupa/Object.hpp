@@ -11,6 +11,12 @@ public:
 
 	void Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics* physics, bool isDestroyable);
 
+	void Update(float deltaTime);
+	//bind
+	inline void Bind(Window* window)
+	{
+		this->window = window;
+	}
 	//sets
 	void SetIsDestroyable(bool isDestroyable);
 	void SetPhysics(Physics* physics);
@@ -22,6 +28,6 @@ protected:
 private:
 	bool isDestroyable = false;
 	Physics* physics = nullptr;
-
+	static Window* window;
 };
 

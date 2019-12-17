@@ -14,6 +14,19 @@ void Object::Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, 
 
 }
 
+void Object::Update(float deltaTime)
+{
+	if (window->IsKeyPress(Key::Key_RARROW))
+	{
+		fVec3 pos = this->GetPosition();
+		Physics *phy = this->GetPhysics();
+		phy->SetVelocity(10);
+		float vel  = phy->GetVelocity();
+		pos.x += (vel * deltaTime);
+		this->SetPosition(pos);
+	}
+}
+
 void Object::SetIsDestroyable(bool isDestroyable)
 {
 	this->isDestroyable = isDestroyable;
