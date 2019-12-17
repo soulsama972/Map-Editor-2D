@@ -109,9 +109,6 @@
     <ClCompile Include="Model.cpp">
       <Filter>game</Filter>
     </ClCompile>
-    <ClCompile Include="Source.cpp">
-      <Filter>game</Filter>
-    </ClCompile>
     <ClCompile Include="StaticObject.cpp">
       <Filter>game</Filter>
     </ClCompile>

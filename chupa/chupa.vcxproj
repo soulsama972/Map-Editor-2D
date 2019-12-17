@@ -162,7 +162,6 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="Physics.cpp" />
-    <ClCompile Include="Source.cpp" />
     <ClCompile Include="StartScreen.cpp" />
     <ClCompile Include="StaticObject.cpp" />
     <ClCompile Include="Texture2D.cpp" />
