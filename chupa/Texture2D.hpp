@@ -12,7 +12,7 @@ struct TextrueVertex
 	fVec3 pos;
 	fVec2 tex;
 };
-using IRect = vec4<int>;
+using IRect = vec4<float>;
 
 
 class Texture2D : private Model11<TextrueInstanceType>

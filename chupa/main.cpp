@@ -17,16 +17,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 	Texture2D::Bind(&bShooter);
 	Object::Bind(&bShooter);
 	Texture2D t("b.png",5000);
+	Texture2D t2("b2.png", 5000);
 	Object obj;
 	Physics phy(10, 10);
 	obj.Init({ 100,100 }, &t, { 200,200,0 }, { 0,0,0 },&phy, true);
 	
-	/*MapEditor* m = new MapEditor(&bShooter, { 300,300,0 });
-	m->SetTexture(&t);
+	MapEditor* m = new MapEditor(&bShooter, { 300,300,0 });
+	m->SetTexture(&t,1);
 	while (m->Update())
 	{
+		t2.AddInstance(IRect(0, 0, 300, 300));
+		
 		m->Draw();
-	}*/
+	}
 
 	while (bShooter.LoopEvent())
 	{
