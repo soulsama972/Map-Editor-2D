@@ -9,9 +9,10 @@ class Object : public StaticObject
 public:
 	Object() = default;
 
-	void Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics* physics, bool isDestroyable);
-
+	void Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics physics, bool isDestroyable);
 	void Update(float deltaTime);
+	bool IsCollide(StaticObject anotherObj);
+
 	//bind
 	inline static void Bind(Window* window)
 	{
@@ -19,15 +20,16 @@ public:
 	}
 	//sets
 	void SetIsDestroyable(bool isDestroyable);
-	void SetPhysics(Physics* physics);
+	void SetPhysics(Physics physics);
 
 	//gets
 	bool GetIsDestroyable();
-	Physics* GetPhysics();
+	Physics GetPhysics();
 protected:
+	static Window* window;
 private:
 	bool isDestroyable = false;
-	Physics* physics = nullptr;
-	static Window* window;
+	Physics physics;
+	
 };
 

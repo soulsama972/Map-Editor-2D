@@ -1,6 +1,6 @@
 #include "Physics.hpp"
 
-Physics::Physics(float velocity, float vacceleration)
+void Physics::Init(float velocity, float vacceleration)
 {
 	this->velocity = velocity;
 	this->vacceleration = vacceleration;

@@ -66,6 +66,9 @@
     <ClInclude Include="MapEditor.hpp">
       <Filter>mapEditor</Filter>
     </ClInclude>
+    <ClInclude Include="Player.hpp">
+      <Filter>game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
@@ -123,6 +126,9 @@
     </ClCompile>
     <ClCompile Include="MapEditor.cpp">
       <Filter>mapEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

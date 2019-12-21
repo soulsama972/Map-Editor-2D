@@ -6,9 +6,8 @@ class Entity : public Object
 {
 public:
 	Entity() = default;
-	void init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics* physics, bool isDestroyable, bool isAlive, int healthPoint, int manaPoint);
-	
-
+	void Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics physics, bool isDestroyable, bool isAlive, int healthPoint, int manaPoint);
+	void AutoMotion(float deltaTime, StaticObject obj);
 	//sets
 	void SetIsAlive(bool isAlive);
 	void SetHealthPoint(int healthPoint);
@@ -22,6 +21,7 @@ public:
 protected:
 
 private:
+	float timeElapsed = 0;
 	bool isAlive = true;
 	int healthPoint = 10;
 	int manaPoint = 0;

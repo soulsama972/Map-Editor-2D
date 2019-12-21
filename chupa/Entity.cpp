@@ -1,7 +1,9 @@
 #include "Entity.hpp"
 
 
-void Entity::init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics* physics, bool isDestroyable, bool isAlive, int healthPoint, int manaPoint)
+
+
+void Entity::Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics physics, bool isDestroyable, bool isAlive, int healthPoint, int manaPoint)
 {
 	SetSize(size);
 	SetTexture(texture);
@@ -12,6 +14,33 @@ void Entity::init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, 
 	SetIsAlive(isAlive);
 	SetHealthPoint(healthPoint);
 	SetManaPoint(manaPoint);
+}
+
+void Entity::AutoMotion(float deltaTime, StaticObject obj)
+{
+	fVec3 pos = this->GetPosition();
+	Physics physics = this->GetPhysics();
+	float velocity = physics.GetVelocity();
+	timeElapsed += deltaTime;
+	physics.SetVelocity(10);
+
+	if(timeElapsed <6.0f){
+		pos.x += (velocity * deltaTime);
+		if(!IsCollide(obj))
+			this->SetPosition(pos);
+	}
+	else if (timeElapsed < 12.0f)
+	{
+		pos.x -= (velocity * deltaTime);
+		if (!IsCollide(obj))
+			this->SetPosition(pos);
+	}
+	else {
+		pos.x += (velocity * deltaTime);
+		if (!IsCollide(obj))
+			this->SetPosition(pos);
+		timeElapsed = 0;
+	}
 }
 
 void Entity::SetIsAlive(bool isAlive)

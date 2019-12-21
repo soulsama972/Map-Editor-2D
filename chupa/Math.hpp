@@ -309,6 +309,7 @@ public:
 	{
 		return x * v.x + y * v.y + z * v.z;
 	}
+
 	inline T GetLength()
 	{
 		return (T)sqrt(GetDot(*this));
@@ -318,6 +319,11 @@ public:
 	{
 		T magnitude = GetLength();
 		return vec3(x / magnitude, y / magnitude);
+	}
+	
+	inline bool	 operator==(const vec3 v)
+	{
+		return (x == v.x && y == v.y && v.z == z);
 	}
 
 	inline vec3 operator+(const vec3 v)
@@ -339,15 +345,16 @@ public:
 	{
 		return vec3(x / v.x, y / v.y, z / v.z);
 	}
+
 	inline vec3 operator/(float  v)
 	{
 		return vec3(x / v, y / v, z / v);
 	}
+
 	inline vec3 operator*(float  v)
 	{
 		return vec3(x * v, y * v, z * v);
 	}
-
 	inline T* ToPointer()
 	{
 		return reinterpret_cast<T*>(this);
