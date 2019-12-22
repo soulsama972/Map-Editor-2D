@@ -14,7 +14,6 @@ public:
 		this->tex = tex;
 		TextureCount = count;
 	}
-	inline IRect Translate(fVec3 p, fVec2 s);
 	void MouseHandler();
 	void Draw();
 	bool Update();
@@ -28,15 +27,5 @@ private:
 	int TextureCount = 0;
 	std::vector<IRect> listRect;
 	Camera camera;
-	IRect tempPos;
+	fVec3 tempPos;
 };
-inline IRect MapEditor::Translate(fVec3 p, fVec2 s)
-{
-	fVec3 cPos = camera.GetCameraPos();
-	IRect r;
-	r.x = p.x - cPos.x;
-	r.y = p.y - cPos.y;
-	r.z = s.x;
-	r.w = s.y;
-	return r;
-}

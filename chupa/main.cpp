@@ -45,8 +45,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 		fVec2 size = entity.GetSize();
 
 		bShooter.ClearTargetView({ 0.2,0.2,0.2,1.0 });
-		t.AddInstance({ pos.x, pos.y,size.x,size.y});
-		t.AddInstance({ posPlayer.x, posPlayer.y,sizePlayer.x,sizePlayer.y });
+	//	t.AddInstance({ pos.x, pos.y,size.x,size.y});
+	//	t.AddInstance({ posPlayer.x, posPlayer.y,sizePlayer.x,sizePlayer.y });
 		t.Draw();
 		bShooter.Render(true);
 	}

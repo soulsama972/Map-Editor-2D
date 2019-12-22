@@ -98,13 +98,15 @@ void Texture2D::AddInstance(IRect rect)
 	TextrueInstanceType in;
 	in.matrix;
 	Matrix4x4 s;
+
 	fVec2 scale = GetScale(fVec2(rect.z, rect.w), window->GetScreen());
 	fVec2 translate = GetTransalte(fVec2(rect.x, rect.y), fVec2(rect.z, rect.w), window->GetScreen());
 
 	in.matrix.Translate(fVec3(translate.x, translate.y, 0.0f).ToPointer());
-	s._11 = scale.x;
-	s._22 = scale.y;
-	in.matrix = in.matrix * s;
+	s.u[0][0] = scale.x;
+	s.u[1][1] = scale.y;
+	in.matrix =  in.matrix * s;
+	in.matrix = in.matrix ;
 
 	Model11::AddInstance(in);
 }
@@ -120,8 +122,8 @@ void Texture2D::AddInstance(IRect* rect,int len)
 		fVec2 translate = GetTransalte(fVec2(rect[i].x, rect[i].y), fVec2(rect[i].z, rect[i].w), window->GetScreen());
 
 		in.matrix.Translate(fVec3(translate.x, translate.y, 0.0f).ToPointer());
-		s._11 = scale.x;
-		s._22 = scale.y;
+		s.u[0][0] = scale.x;
+		s.u[1][1] = scale.y;
 		in.matrix = in.matrix * s;
 
 		Model11::AddInstance(in);

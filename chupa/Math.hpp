@@ -85,13 +85,26 @@ public:
 	inline void Identity()
 	{
 		for (int i = 0; i < 16; i++)
-		{
-			if (i % 4 == 0)
-				m[i] = 1;
 			m[i] = 0;
-		}
+
+		u[0][0] = 1;
+		u[1][1] = 1;
+		u[2][2] = 1;
+		u[3][3] = 1;
 	}
 
+	inline Matrix4x4 Transpose()
+	{
+		Matrix4x4 res;
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				res.u[i][j] = this->u[j][i];
+			}
+		}
+		return res;
+	}
 
 	inline void pFloatToMatrix(float* viewMatrix)
 	{
@@ -103,6 +116,7 @@ public:
 
 	inline void Mul(const Matrix4x4 src1, const Matrix4x4 src2)
 	{
+
 		u[0][0] = src1.u[0][0] * src2.u[0][0] + src1.u[0][1] * src2.u[1][0] + src1.u[0][2] * src2.u[2][0] + src1.u[0][3] * src2.u[3][0];
 		u[0][1] = src1.u[0][0] * src2.u[0][1] + src1.u[0][1] * src2.u[1][1] + src1.u[0][2] * src2.u[2][1] + src1.u[0][3] * src2.u[3][1];
 		u[0][2] = src1.u[0][0] * src2.u[0][2] + src1.u[0][1] * src2.u[1][2] + src1.u[0][2] * src2.u[2][2] + src1.u[0][3] * src2.u[3][2];
@@ -128,9 +142,9 @@ public:
 
 	inline void Translate(float t[3])
 	{
-		this->u[3][0] = t[0];
-		this->u[3][1] = t[1];
-		this->u[3][2] = t[2];
+		this->u[0][3] = t[0];
+		this->u[1][3] = t[1];
+		this->u[2][3] = t[2];
 	}
 
 };

@@ -5,7 +5,7 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 	this->window = window;
 	camera.Bind(window);
 	camera.Init(300, 300, 1, 1000);
-	camera.Update({ size.x/2,size.y/2,size.z/2 });
+	camera.Update(fVec3(0,0,0));
 	this->size = size;
 }
 
@@ -13,8 +13,8 @@ void MapEditor::MouseHandler()
 {
 	fVec3 mousePos = fVec3(window->GetMousePos().x, window->GetMousePos().y,0);
 	fVec2 objectSize = fVec2(100.0f, 100.0f);
-	tempPos = IRect(mousePos.x - objectSize.x / 2, mousePos.y - objectSize.y / 2, objectSize.x, objectSize.y);
-	tempPos = Translate(mousePos, objectSize);
+	fVec3 camPos = camera.GetPos();
+	tempPos = mousePos - camPos;
 	if (window->IsMouseClick(MOUSE::LEFT) && !stillOn)
 	{
 		int res = IsEmpty(fVec2(mousePos.x,mousePos.y));
@@ -23,34 +23,36 @@ void MapEditor::MouseHandler()
 			std::swap(listRect[res], listRect.back());
 			listRect.pop_back();
 		}
-		tex->AddInstance(tempPos);
+		IRect r;
+		r.x = tempPos.x;
+		r.y = tempPos.y;
+		r.z = objectSize.x;
+		r.w = objectSize.y;
+		tex->AddInstance(r);
 		stillOn = true;
 	}
 	else if (!window->IsMouseClick(MOUSE::LEFT) && stillOn)
 	{
 		stillOn = false;
-		listRect.push_back(tempPos);
+		IRect r;
+		r.x = tempPos.x;
+		r.y = tempPos.y;
+		r.z = objectSize.x;
+		r.w = objectSize.y;
+		listRect.push_back(r);
 	}
 	else if (stillOn)
 	{
-		tex->AddInstance(tempPos);
+		IRect r;
+		r.x = tempPos.x;
+		r.y = tempPos.y;
+		r.z = objectSize.x;
+		r.w = objectSize.y;
+		tex->AddInstance(r);
 	}
 	for (auto& i : listRect)
 	{
-		IRect r;
-		r.x = i.x - camera.GetCameraPos().x;
-		r.y = i.y - camera.GetCameraPos().y;
-		r.z = i.z;
-		r.w = i.w;
-		if (r.x < 0)
-			r.x = 0;
-		if (r.x > size.x)
-			r.x = size.x - r.z;
-		if (r.y < 0)
-			r.y = 0;
-		if (r.y + r.w > size.y)
-			r.y = size.y - r.w;
-		tex->AddInstance(r);
+		tex->AddInstance(i);
 	}
 
 
@@ -89,14 +91,18 @@ bool MapEditor::Update()
 {
 	if (window->LoopEvent())
 	{
-	
+		fVec3 camPos = camera.GetPos();
 		if (window->IsKeyPress(Key::Key_C))
 		{
 			listRect.clear();
 		}
-
+		if (window->IsKeyPress(Key::Key_D))
+			camPos.x += 1;
+		if (window->IsKeyPress(Key::Key_A))
+			camPos.x -= 1;
+		camera.Update(camPos);
 		MouseHandler();
-
+		
 		return true;
 	}
 
