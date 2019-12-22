@@ -34,8 +34,8 @@ inline IRect MapEditor::Translate(fVec3 p, fVec2 s)
 {
 	fVec3 cPos = camera.GetCameraPos();
 	IRect r;
-	r.x = p.x - s.x / 2;
-	r.x = p.y - s.y / 2;
+	r.x = p.x - cPos.x;
+	r.y = p.y - cPos.y;
 	r.z = s.x;
 	r.w = s.y;
 	return r;

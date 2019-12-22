@@ -4,6 +4,7 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 {
 	this->window = window;
 	camera.Bind(window);
+	camera.Init(300, 300, 1, 1000);
 	camera.Update({ size.x/2,size.y/2,size.z/2 });
 	this->size = size;
 }
@@ -47,7 +48,7 @@ void MapEditor::MouseHandler()
 			r.x = size.x - r.z;
 		if (r.y < 0)
 			r.y = 0;
-		if (r.y > size.y)
+		if (r.y + r.w > size.y)
 			r.y = size.y - r.w;
 		tex->AddInstance(r);
 	}

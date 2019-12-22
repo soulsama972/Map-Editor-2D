@@ -27,12 +27,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 	entity.Init({ 100,100 }, &t, { 200,200,0 }, {0,0,0},phy,false, true ,10,0);
 	player.Init({ 100,100 }, &t, { 300,200,0 }, { 0,0,0 }, phy, false, true, 10, 0);
 	
-	/*MapEditor* m = new MapEditor(&bShooter, { 300,300,0 });
-	m->SetTexture(&t);
+	MapEditor* m = new MapEditor(&bShooter, { 300,300,0 });
+	m->SetTexture(&t,1);
 	while (m->Update())
 	{
 		m->Draw();
-	}*/
+	}
 
 	while (bShooter.LoopEvent())
 	{
