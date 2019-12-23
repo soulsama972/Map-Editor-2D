@@ -5,6 +5,9 @@
 #include<vector>
 #include"Camera.hpp"
 
+
+
+
 class MapEditor
 {
 public:
@@ -19,13 +22,20 @@ public:
 	bool Update();
 	void Save();
 private:
+	struct TexData
+	{
+		fVec3	pos;
+		fVec3	origin;
+		fVec2	size;
+	};
+
 	int IsEmpty(fVec2 pos);
 	bool stillOn = false;
-	fVec3 size;
+	fVec3 screen;
 	Window* window = nullptr;
 	Texture2D* tex = nullptr;
 	int TextureCount = 0;
-	std::vector<IRect> listRect;
+	std::vector<TexData> listPos;
 	Camera camera;
-	fVec3 tempPos;
+	TexData temp;
 };

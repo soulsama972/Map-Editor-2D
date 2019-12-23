@@ -25,8 +25,6 @@ public:
 	};
 	
 	
-	
-
 	inline void operator *= (float v)
 	{
 		for (int i = 0; i < 16; i++)
@@ -255,11 +253,6 @@ public:
 		return x * v.x + y * v.y + z * v.z;
 	}
 
-	inline vec3 Cross(const vec3<T>& v)
-	{
-
-		return vec3(y * v.z - z - v.y,x * v.z - z * v.x, x * v.y - y * v.x);
-	}
 	inline T GetLength()
 	{
 		return (T)sqrt(GetDot(*this));
@@ -400,31 +393,6 @@ using fVec3 = vec3<float>;
 using fVec4 = vec4<float>;
 
 
-inline bool WorldToScreen(float* viewMatrix, fVec3 pos, fVec2& newPos, fVec2 screenSize, bool transpose)
-{
-	auto TransfromCoord = [](float x, float f)
-	{
-		return f * (x + 1) * 0.5f;
-	};
-	fVec4 vec4;
-	Matrix4x4 view = viewMatrix;
-
-	///*if (transpose)
-	//	*/view.Transpose(view);
-
-	vec4.Transform(pos, view);
-
-	if (vec4.w < 0.5f)
-		return false;
-
-	vec4.x /= vec4.w;
-	vec4.y /= vec4.w;
-
-	newPos.x = TransfromCoord(vec4.x, screenSize.x);
-	newPos.y = TransfromCoord(-vec4.y, screenSize.y);
-
-	return true;
-}
 
 inline fVec2 GetScale(fVec2 s,fVec2 screen)
 {
@@ -435,15 +403,35 @@ inline fVec2 GetTransalte(fVec2 t, fVec2 c, fVec2 screen)
 {
 	return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
 }
+inline Matrix4x4 SetScaleMatrix(fVec3 scale)
+{
+	Matrix4x4 m;
+	m.u[0][0] = scale.x;
+	m.u[1][1] = scale.y;
+	m.u[2][2] = scale.z;
+	return m;
+}
 
+inline Matrix4x4 SetScaleMatrix(fVec2 scale)
+{
+	Matrix4x4 m;
+	m.u[0][0] = scale.x;
+	m.u[1][1] = scale.y;
+	return m;
+}
+
+inline fVec3 Cross(fVec3 v, fVec3 v2)
+{
+	return fVec3(v.y * v2.z - v.z * v2.y, v.x * v2.z - v.z * v2.x, v.x * v2.y - v.y * v2.x);
+}
 
 inline Matrix4x4 LookAtRH(fVec3 eye, fVec3 target, fVec3 up)
 {
 	fVec3 zaxis = (eye - target);    // The "forward" vector.
 	zaxis = zaxis.GetNormalize();
-	fVec3 xaxis = up.Cross(zaxis);// The "right" vector.
+	fVec3 xaxis = Cross(up, zaxis);// The "right" vector.
 	xaxis = xaxis.GetNormalize();
-	fVec3 yaxis =zaxis.Cross( xaxis);     // The "up" vector.
+	fVec3 yaxis = Cross(xaxis, zaxis);     // The "up" vector.
 
 	// Create a 4x4 view matrix from the right, up, forward and eye position vectors
 	Matrix4x4 viewMatrix;

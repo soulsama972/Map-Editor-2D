@@ -4,55 +4,43 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 {
 	this->window = window;
 	camera.Bind(window);
-	camera.Init(300, 300, 1, 1000);
+	camera.Init(800, 600, 1.0f, 1000.0f);
 	camera.Update(fVec3(0,0,0));
-	this->size = size;
+	this->screen = size;
 }
 
 void MapEditor::MouseHandler()
 {
 	fVec3 mousePos = fVec3(window->GetMousePos().x, window->GetMousePos().y,0);
-	fVec2 objectSize = fVec2(100.0f, 100.0f);
 	fVec3 camPos = camera.GetPos();
-	tempPos = mousePos - camPos;
+	temp.pos = mousePos + camPos;
+	temp.size = fVec2(100.0f, 100.0f);
+	temp.origin = temp.pos - fVec3(temp.size.x/2, temp.size.y/2, 0.0f);
 	if (window->IsMouseClick(MOUSE::LEFT) && !stillOn)
 	{
-		int res = IsEmpty(fVec2(mousePos.x,mousePos.y));
+		int res = IsEmpty(fVec2(temp.pos.x, temp.pos.y));
 		if (res >= 0)
 		{
-			std::swap(listRect[res], listRect.back());
-			listRect.pop_back();
+			std::swap(listPos[res], listPos.back());
+			listPos.pop_back();
 		}
-		IRect r;
-		r.x = tempPos.x;
-		r.y = tempPos.y;
-		r.z = objectSize.x;
-		r.w = objectSize.y;
-		tex->AddInstance(r);
+		tex->AddInstance(temp.origin, camera.GetPos(), temp.size);
 		stillOn = true;
 	}
 	else if (!window->IsMouseClick(MOUSE::LEFT) && stillOn)
 	{
 		stillOn = false;
-		IRect r;
-		r.x = tempPos.x;
-		r.y = tempPos.y;
-		r.z = objectSize.x;
-		r.w = objectSize.y;
-		listRect.push_back(r);
+
+		listPos.push_back(temp);
 	}
 	else if (stillOn)
 	{
-		IRect r;
-		r.x = tempPos.x;
-		r.y = tempPos.y;
-		r.z = objectSize.x;
-		r.w = objectSize.y;
-		tex->AddInstance(r);
+		
+		tex->AddInstance(temp.origin, camera.GetPos(), temp.size);
 	}
-	for (auto& i : listRect)
+	for (auto& i : listPos)
 	{
-		tex->AddInstance(i);
+		tex->AddInstance(i.origin,camera.GetPos(), i.size);
 	}
 
 
@@ -61,31 +49,32 @@ void MapEditor::MouseHandler()
 void MapEditor::Draw()
 {
 	Texture2D t2("b2.png", 5000);
-	t2.AddInstance(IRect(0.0f, 0.0f, size.x, size.y));
+	Texture2D t("b.png", 5000);
+	//t2.AddInstance(fVec3(0,0,0),fVec3(0,0,0),fVec2(300,300));
+	t2.Test(fVec3(900.0, 0.0, 1.0), fVec2(100, 100), camera);
+//	t.Test(fVec3(900.0, 100.0, 0.0), fVec2(100, 100), camera);
 	window->ClearTargetView({ 0.0f,0.0f,0.0f,1.0f });
 
 	tex->Draw(true);
+	t.Draw();
 	t2.Draw();
+	
 	window->Render();
-
-
-
 }
 
 int MapEditor::IsEmpty(fVec2 pos)
 {
 	int i = 0;
-	for (auto& r : listRect)
+	for (auto& r : listPos)
 	{
-		if ((pos.x >= r.x&& pos.x <= r.x + r.z) && (pos.y >= r.y && pos.y <= r.y + r.w))
+		if ((pos.x > r.origin.x && pos.x < r.origin.x + r.size.x) &&
+			(pos.y > r.origin.y && pos.y < r.origin.y + r.size.y ))
 			return i;
 		i++;
 	}
 	return -1;
 
 }
-
-
 
 bool MapEditor::Update()
 {
@@ -94,12 +83,20 @@ bool MapEditor::Update()
 		fVec3 camPos = camera.GetPos();
 		if (window->IsKeyPress(Key::Key_C))
 		{
-			listRect.clear();
+			listPos.clear();
 		}
 		if (window->IsKeyPress(Key::Key_D))
-			camPos.x += 1;
+			camPos.x += 5.01f;
 		if (window->IsKeyPress(Key::Key_A))
-			camPos.x -= 1;
+			camPos.x -= 5.01f;
+		if (window->IsKeyPress(Key::Key_W))
+			camPos.y -= 5.01f;
+		if (window->IsKeyPress(Key::Key_S))
+			camPos.y += 5.01f;
+		if (window->IsKeyPress(Key::Key_Q))
+			camPos.z += 5.01f;
+		if (window->IsKeyPress(Key::Key_E))
+			camPos.z -= 5.01f;
 		camera.Update(camPos);
 		MouseHandler();
 		

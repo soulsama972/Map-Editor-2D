@@ -45,10 +45,6 @@ private:
 
 	void InitD3D();
 
-	inline fVec2 GetScale(fVec2 s);
-
-	inline fVec2 GetTransalte(fVec2 t, fVec2 c);
-
 	void CreateSwapChain();
 	void CreateBackBuffer();
 	void CreateDpethStencil();
@@ -70,15 +66,6 @@ private:
 
 };
 
-inline fVec2 Window::GetScale(fVec2 s)
-{
-	return fVec2(s.x / screen.x, s.y / screen.y);
-}
-
-inline fVec2 Window::GetTransalte(fVec2 t, fVec2 c)
-{
-	return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
-}
 
 inline ID3D11Device* Window::GetDevice()const
 {

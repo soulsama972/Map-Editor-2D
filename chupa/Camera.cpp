@@ -3,15 +3,15 @@
 Window* Camera::window = nullptr;
 
 
-//2 / w  0    0           0
-//0    2 / h  0           0
-//0    0    1 / (zf - zn)   0
-//0    0 - zn / (zf - zn)  1
 void Camera::Init(float width, float height, float zNear, float zFar)
-{
-	/*viewMatrix._11 = 2 / width;
-	viewMatrix._22 = 2 / height;
-	viewMatrix._33 = 1 / (zFar - zNear);
-	viewMatrix._43 = -zNear / (zFar - zNear);*/
+{	
+	view = LookAtRH(fVec3(0,0,10), fVec3(0.0f,0.0f,-10.0f),fVec3(0,1,0));
+
+	proj.u[0][0] = 1 / width;
+	proj.u[1][1] = 1 / height;
+	proj.u[2][2] = 1 / (zFar-zNear);
+	proj.u[3][2] = zNear / (zNear - zFar);
+
+
 }
 

@@ -3,6 +3,7 @@
 #include"Window.hpp"
 #include"Math.hpp"
 #include<string>
+#include"Camera.hpp"
 struct TextrueInstanceType
 {
 	Matrix4x4 matrix;
@@ -12,7 +13,7 @@ struct TextrueVertex
 	fVec3 pos;
 	fVec2 tex;
 };
-using IRect = vec4<float>;
+
 
 
 class Texture2D : private Model11<TextrueInstanceType>
@@ -20,8 +21,8 @@ class Texture2D : private Model11<TextrueInstanceType>
 public:
 	~Texture2D();
 	Texture2D(std::string src, UINT MaxInstance);
-	void AddInstance(IRect rect);
-	void AddInstance(IRect* rect,int len);
+	void AddInstance(fVec3 pos,fVec3 cameraPos,fVec2 size);
+	void Test(fVec3 pos, fVec2 size,Camera camera);
 	void Draw(bool clearAfter = true);
 	inline void Clear()
 	{

@@ -1,4 +1,5 @@
 #include "Texture2D.hpp"
+
 Window* Texture2D::window = nullptr;
 
 Texture2D::~Texture2D()
@@ -93,42 +94,41 @@ Texture2D::Texture2D(std::string src,UINT MaxInstance)
 	CheckFAILED(D3DX11CreateShaderResourceViewFromFileA(dev, src.c_str(), NULL, NULL, &textrue, NULL));
 }
 
-void Texture2D::AddInstance(IRect rect)
+void Texture2D::AddInstance(fVec3 pos, fVec3 cameraPos, fVec2 size)
 {
 	TextrueInstanceType in;
-	in.matrix;
 	Matrix4x4 s;
-
-	fVec2 scale = GetScale(fVec2(rect.z, rect.w), window->GetScreen());
-	fVec2 translate = GetTransalte(fVec2(rect.x, rect.y), fVec2(rect.z, rect.w), window->GetScreen());
+	fVec2 scale;
+	fVec2 translate;
+	fVec3 worldPos = pos - cameraPos;
+	fVec2 screenSize = window->GetScreen();
+	if (worldPos.x +size.x < 0 || worldPos.x > screenSize.x || worldPos.y + size.y < 0 || worldPos.y  > screenSize.y)
+		return;
+	scale= GetScale(size, window->GetScreen());
+	translate = GetTransalte(fVec2(worldPos.x, worldPos.y), size, window->GetScreen());
 
 	in.matrix.Translate(fVec3(translate.x, translate.y, 0.0f).ToPointer());
 	s.u[0][0] = scale.x;
 	s.u[1][1] = scale.y;
 	in.matrix =  in.matrix * s;
-	in.matrix = in.matrix ;
 
 	Model11::AddInstance(in);
 }
 
-void Texture2D::AddInstance(IRect* rect,int len)
+void Texture2D::Test(fVec3 pos, fVec2 size, Camera camera)
 {
-	for (int i = 0; i < len; i++)
-	{
-		TextrueInstanceType in;
-		in.matrix;
-		Matrix4x4 s;
-		fVec2 scale = GetScale(fVec2(rect[i].z, rect[i].w), window->GetScreen());
-		fVec2 translate = GetTransalte(fVec2(rect[i].x, rect[i].y), fVec2(rect[i].z, rect[i].w), window->GetScreen());
-
-		in.matrix.Translate(fVec3(translate.x, translate.y, 0.0f).ToPointer());
-		s.u[0][0] = scale.x;
-		s.u[1][1] = scale.y;
-		in.matrix = in.matrix * s;
-
-		Model11::AddInstance(in);
-	}
+	TextrueInstanceType in;
+	Matrix4x4 s = SetScaleMatrix(size);
+	fVec3 cameraPos = camera.GetPos();
+	fVec2 screen = window->GetScreen();
+	fVec3 screenWorld = fVec3(pos.x - cameraPos.x, -pos.y + cameraPos.y, pos.z - cameraPos.z);
+		
+	in.matrix.Translate(screenWorld.ToPointer());
+	in.matrix =  in.matrix *s;
+	in.matrix = camera.GetProjMatrix() * in.matrix;
+	Model11::AddInstance(in);
 }
+
 
 
 void Texture2D::Draw(bool clearAfter)
@@ -142,5 +142,4 @@ void Texture2D::Draw(bool clearAfter)
 	if(clearAfter)
 		ClearInstance();
 }
-
 
