@@ -4,76 +4,115 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 {
 	this->window = window;
 	camera.Bind(window);
-	camera.Init(800, 600, 1.0f, 1000.0f);
-	camera.Update(fVec3(0,0,0));
+	camera.Init(size.x, size.y, 0.1f, 1000.0f);
 	this->screen = size;
+	camera.Update(fVec3(0.0f,0.0f,-10.0f));
+
 }
+
 
 void MapEditor::MouseHandler()
 {
-	fVec3 mousePos = fVec3(window->GetMousePos().x, window->GetMousePos().y,0);
-	fVec3 camPos = camera.GetPos();
-	temp.pos = mousePos + camPos;
-	temp.size = fVec2(100.0f, 100.0f);
-	temp.origin = temp.pos - fVec3(temp.size.x/2, temp.size.y/2, 0.0f);
-	if (window->IsMouseClick(MOUSE::LEFT) && !stillOn)
+	fVec3 ori = GetWorldMouse();
+	fVec3 pos = ori - size/2;
+
+	if (IsInBound())
 	{
-		int res = IsEmpty(fVec2(temp.pos.x, temp.pos.y));
-		if (res >= 0)
+		if (window->IsMouseClick(MOUSE::LEFT) && !stillOn)
 		{
-			std::swap(listPos[res], listPos.back());
-			listPos.pop_back();
+			int res = IsEmpty(ori.ToVec2());
+			if (res >= 0)
+			{
+				std::swap(listInfo[res], listInfo.back());
+				listInfo.pop_back();
+			}
+			tex[0]->AddInstance(ori, size, camera);
+			stillOn = true;
 		}
-		tex->AddInstance(temp.origin, camera.GetPos(), temp.size);
-		stillOn = true;
-	}
-	else if (!window->IsMouseClick(MOUSE::LEFT) && stillOn)
-	{
-		stillOn = false;
 
-		listPos.push_back(temp);
-	}
-	else if (stillOn)
-	{
-		
-		tex->AddInstance(temp.origin, camera.GetPos(), temp.size);
-	}
-	for (auto& i : listPos)
-	{
-		tex->AddInstance(i.origin,camera.GetPos(), i.size);
-	}
+		else if (!window->IsMouseClick(MOUSE::LEFT) && stillOn)
+		{
+			stillOn = false;
+			TexData info;
+			info.origin = ori;
+			info.pos = pos;
+			info.size = size;
+			info.textureId = 1;
+			listInfo.push_back(info);
+		}
 
+		else if (stillOn)
+		{
 
+			tex[0]->AddInstance(ori, size, camera);
+		}
+	}
 }
 
 void MapEditor::Draw()
 {
-	Texture2D t2("b2.png", 5000);
-	Texture2D t("b.png", 5000);
-	//t2.AddInstance(fVec3(0,0,0),fVec3(0,0,0),fVec2(300,300));
-	t2.Test(fVec3(900.0, 0.0, 1.0), fVec2(100, 100), camera);
-//	t.Test(fVec3(900.0, 100.0, 0.0), fVec2(100, 100), camera);
-	window->ClearTargetView({ 0.0f,0.0f,0.0f,1.0f });
 
-	tex->Draw(true);
-	t.Draw();
-	t2.Draw();
+	//tex[1]->AddInstance(fVec3(0,0,0),fVec3(400.0f,400.0f,0.0f),camera);
+	tex[1]->AddInstance(fVec3(0, 0, 0), fVec3(100.0f, 400.0f,0.0f), camera);
+	tex[1]->AddInstance(fVec3(0, 0, 0), fVec3(100.0f, 400.0f, 0.0f), camera);
+	tex[1]->AddInstance(fVec3(2000.0f, 0.0f, 0.0f), fVec3(100.0f, 1000.0f, 0.0f), camera);
+	window->ClearTargetView({ 0.0f,0.0f,0.0f,1.0f });
+	Matrix4x4 w;
+	tex[0]->Update(w, camera.view, camera.GetProjMatrix());
+	tex[1]->Update(w, camera.view, camera.GetProjMatrix());
+	for (auto& i : listInfo)
+	{
+		tex[0]->AddInstance(i.origin, i.size, camera);
+	}
+
+	tex[0]->Draw(true);
+	tex[1]->Draw(true);
 	
-	window->Render();
+	window->Render(true);
+}
+
+fVec3 MapEditor::GetWorldMouse()
+{
+	fVec3 mPos = fVec3(window->GetMousePos().x, window->GetMousePos().y, 0);
+	fVec3 camPos = camera.GetPos();
+	fVec2 camScreen = camera.GetScreen();
+	fVec2 screen = window->GetScreen();
+	fVec3 p;
+	Matrix4x4 viewProj = camera.view * camera.GetProjMatrix();
+	Matrix4x4 inv = viewProj.InvertMatrix();
+	mPos = mPos*2;
+	p.x = mPos.x / screen.x - 1;
+	p.y = -((mPos.y / screen.y )- 1);
+	
+
+	fVec3 screenWorld = p.Transfrom(inv);
+	screenWorld.x = screenWorld.x + camScreen.x / 2;
+	screenWorld.y = camScreen.y / 2 - screenWorld.y;
+	screenWorld.z = 1;
+	Print("pos: %f , %f \n", screenWorld.x, screenWorld.y);
+	return screenWorld;
 }
 
 int MapEditor::IsEmpty(fVec2 pos)
 {
 	int i = 0;
-	for (auto& r : listPos)
+	for (auto& r : listInfo)
 	{
-		if ((pos.x > r.origin.x && pos.x < r.origin.x + r.size.x) &&
-			(pos.y > r.origin.y && pos.y < r.origin.y + r.size.y ))
+		if ((pos.x > r.pos.x && pos.x < r.pos.x + r.size.x) &&
+			(pos.y > r.pos.y && pos.y < r.pos.y + r.size.y ))
 			return i;
 		i++;
 	}
 	return -1;
 
+}
+
+bool MapEditor::IsInBound()
+{
+	fVec3 ori = GetWorldMouse();
+	if(ori.x < 0 || ori.x > screen.x || ori.y < 0 || ori.y > screen.y)
+		return false;
+	return true;
 }
 
 bool MapEditor::Update()
@@ -83,20 +122,23 @@ bool MapEditor::Update()
 		fVec3 camPos = camera.GetPos();
 		if (window->IsKeyPress(Key::Key_C))
 		{
-			listPos.clear();
+			listInfo.clear();
 		}
+
 		if (window->IsKeyPress(Key::Key_D))
-			camPos.x += 5.01f;
+			camPos.x += 10.01f;
 		if (window->IsKeyPress(Key::Key_A))
-			camPos.x -= 5.01f;
+			camPos.x -= 10.01f;
 		if (window->IsKeyPress(Key::Key_W))
-			camPos.y -= 5.01f;
+			camPos.y += 10.01f;
 		if (window->IsKeyPress(Key::Key_S))
-			camPos.y += 5.01f;
+			camPos.y -= 10.01f;
 		if (window->IsKeyPress(Key::Key_Q))
-			camPos.z += 5.01f;
+			camPos.z += 10.01f;
 		if (window->IsKeyPress(Key::Key_E))
-			camPos.z -= 5.01f;
+			camPos.z -= 10.01f;
+		if (window->IsKeyPress(Key::Key_F5))
+			Save("Map1");
 		camera.Update(camPos);
 		MouseHandler();
 		
@@ -107,8 +149,20 @@ bool MapEditor::Update()
 }
 
 
-void MapEditor::Save()
+void MapEditor::Save(std::string nameOfMap)
 {
-
+	std::ofstream f(nameOfMap);
+	if (f.is_open())
+	{
+		f << camera.GetScreen().x << ' ' << camera.GetScreen().y << std::endl;
+		for (auto& r : listInfo)
+		{
+			f << r.origin.x << ' ' << r.origin.y << ' ' << r.origin.z << ' ';
+			f << r.pos.x	<< ' ' <<	r.pos.y << ' ' << r.pos.z << ' ';
+			f << r.size.x	<< ' ' << r.size.y << ' ' << r.size.z << ' ';
+			f << r.textureId << std::endl;
+		}
+		f.close();
+	}
 }
 

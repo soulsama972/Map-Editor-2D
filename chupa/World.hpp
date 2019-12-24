@@ -8,13 +8,25 @@
 class World 
 {
 public:
-	World();
-	void CreateMap(std::string file);
+	World() = default;
+	void LoadMap(std::string file);
+	void Draw(Camera camera);
+	Texture2D *tex;
+	fVec3 screenMap;
 protected:
 	
 private:
-	fVec2 screenMap;
+	struct TexData
+	{
+		fVec3	pos;
+		fVec3	origin;
+		fVec3	size;
+		UINT textureId = 0;
+	};
+
+	std::vector<TexData> listInfo;
 	std::vector<Object> object;
+	std::vector<StaticObject>sObject;
 	std::vector<Entity> entity;
 
 };

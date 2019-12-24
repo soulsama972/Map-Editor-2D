@@ -3,7 +3,17 @@
 
 
 #define PI 3.1415926535897932384626433832795f
-
+template<typename T>
+class vec3;
+template<typename T>
+class vec2;
+template<typename T>
+class vec3;
+template<typename T>
+class vec4;
+using fVec2 = vec2<float>;
+using fVec3 = vec3<float>;
+using fVec4 = vec4<float>;
 
 class Matrix4x4
 {
@@ -140,9 +150,143 @@ public:
 
 	inline void Translate(float t[3])
 	{
-		this->u[0][3] = t[0];
-		this->u[1][3] = t[1];
-		this->u[2][3] = t[2];
+		this->u[3][0] = t[0];
+		this->u[3][1] = t[1];
+		this->u[3][2] = t[2];
+	}
+
+	inline Matrix4x4 InvertMatrix()
+	{
+		Matrix4x4 inv;
+		float det;
+		int i;
+
+		inv.m[0] =  m[5] * m[10] * m[15] -
+					m[5] * m[11] * m[14] -
+					m[9] * m[6] *  m[15] +
+					m[9] * m[7] *  m[14] +
+					m[13] * m[6] * m[11] -
+					m[13] * m[7] * m[10];
+
+		inv.m[4] = -m[4] * m[10] * m[15] +
+					m[4] * m[11] * m[14] +
+					m[8] * m[6]  * m[15] -
+					m[8] * m[7]  * m[14] -
+					m[12] * m[6] * m[11] +
+					m[12] * m[7] * m[10];
+
+		inv.m[8] =  m[4]  * m[9]  * m[15] -
+					m[4]  * m[11] * m[13] -
+					m[8]  * m[5]  * m[15] +
+					m[8]  * m[7]  * m[13] +
+					m[12] * m[5]  * m[11] -
+					m[12] * m[7]  * m[9];
+
+		inv.m[12] = -m[4]  * m[9]  * m[14] +
+					 m[4]  * m[10] * m[13] +
+					 m[8]  * m[5]  * m[14] -
+					 m[8]  * m[6]  * m[13] -
+				   	 m[12] * m[5]  * m[10] +
+					 m[12] * m[6]  * m[9];
+
+		inv.m[1] = -m[1]  * m[10] * m[15] +
+					m[1]  * m[11] * m[14] +
+					m[9]  * m[2]  * m[15] -
+					m[9]  * m[3]  * m[14] -
+					m[13] * m[2]  * m[11] +
+					m[13] * m[3]  * m[10];
+
+		inv.m[5] = m[0] * m[10] * m[15] -
+			m[0] * m[11] * m[14] -
+			m[8] * m[2] * m[15] +
+			m[8] * m[3] * m[14] +
+			m[12] * m[2] * m[11] -
+			m[12] * m[3] * m[10];
+
+		inv.m[9] = -m[0] * m[9] * m[15] +
+			m[0] * m[11] * m[13] +
+			m[8] * m[1] * m[15] -
+			m[8] * m[3] * m[13] -
+			m[12] * m[1] * m[11] +
+			m[12] * m[3] * m[9];
+
+		inv.m[13] = m[0] * m[9] * m[14] -
+			m[0] * m[10] * m[13] -
+			m[8] * m[1] * m[14] +
+			m[8] * m[2] * m[13] +
+			m[12] * m[1] * m[10] -
+			m[12] * m[2] * m[9];
+
+		inv.m[2] = m[1] * m[6] * m[15] -
+			m[1] * m[7] * m[14] -
+			m[5] * m[2] * m[15] +
+			m[5] * m[3] * m[14] +
+			m[13] * m[2] * m[7] -
+			m[13] * m[3] * m[6];
+
+		inv.m[6] = -m[0] * m[6] * m[15] +
+			m[0] * m[7] * m[14] +
+			m[4] * m[2] * m[15] -
+			m[4] * m[3] * m[14] -
+			m[12] * m[2] * m[7] +
+			m[12] * m[3] * m[6];
+
+		inv.m[10] = m[0] * m[5] * m[15] -
+			m[0] * m[7] * m[13] -
+			m[4] * m[1] * m[15] +
+			m[4] * m[3] * m[13] +
+			m[12] * m[1] * m[7] -
+			m[12] * m[3] * m[5];
+
+		inv.m[14] = -m[0] * m[5] * m[14] +
+			m[0] * m[6] * m[13] +
+			m[4] * m[1] * m[14] -
+			m[4] * m[2] * m[13] -
+			m[12] * m[1] * m[6] +
+			m[12] * m[2] * m[5];
+
+		inv.m[3] = -m[1] * m[6] * m[11] +
+			m[1] * m[7] * m[10] +
+			m[5] * m[2] * m[11] -
+			m[5] * m[3] * m[10] -
+			m[9] * m[2] * m[7] +
+			m[9] * m[3] * m[6];
+
+		inv.m[7] = m[0] * m[6] * m[11] -
+			m[0] * m[7] * m[10] -
+			m[4] * m[2] * m[11] +
+			m[4] * m[3] * m[10] +
+			m[8] * m[2] * m[7] -
+			m[8] * m[3] * m[6];
+
+		inv.m[11] = -m[0] * m[5] * m[11] +
+			m[0] * m[7] * m[9] +
+			m[4] * m[1] * m[11] -
+			m[4] * m[3] * m[9] -
+			m[8] * m[1] * m[7] +
+			m[8] * m[3] * m[5];
+
+		inv.m[15] = m[0] * m[5] * m[10] -
+			m[0] * m[6] * m[9] -
+			m[4] * m[1] * m[10] +
+			m[4] * m[2] * m[9] +
+			m[8] * m[1] * m[6] -
+			m[8] * m[2] * m[5];
+
+		det = m[0] * inv.m[0] + m[1] * inv.m[4] + m[2] * inv.m[8] + m[3] * inv.m[12];
+
+		if (det == 0)
+		{
+			Matrix4x4 id;
+			return id;
+		}
+
+		det = 1.0f / det;
+
+		for (i = 0; i < 16; i++)
+			inv.m[i] = inv.m[i] * det;
+
+		return inv;
 	}
 
 };
@@ -164,6 +308,7 @@ public:
 		x = src.x;
 		y = src.y;
 	}
+
 	template<typename K>
 	inline vec2(const K& x, const K& y)
 	{
@@ -207,15 +352,31 @@ public:
 		return vec2(x / v.x, y / v.y);
 	}
 
+	inline vec2 operator/(float f)
+	{
+		return vec2(x / f, y / f);
+	}
+
+	inline void operator/=(float f)
+	{
+		x /= 2;
+		y /= 2;
+	}
+
 	inline vec2 operator-(const float f)
 	{
 		return vec2(x - f, y - f);
 	}
+
 	inline T* ToPointer()
 	{
 		return reinterpret_cast<T*>(this);
 	}
 
+	inline vec3<T> ToFVec3()
+	{
+		return vec3<T>((T)x, (T)y, (T)0);
+	}
 
 };
 
@@ -279,6 +440,7 @@ public:
 		return vec3(x - v.x, y - v.y, z - v.z);
 	}
 
+
 	inline vec3 operator*(const vec3 v)
 	{
 		return vec3(x * v.x, y * v.y, z * v.z);
@@ -294,13 +456,43 @@ public:
 		return vec3(x / v, y / v, z / v);
 	}
 
+	inline void operator/=(float  v)
+	{
+		x /= v;
+		y /= v;
+		z /= v;
+		
+	}
+
+
 	inline vec3 operator*(float  v)
 	{
 		return vec3(x * v, y * v, z * v);
 	}
+
+
 	inline T* ToPointer()
 	{
 		return reinterpret_cast<T*>(this);
+	}
+
+	inline vec3 Transfrom(Matrix4x4 m)
+	{
+		vec3 v;
+		v.x = x * m.u[0][0] + y * m.u[1][0] + z * m.u[2][0] + m.u[3][0];
+		v.y = x * m.u[0][1] + y * m.u[1][1] + z * m.u[2][1] + m.u[3][1];
+		v.z = x * m.u[0][2] + y * m.u[1][2] + z * m.u[2][2] + m.u[3][2];
+		return v;
+	}
+
+	inline vec2<T> ToVec2()
+	{
+		return vec2<T>((T)x, (T)y);
+	}
+
+	inline vec3 ToNegativeY()
+	{
+		return vec3(x, -y, z);
 	}
 };
 
@@ -388,9 +580,7 @@ public:
 };
 
 
-using fVec2 = vec2<float>;
-using fVec3 = vec3<float>;
-using fVec4 = vec4<float>;
+
 
 
 
@@ -403,6 +593,7 @@ inline fVec2 GetTransalte(fVec2 t, fVec2 c, fVec2 screen)
 {
 	return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
 }
+
 inline Matrix4x4 SetScaleMatrix(fVec3 scale)
 {
 	Matrix4x4 m;
@@ -425,35 +616,6 @@ inline fVec3 Cross(fVec3 v, fVec3 v2)
 	return fVec3(v.y * v2.z - v.z * v2.y, v.x * v2.z - v.z * v2.x, v.x * v2.y - v.y * v2.x);
 }
 
-inline Matrix4x4 LookAtRH(fVec3 eye, fVec3 target, fVec3 up)
-{
-	fVec3 zaxis = (eye - target);    // The "forward" vector.
-	zaxis = zaxis.GetNormalize();
-	fVec3 xaxis = Cross(up, zaxis);// The "right" vector.
-	xaxis = xaxis.GetNormalize();
-	fVec3 yaxis = Cross(xaxis, zaxis);     // The "up" vector.
 
-	// Create a 4x4 view matrix from the right, up, forward and eye position vectors
-	Matrix4x4 viewMatrix;
-	viewMatrix.u[0][0] = xaxis.x;
-	viewMatrix.u[1][0] = xaxis.y;
-	viewMatrix.u[2][0] = xaxis.z;
-	viewMatrix.u[3][0] = -xaxis.GetDot(eye);
 
-	viewMatrix.u[0][1] = yaxis.x;
-	viewMatrix.u[1][1] = yaxis.y;
-	viewMatrix.u[2][1] = yaxis.z;
-	viewMatrix.u[3][1] = -yaxis.GetDot(eye);
 
-	viewMatrix.u[0][2] = zaxis.x;
-	viewMatrix.u[1][2] = zaxis.y;
-	viewMatrix.u[2][2] = zaxis.z;
-	viewMatrix.u[3][2] = -zaxis.GetDot(eye);
-
-	viewMatrix.u[0][3] = 0.0f;
-	viewMatrix.u[1][3] = 0.0f;
-	viewMatrix.u[2][3] = 0.0f;
-	viewMatrix.u[3][3] = 1;
-
-	return viewMatrix;
-}

@@ -48,7 +48,10 @@ public:
 	void InitBuffer(ID3D11Device* dev, ID3D11DeviceContext* devcon, void* pVertex, void* pIndex, UINT vertexLen, UINT indexLen, UINT maxInstance,D3D11_PRIMITIVE_TOPOLOGY topology, UINT vertexByteWidth, UINT instanceByteWidth);
 	void InitializeShaders(const char* vertexSrcFile, const char* vertexFunctionMainName, const char* pixelSrcFile, const char* pixelFunctionMainName, D3D11_INPUT_ELEMENT_DESC* InputElementDesc, UINT32 InputElementDescCount);
 
-
+protected:
+	//if the ByteWidth  less then 16 the cnstant buffer will fail
+	void CreateCnstantBuffer(UINT ByteWidth);
+	void Update(void* newBuffer);
 private:
 
 	void CleanUp();
@@ -59,7 +62,7 @@ private:
 
 	ID3D11Device* dev = 0;
 	ID3D11DeviceContext* devcon = 0;
-
+	ID3D11Buffer* cnstantBuffer = 0;
 	ID3D11VertexShader* vertexShader = 0;
 	ID3D11PixelShader* pixelShader = 0;
 	ID3D11InputLayout* layout = 0;
@@ -71,6 +74,7 @@ private:
 	UINT vertexLen = 0;
 	UINT vertexStride = 0;
 	UINT instanceStride = 0;
+	UINT cnstantBufferByteWidth = 0;
 	D3D11_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 };
 
@@ -218,14 +222,45 @@ void Model11<T>::InitializeShaders(const char* vertexSrcFile, const char* vertex
 }
 
 template<typename T>
+inline void Model11<T>::CreateCnstantBuffer(UINT ByteWidth)
+{
+	D3D11_BUFFER_DESC matrixBufferDesc;
+	// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	matrixBufferDesc.ByteWidth = ByteWidth;
+	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	matrixBufferDesc.MiscFlags = 0;
+	matrixBufferDesc.StructureByteStride = 0;
+
+	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	CheckFAILED( dev->CreateBuffer(&matrixBufferDesc, NULL, &cnstantBuffer));
+
+	cnstantBufferByteWidth = ByteWidth;
+}
+
+template<typename T>
+inline void Model11<T>::Update(void* newBuffer)
+{
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	CheckFAILED( devcon->Map(cnstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
+	
+	// Get a pointer to the data in the constant buffer.
+	memcpy(mappedResource.pData, newBuffer, cnstantBufferByteWidth);
+	// Unlock the constant buffer.
+	devcon->Unmap(cnstantBuffer, 0);
+}
+
+template<typename T>
 void Model11<T>::Model11::CleanUp()
 {
-	SafeDelete(indexBuffer)
-	SafeDelete(vertexBuffer)
-	SafeDelete(instanceBuffer)
-	SafeDelete(vertexShader)
-	SafeDelete(pixelShader)
-	SafeDelete(layout)
+	SafeDelete(indexBuffer);
+	SafeDelete(vertexBuffer);
+	SafeDelete(instanceBuffer);
+	SafeDelete(vertexShader);
+	SafeDelete(pixelShader);
+	SafeDelete(layout);
+	SafeDelete(cnstantBuffer);
 	SafeDeletePtrArr(instance)
 
 
@@ -277,11 +312,11 @@ void Model11<T>::Model11::Draw()
 	// Set the vertex input layout.
 	devcon->IASetInputLayout(layout);
 
-
 	// Set the vertex and pixel shaders that will be used to render.
 	devcon->VSSetShader(vertexShader, NULL, 0);
 	devcon->PSSetShader(pixelShader, NULL, 0);
-
+	
+	devcon->VSSetConstantBuffers(0, 1, &cnstantBuffer);
 	// Render.
 	devcon->DrawIndexedInstanced(indexLen, instanceCount, 0, 0, 0);
 }

@@ -33,4 +33,18 @@ void Player::Motion(float deltaTime, StaticObject obj)
 		if (!IsCollide(obj))
 			this->SetPosition(pos);
 	}
+	if (window->IsKeyPress(Key::Key_UARROW))
+	{
+		physics.SetVelocity(10);
+		pos.y -= (velocity * deltaTime);
+		if (!IsCollide(obj))
+			this->SetPosition(pos);
+	}
+	if (window->IsKeyPress(Key::Key_DARROW)) {
+		physics.SetVelocity(10);
+		pos.y += (velocity * deltaTime);
+		if (!IsCollide(obj))
+			this->SetPosition(pos);
+	}
+
 }
