@@ -3,18 +3,69 @@
 
 
 #define PI 3.1415926535897932384626433832795f
-template<typename T>
-class vec3;
-template<typename T>
-class vec2;
-template<typename T>
-class vec3;
-template<typename T>
-class vec4;
-using fVec2 = vec2<float>;
-using fVec3 = vec3<float>;
-using fVec4 = vec4<float>;
+//template<typename T>
+//class vec3;
+//template<typename T>
+//class vec2;
+//template<typename T>
+//class vec3;
+//template<typename T>
+//class vec4;
 
+template<typename T>
+class Type2
+{
+public:
+	union
+	{
+		struct
+		{
+			T x, y;
+		};
+		T arr[2];
+	};
+};
+
+template<typename T>
+class Type3
+{
+public:
+	union
+	{
+		struct
+		{
+			T x, y, z;
+		};
+		T arr[3];
+	};
+};
+
+template<typename T>
+class Type4
+{
+public:
+	union
+	{
+		struct
+		{
+			T x, y, z, w;
+		};
+		T arr[4];
+	};
+};
+
+template<typename T,typename K, int count>
+class Vector;
+
+//using fVec2 = vec2<float>;
+//using fVec3 = vec3<float>;
+//using fVec4 = vec4<float>;
+
+using fVec2 = Vector<float, Type2<float>, 2>;
+using fVec3 = Vector<float, Type3<float>, 3>;
+using fVec4 = Vector<float, Type4<float>, 4>;
+
+using iVec2 = Vector<int, Type2<int>, 2>;
 class Matrix4x4
 {
 public:
@@ -291,34 +342,357 @@ public:
 
 };
 
-template<typename T>
-class vec2
+//template<typename T>
+//class vec2
+//{
+//public:
+//	T x, y;
+//
+//	inline vec2()
+//	{
+//		x = (T)0;
+//		y = (T)0;
+//	}
+//
+//	inline vec2(const vec2& src)
+//	{
+//		x = src.x;
+//		y = src.y;
+//	}
+//
+//	template<typename K>
+//	inline vec2(const K& x, const K& y)
+//	{
+//		this->x = static_cast<T>(x);
+//		this->y = static_cast<T>(y);
+//	}
+//
+//	inline T GetLength()
+//	{
+//		return x * x + y * y;
+//	}
+//
+//	inline T GetMagnitude()
+//	{
+//		return (T)sqrt(GetLength());
+//	}
+//
+//	inline vec2 GetNormalize()
+//	{
+//		T magnitude = GetMagnitude();
+//		return vec2(x / magnitude, y / magnitude);
+//	}
+//
+//	inline vec2 operator+(const vec2 v)
+//	{
+//		return vec2(x + v.x, y + v.y);
+//	}
+//
+//	inline vec2 operator-(const vec2 v)
+//	{
+//		return vec2(x - v.x, y - v.y);
+//	}
+//
+//	inline vec2 operator*(const vec2 v)
+//	{
+//		return vec2(x * v.x, y * v.y);
+//	}
+//
+//	inline vec2 operator/(const vec2 v)
+//	{
+//		return vec2(x / v.x, y / v.y);
+//	}
+//
+//	inline vec2 operator/(float f)
+//	{
+//		return vec2(x / f, y / f);
+//	}
+//
+//	inline void operator/=(float f)
+//	{
+//		x /= 2;
+//		y /= 2;
+//	}
+//
+//	inline vec2 operator-(const float f)
+//	{
+//		return vec2(x - f, y - f);
+//	}
+//
+//	inline T* ToPointer()
+//	{
+//		return reinterpret_cast<T*>(this);
+//	}
+
+	/*inline vec3<T> ToFVec3()
+	{
+		return vec3<T>((T)x, (T)y, (T)0);
+	}*/
+
+//};
+//
+//
+//template<typename T>
+//class vec3
+//{
+//public:
+//	T x, y, z;
+//
+//	inline vec3()
+//	{
+//		x = (T)0;
+//		y = (T)0;
+//		z = (T)0;
+//	}
+//
+//	inline vec3(const vec3& src)
+//	{
+//		x = src.x;
+//		y = src.y;
+//		z = src.z;
+//	}
+//
+//	template<typename K>
+//	inline vec3(const K& x, const K& y,const K & z)
+//	{
+//		this->x = static_cast<T>(x);
+//		this->y = static_cast<T>(y);
+//		this->z = static_cast<T>(z);
+//	}
+//
+//	inline T GetDot(const vec3<T>& v)
+//	{
+//		return x * v.x + y * v.y + z * v.z;
+//	}
+//
+//	inline T GetLength()
+//	{
+//		return (T)sqrt(GetDot(*this));
+//	}
+//
+//	inline vec3 GetNormalize()
+//	{
+//		T magnitude = GetLength();
+//		return vec3(x / magnitude, y / magnitude,z/magnitude);
+//	}
+//	
+//	inline bool	 operator==(const vec3 v)
+//	{
+//		return (x == v.x && y == v.y && v.z == z);
+//	}
+//
+//	inline vec3 operator+(const vec3 v)
+//	{
+//		return vec3(x + v.x, y + v.y, z + v.z);
+//	}
+//
+//	inline vec3 operator-(const vec3 v)
+//	{
+//		return vec3(x - v.x, y - v.y, z - v.z);
+//	}
+//
+//
+//	inline vec3 operator*(const vec3 v)
+//	{
+//		return vec3(x * v.x, y * v.y, z * v.z);
+//	}
+//
+//	inline vec3 operator/(const vec3 v)
+//	{
+//		return vec3(x / v.x, y / v.y, z / v.z);
+//	}
+//
+//	inline vec3 operator/(float  v)
+//	{
+//		return vec3(x / v, y / v, z / v);
+//	}
+//
+//	inline void operator/=(float  v)
+//	{
+//		x /= v;
+//		y /= v;
+//		z /= v;
+//		
+//	}
+//
+//
+//	inline vec3 operator*(float  v)
+//	{
+//		return vec3(x * v, y * v, z * v);
+//	}
+//
+//
+//	inline T* ToPointer()
+//	{
+//		return reinterpret_cast<T*>(this);
+//	}
+//
+//	inline vec3 Transfrom(Matrix4x4 m)
+//	{
+//		vec3 v;
+//		v.x = x * m.u[0][0] + y * m.u[1][0] + z * m.u[2][0] + m.u[3][0];
+//		v.y = x * m.u[0][1] + y * m.u[1][1] + z * m.u[2][1] + m.u[3][1];
+//		v.z = x * m.u[0][2] + y * m.u[1][2] + z * m.u[2][2] + m.u[3][2];
+//		return v;
+//	}
+//
+//	inline vec2<T> ToVec2()
+//	{
+//		return vec2<T>((T)x, (T)y);
+//	}
+//
+//	inline vec3 ToNegativeY()
+//	{
+//		return vec3(x, -y, z);
+//	}
+//};
+//
+//
+//template<typename T>
+//class vec4
+//{
+//public:
+//	T x, y, z, w;
+//
+//	inline vec4()
+//	{
+//		x = (T)0;
+//		y = (T)0;
+//		z = (T)0;
+//		w = (T)0;
+//	}
+//
+//	inline vec4(const vec4& src)
+//	{
+//		x = src.x;
+//		y = src.y;
+//		z = src.z;
+//		w = src.w;
+//	}
+//
+//	template<typename K>
+//	inline vec4(const K& x, const K& y, const K& z , const K& w)
+//	{
+//		this->x = static_cast<T>(x);
+//		this->y = static_cast<T>(y);
+//		this->z = static_cast<T>(z);
+//		this->w = static_cast<T>(w);
+//	}
+//
+//	inline T GetLength()
+//	{
+//		return x * x + y * y + z * z + w * w;
+//	}
+//
+//	inline T GetMagnitude()
+//	{
+//		return (T)sqrt(GetLength());
+//	}
+//
+//	inline vec4 GetNormalize()
+//	{
+//		T magnitude = GetMagnitude();
+//		return vec4(x / magnitude, y / magnitude);
+//	}
+//
+//	inline void Transform(const vec3<float>  v, const Matrix4x4  m)
+//	{
+//		
+//		x = v.x * m.u[0][0] + v.y * m.u[1][0] + v.z * m.u[2][0] + m.u[3][0];
+//		y = v.x * m.u[0][1] + v.y * m.u[1][1] + v.z * m.u[2][1] + m.u[3][1];
+//		z = v.x * m.u[0][2] + v.y * m.u[1][2] + v.z * m.u[2][2] + m.u[3][2];
+//		w = v.x * m.u[0][3] + v.y * m.u[1][3] + v.z * m.u[2][3] + m.u[3][3];
+//	}
+//
+//	inline vec4 operator+(const vec4 v)
+//	{
+//		return vec4(x + v.x, y + v.y, z + v.z, w + v.w);
+//	}
+//
+//	inline vec4 operator-(const vec4 v)
+//	{
+//		return vec4(x - v.x, y - v.y, z - v.z, w - v.w);
+//	}
+//
+//	inline vec4 operator*(const vec4 v)
+//	{
+//		return vec4(x * v.x, y * v.y, z * v.z, w * v.w);
+//	}
+//
+//	inline vec4 operator/(const vec4 v)
+//	{
+//		return vec4(x / v.x, y / v.y, z / v.z, w / v.w);
+//	}
+//
+//	inline T* ToPointer()
+//	{
+//		return reinterpret_cast<T*>(this);
+//	}
+//};
+//
+//
+
+
+
+
+//inline fVec2 GetScale(fVec2 s,fVec2 screen)
+//{
+//	return fVec2(s.x / screen.x, s.y / screen.y);
+//}
+//
+//inline fVec2 GetTransalte(fVec2 t, fVec2 c, fVec2 screen)
+//{
+//	return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
+//}
+
+
+
+
+template<typename T,typename K, int count>
+class Vector : public K
 {
 public:
-	T x, y;
-
-	inline vec2()
-	{
-		x = (T)0;
-		y = (T)0;
+	inline Vector()
+	{	
+		for (int i = 0; i < count; i++)
+			this->arr[i] = 0;
 	}
 
-	inline vec2(const vec2& src)
-	{
-		x = src.x;
-		y = src.y;
+	inline Vector(const Vector& src)
+	{	
+		for (int i = 0; i < count; i++)
+			this->arr[i] = src.arr[i];
 	}
 
-	template<typename K>
-	inline vec2(const K& x, const K& y)
+	inline Vector(const T& x, const T& y , const T& z, const T& w)
 	{
-		this->x = static_cast<T>(x);
-		this->y = static_cast<T>(y);
+		this->x = x;
+		this->y = y;
+		this->z = z;
+		this->w = w;
+	}
+
+	inline Vector(const T& x, const T& y, const T& z)
+	{
+		this->x = x;
+		this->y = y;
+		this->z = z;
+	}
+
+	inline Vector(const T& x, const T& y)
+	{
+		this->x = x;
+		this->y = y;
 	}
 
 	inline T GetLength()
 	{
-		return x * x + y * y;
+		T res = 0;
+		for (int i = 0; i < count; i++)
+		{
+			res += (this->arr[i] * this->arr[i]);
+		}
+		return res;
 	}
 
 	inline T GetMagnitude()
@@ -326,275 +700,146 @@ public:
 		return (T)sqrt(GetLength());
 	}
 
-	inline vec2 GetNormalize()
+	inline Vector GetNormalize()
 	{
-		T magnitude = GetMagnitude();
-		return vec2(x / magnitude, y / magnitude);
-	}
-
-	inline vec2 operator+(const vec2 v)
-	{
-		return vec2(x + v.x, y + v.y);
-	}
-
-	inline vec2 operator-(const vec2 v)
-	{
-		return vec2(x - v.x, y - v.y);
-	}
-
-	inline vec2 operator*(const vec2 v)
-	{
-		return vec2(x * v.x, y * v.y);
-	}
-
-	inline vec2 operator/(const vec2 v)
-	{
-		return vec2(x / v.x, y / v.y);
-	}
-
-	inline vec2 operator/(float f)
-	{
-		return vec2(x / f, y / f);
-	}
-
-	inline void operator/=(float f)
-	{
-		x /= 2;
-		y /= 2;
-	}
-
-	inline vec2 operator-(const float f)
-	{
-		return vec2(x - f, y - f);
-	}
-
-	inline T* ToPointer()
-	{
-		return reinterpret_cast<T*>(this);
-	}
-
-	inline vec3<T> ToFVec3()
-	{
-		return vec3<T>((T)x, (T)y, (T)0);
-	}
-
-};
-
-
-template<typename T>
-class vec3
-{
-public:
-	T x, y, z;
-
-	inline vec3()
-	{
-		x = (T)0;
-		y = (T)0;
-		z = (T)0;
-	}
-
-	inline vec3(const vec3& src)
-	{
-		x = src.x;
-		y = src.y;
-		z = src.z;
-	}
-
-	template<typename K>
-	inline vec3(const K& x, const K& y,const K & z)
-	{
-		this->x = static_cast<T>(x);
-		this->y = static_cast<T>(y);
-		this->z = static_cast<T>(z);
-	}
-
-	inline T GetDot(const vec3<T>& v)
-	{
-		return x * v.x + y * v.y + z * v.z;
-	}
-
-	inline T GetLength()
-	{
-		return (T)sqrt(GetDot(*this));
-	}
-
-	inline vec3 GetNormalize()
-	{
-		T magnitude = GetLength();
-		return vec3(x / magnitude, y / magnitude,z/magnitude);
-	}
-	
-	inline bool	 operator==(const vec3 v)
-	{
-		return (x == v.x && y == v.y && v.z == z);
-	}
-
-	inline vec3 operator+(const vec3 v)
-	{
-		return vec3(x + v.x, y + v.y, z + v.z);
-	}
-
-	inline vec3 operator-(const vec3 v)
-	{
-		return vec3(x - v.x, y - v.y, z - v.z);
-	}
-
-
-	inline vec3 operator*(const vec3 v)
-	{
-		return vec3(x * v.x, y * v.y, z * v.z);
-	}
-
-	inline vec3 operator/(const vec3 v)
-	{
-		return vec3(x / v.x, y / v.y, z / v.z);
-	}
-
-	inline vec3 operator/(float  v)
-	{
-		return vec3(x / v, y / v, z / v);
-	}
-
-	inline void operator/=(float  v)
-	{
-		x /= v;
-		y /= v;
-		z /= v;
-		
-	}
-
-
-	inline vec3 operator*(float  v)
-	{
-		return vec3(x * v, y * v, z * v);
-	}
-
-
-	inline T* ToPointer()
-	{
-		return reinterpret_cast<T*>(this);
-	}
-
-	inline vec3 Transfrom(Matrix4x4 m)
-	{
-		vec3 v;
-		v.x = x * m.u[0][0] + y * m.u[1][0] + z * m.u[2][0] + m.u[3][0];
-		v.y = x * m.u[0][1] + y * m.u[1][1] + z * m.u[2][1] + m.u[3][1];
-		v.z = x * m.u[0][2] + y * m.u[1][2] + z * m.u[2][2] + m.u[3][2];
+		Vector v;
+		T magnitude = GetMagnitude();	
+		for (int i = 0; i < count; i++)
+			v.arr[i] = this->arr[i] / magnitude;
 		return v;
 	}
 
-	inline vec2<T> ToVec2()
-	{
-		return vec2<T>((T)x, (T)y);
-	}
-
-	inline vec3 ToNegativeY()
-	{
-		return vec3(x, -y, z);
-	}
-};
-
-
-template<typename T>
-class vec4
-{
-public:
-	T x, y, z, w;
-
-	inline vec4()
-	{
-		x = (T)0;
-		y = (T)0;
-		z = (T)0;
-		w = (T)0;
-	}
-
-	inline vec4(const vec4& src)
-	{
-		x = src.x;
-		y = src.y;
-		z = src.z;
-		w = src.w;
-	}
-
-	template<typename K>
-	inline vec4(const K& x, const K& y, const K& z , const K& w)
-	{
-		this->x = static_cast<T>(x);
-		this->y = static_cast<T>(y);
-		this->z = static_cast<T>(z);
-		this->w = static_cast<T>(w);
-	}
-
-	inline T GetLength()
-	{
-		return x * x + y * y + z * z + w * w;
-	}
-
-	inline T GetMagnitude()
-	{
-		return (T)sqrt(GetLength());
-	}
-
-	inline vec4 GetNormalize()
-	{
-		T magnitude = GetMagnitude();
-		return vec4(x / magnitude, y / magnitude);
-	}
-
-	inline void Transform(const vec3<float>  v, const Matrix4x4  m)
-	{
-		
-		x = v.x * m.u[0][0] + v.y * m.u[1][0] + v.z * m.u[2][0] + m.u[3][0];
-		y = v.x * m.u[0][1] + v.y * m.u[1][1] + v.z * m.u[2][1] + m.u[3][1];
-		z = v.x * m.u[0][2] + v.y * m.u[1][2] + v.z * m.u[2][2] + m.u[3][2];
-		w = v.x * m.u[0][3] + v.y * m.u[1][3] + v.z * m.u[2][3] + m.u[3][3];
-	}
-
-	inline vec4 operator+(const vec4 v)
-	{
-		return vec4(x + v.x, y + v.y, z + v.z, w + v.w);
-	}
-
-	inline vec4 operator-(const vec4 v)
-	{
-		return vec4(x - v.x, y - v.y, z - v.z, w - v.w);
-	}
-
-	inline vec4 operator*(const vec4 v)
-	{
-		return vec4(x * v.x, y * v.y, z * v.z, w * v.w);
-	}
-
-	inline vec4 operator/(const vec4 v)
-	{
-		return vec4(x / v.x, y / v.y, z / v.z, w / v.w);
-	}
-
 	inline T* ToPointer()
 	{
 		return reinterpret_cast<T*>(this);
 	}
+
+	inline T GetDot(const Vector& v)
+	{
+		T res = 0;
+		for (int i = 0; i < count; i++)
+		{
+			res += (this->arr[i] * v.arr[i]);
+		}
+		return res;
+	}
+
+	inline T GetDot()
+	{
+		return GetLength();
+	}
+
+	inline Vector TransfromV4(const Matrix4x4& m)
+	{
+		Vector v;
+		for (int i = 0; i < count; i++)
+		{
+			v.arr[i] = this->x * m.u[0][i] + this->y * m.u[1][i] + this->z * m.u[2][i] + this->w * m.u[3][i];
+		}
+		return v;
+	}
+
+	inline Vector TransfromV3(const Matrix4x4& m)
+	{
+		Vector v;
+		for (int i = 0; i < count; i++)
+		{
+			v.arr[i] = this->x * m.u[0][i] + this->y * m.u[1][i] + this->z * m.u[2][i] + m.u[3][i];
+		}
+		return v;
+	}
+
+	inline Vector<T,Type3<T>,3> ToFVec3()
+	{
+		Vector<T, Type3<T>, 3>v;
+		for (int i = 0; i < 3; i++)
+			v.arr[i] = i > count - 1 ? this->arr[i] : 0;
+		
+
+		return v;
+	}
+
+	inline Vector<T, Type2<T>, 2> ToFVec2()
+	{
+		Vector<T, Type2<T>, 2>v;
+		for (int i = 0; i < 2; i++)
+			v.arr[i] = i > count - 1 ? this->arr[i] : 0;
+		return v;
+	}
+
+	inline Vector<T, Type4<T>, 4> ToFVec4()
+	{
+		Vector<T, Type4<T>, 4>v;
+		for (int i = 0; i < 4; i++)
+			v.arr[i] =  i > count-1 ? this->arr[i] : 0;
+		return v;
+	}
+
+	inline Vector operator+(const Vector& v)
+	{
+		Vector res;
+		for (int i = 0; i < count; i++)
+			res.arr[i] = this->arr[i] + v.arr[i];
+		return res;
+	}
+
+	inline Vector operator+=(const Vector& v)
+	{
+		return *this + v;
+	}
+
+	inline Vector operator-(const Vector& v)
+	{
+		Vector res;
+		for (int i = 0; i < count; i++)
+			res.arr[i] = this->arr[i] - v.arr[i];
+		return res;
+	}
+
+	inline Vector operator-=(const Vector& v)
+	{
+		return *this - v;
+	}
+
+	inline Vector operator/(const T& v)
+	{
+		Vector res;
+		for (int i = 0; i < count; i++)
+			res.arr[i] = this->arr[i] / v;
+		return res;
+	}
+
+	inline Vector operator/=(const T& v)
+	{
+		return *this / v;
+	}
+
+	inline Vector operator*(const T& v)
+	{
+		Vector res;
+		for (int i = 0; i < count; i++)
+			res.arr[i] = this->arr[i] * v;
+		return res;
+	}
+
+	inline Vector operator*=(const T& v)
+	{
+		return *this * v;
+	}
+
+	inline bool operator==(const Vector& v)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			if (this->arr[i] != v.arr[i])
+				return false;
+		}
+		return true;
+	}
 };
 
 
-
-
-
-
-inline fVec2 GetScale(fVec2 s,fVec2 screen)
-{
-	return fVec2(s.x / screen.x, s.y / screen.y);
-}
-
-inline fVec2 GetTransalte(fVec2 t, fVec2 c, fVec2 screen)
-{
-	return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
-}
-
-inline Matrix4x4 SetScaleMatrix(fVec3 scale)
+inline Matrix4x4 SetScaleMatrix(const fVec3& scale)
 {
 	Matrix4x4 m;
 	m.u[0][0] = scale.x;
@@ -603,7 +848,7 @@ inline Matrix4x4 SetScaleMatrix(fVec3 scale)
 	return m;
 }
 
-inline Matrix4x4 SetScaleMatrix(fVec2 scale)
+inline Matrix4x4 SetScaleMatrix(const fVec2& scale)
 {
 	Matrix4x4 m;
 	m.u[0][0] = scale.x;
@@ -611,11 +856,11 @@ inline Matrix4x4 SetScaleMatrix(fVec2 scale)
 	return m;
 }
 
+
 inline fVec3 Cross(fVec3 v, fVec3 v2)
 {
 	return fVec3(v.y * v2.z - v.z * v2.y, v.x * v2.z - v.z * v2.x, v.x * v2.y - v.y * v2.x);
 }
-
 
 
 

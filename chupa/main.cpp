@@ -9,13 +9,28 @@
 #pragma warning (push)
 #pragma warning (disable : 28251)
 
+template<typename T>
+class V
+{
+public:
+	T x,y,z;
+};
+
+template<typename T>
+class V2
+{
+public:
+	T x,y,z,w;
+};
+
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow)
 {
 
 	Window bShooter;
 	
-
+	 
 	bShooter.Init(L"bubbleShooter", 800, 600);
 	Texture2D::Bind(&bShooter);
 	Object::Bind(&bShooter);
@@ -37,14 +52,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 	phy.Init(10, 10);
 
 	entity.Init({ 100,100 }, &t, { 200,200,0 }, {0,0,0},phy,false, true ,10,0);
-	player.Init({ 100,100 }, &t2, { 0.0f,world.screenMap.y-200.0f,10.0f}, { 0,0,0 }, phy, false, true, 10, 0);
+	player.Init({ 100,100 }, &t2, { 0.0f,world.screenMap.y-200.0f,1.0f}, { 0,0,0 }, phy, false, true, 10, 0);
 	
-	/*MapEditor* m = new MapEditor(&bShooter, { 1500,800,1 });
+	MapEditor* m = new MapEditor(&bShooter, { 2500,800,1 });
 	m->SetTexture(tex,2);
 	while (m->Update())
 	{
 		m->Draw();
-	}*/
+	}
 
 	while (bShooter.LoopEvent())
 	{
@@ -57,15 +72,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 		fVec2 size = entity.GetSize();
 
 		fVec3 camPos = camera.GetPos();
-
-		camera.Update(fVec3(0,0,0));
+		if (bShooter.IsKeyPress(Key::Key_D))
+			camPos.x += 10.01f;
+		if (bShooter.IsKeyPress(Key::Key_A))
+			camPos.x -= 10.01f;
+		camera.Update(camPos);
 
 		bShooter.ClearTargetView({ 0.2,0.2,0.2,1.0 });
 		Matrix4x4 w;
 		t2.Update(w, camera.view, camera.GetProjMatrix());
 		t2.AddInstance(player.GetPosition(), player.GetSize().ToFVec3(), camera);
-	//	t.AddInstance({ pos.x, pos.y,size.x,size.y});
-	//	t.AddInstance({ posPlayer.x, posPlayer.y,sizePlayer.x,sizePlayer.y });
 		t.Draw();
 		t2.Draw();
 		world.Draw(camera);

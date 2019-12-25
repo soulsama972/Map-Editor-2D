@@ -34,7 +34,7 @@ private:
 
 	int IsEmpty(fVec2 pos);
 	bool IsInBound();
-	fVec3 size = fVec3(100.0f, 100.0f, 0.0f);
+	fVec3 size = fVec3(100.0f, 100.0f, 100.0f);
 	bool stillOn = false;
 	fVec3 screen;
 	Window* window = nullptr;

@@ -29,7 +29,7 @@ public:
 	void SetRasterizer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, bool multiSample = true, bool antialiasedLine = true);
 
 	void Init(const wchar_t * className, int width, int height);
-	void Init(const wchar_t* className, vec2<float> screenRes);
+	void Init(const wchar_t* className, fVec2 screenRes);
 	void UpdateScreen(const fVec2& screensize);
 
 	ID3D11Device* GetDevice() const;

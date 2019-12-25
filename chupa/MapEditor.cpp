@@ -20,9 +20,10 @@ void MapEditor::MouseHandler()
 	{
 		if (window->IsMouseClick(MOUSE::LEFT) && !stillOn)
 		{
-			int res = IsEmpty(ori.ToVec2());
+			int res = IsEmpty(ori.ToFVec2());
 			if (res >= 0)
 			{
+				size = listInfo[res].size;
 				std::swap(listInfo[res], listInfo.back());
 				listInfo.pop_back();
 			}
@@ -52,10 +53,6 @@ void MapEditor::MouseHandler()
 void MapEditor::Draw()
 {
 
-	//tex[1]->AddInstance(fVec3(0,0,0),fVec3(400.0f,400.0f,0.0f),camera);
-	tex[1]->AddInstance(fVec3(0, 0, 0), fVec3(100.0f, 400.0f,0.0f), camera);
-	tex[1]->AddInstance(fVec3(0, 0, 0), fVec3(100.0f, 400.0f, 0.0f), camera);
-	tex[1]->AddInstance(fVec3(2000.0f, 0.0f, 0.0f), fVec3(100.0f, 1000.0f, 0.0f), camera);
 	window->ClearTargetView({ 0.0f,0.0f,0.0f,1.0f });
 	Matrix4x4 w;
 	tex[0]->Update(w, camera.view, camera.GetProjMatrix());
@@ -85,7 +82,7 @@ fVec3 MapEditor::GetWorldMouse()
 	p.y = -((mPos.y / screen.y )- 1);
 	
 
-	fVec3 screenWorld = p.Transfrom(inv);
+	fVec3 screenWorld = p.TransfromV3(inv);
 	screenWorld.x = screenWorld.x + camScreen.x / 2;
 	screenWorld.y = camScreen.y / 2 - screenWorld.y;
 	screenWorld.z = 1;
@@ -126,17 +123,28 @@ bool MapEditor::Update()
 		}
 
 		if (window->IsKeyPress(Key::Key_D))
-			camPos.x += 10.01f;
+			size.x += 10.0f;
 		if (window->IsKeyPress(Key::Key_A))
-			camPos.x -= 10.01f;
+			size.x -= 10.0f;
 		if (window->IsKeyPress(Key::Key_W))
-			camPos.y += 10.01f;
+			size.y += 10.0f;
 		if (window->IsKeyPress(Key::Key_S))
-			camPos.y -= 10.01f;
+			size.y -= 10.0f;
 		if (window->IsKeyPress(Key::Key_Q))
-			camPos.z += 10.01f;
+			size.z -= 1.0f;
 		if (window->IsKeyPress(Key::Key_E))
-			camPos.z -= 10.01f;
+			size.z += 1.0f;
+
+		if (window->IsKeyPress(Key::Key_DARROW))
+			camPos.y -= 10.0f;
+		if (window->IsKeyPress(Key::Key_UARROW))
+			camPos.y += 10.0f;
+		if (window->IsKeyPress(Key::Key_LARROW))
+			camPos.x -= 10.0f;
+		if (window->IsKeyPress(Key::Key_RARROW))
+			camPos.x += 10.0f;
+
+
 		if (window->IsKeyPress(Key::Key_F5))
 			Save("Map1");
 		camera.Update(camPos);

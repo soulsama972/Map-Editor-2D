@@ -115,16 +115,15 @@ void Texture2D::Update(Matrix4x4 world, Matrix4x4 view, Matrix4x4 proj)
 void Texture2D::AddInstance(fVec3 pos, fVec3 size, Camera camera)
 {
 	TextrueInstanceType in;
-	size /= 2;
-	Matrix4x4 s = SetScaleMatrix(size);
+	Matrix4x4 s = SetScaleMatrix(size/2);
 	fVec3 cameraPos = camera.GetPos();
 	fVec2 screen = camera.GetScreen();
 	
 	//pos = pos - cameraPos.ToNegativeY();
-	fVec3 screenWorld = pos.Transfrom( camera.GetProjMatrix());
+	fVec3 screenWorld = pos.TransfromV3( camera.GetProjMatrix());
 	screenWorld.x = screenWorld.x * (screen.x / 2) - ( screen.x / 2);
 	screenWorld.y = -screenWorld.y * (screen.y / 2) + (screen.y / 2);
-	screenWorld.z =  pos.z;
+	screenWorld.z = size.z;
 	//screenWorld = pos.Transfrom((camera.view * camera.GetProjMatrix()).InvertMatrix());
 	//if (screenWorld.x + size.x < 0 || screenWorld.x - size.x> screen.x || screenWorld.y + size.y < -screen.y || screenWorld.y - size.y > 0) // cliping
 	//	return;

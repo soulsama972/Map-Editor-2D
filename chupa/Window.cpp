@@ -52,7 +52,7 @@ void Window::Init(const wchar_t* className, int width, int height)
 	map.AddInstance(hwnd, this);
 }
 
-void Window::Init(const wchar_t* className, vec2<float> screenRes)
+void Window::Init(const wchar_t* className, fVec2 screenRes)
 {
 	hInstance = GetModuleHandle(nullptr);
 	screen = screenRes;

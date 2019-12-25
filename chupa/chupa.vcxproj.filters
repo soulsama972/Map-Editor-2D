@@ -118,9 +118,6 @@
     <ClCompile Include="Physics.cpp">
       <Filter>game</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>game</Filter>
-    </ClCompile>
     <ClCompile Include="StaticObject.cpp">
       <Filter>game</Filter>
     </ClCompile>
@@ -135,6 +132,9 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>directx</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

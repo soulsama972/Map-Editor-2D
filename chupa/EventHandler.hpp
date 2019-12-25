@@ -142,7 +142,7 @@ public:
 	}
 	static Map map;
 
-	inline vec2	<int> GetMousePos()
+	inline iVec2 GetMousePos()
 	{
 		return mousePos;
 	}
@@ -168,8 +168,8 @@ private:
 	};
 
 	
-	vec2<int> mousePos;
-	vec2<int> screenResoltion;
+	iVec2 mousePos;
+	iVec2 screenResoltion;
 	bool mouse[3] = { OFF };
 	bool windowFocus = false;
 	bool windowDestory = false;
