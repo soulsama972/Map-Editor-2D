@@ -12,6 +12,9 @@
 //template<typename T>
 //class vec4;
 
+
+
+
 template<typename T>
 class Type2
 {
@@ -57,9 +60,6 @@ public:
 template<typename T,typename K, int count>
 class Vector;
 
-//using fVec2 = vec2<float>;
-//using fVec3 = vec3<float>;
-//using fVec4 = vec4<float>;
 
 using fVec2 = Vector<float, Type2<float>, 2>;
 using fVec3 = Vector<float, Type3<float>, 3>;
@@ -342,6 +342,7 @@ public:
 
 };
 
+//
 //template<typename T>
 //class vec2
 //{
@@ -423,12 +424,12 @@ public:
 //	{
 //		return reinterpret_cast<T*>(this);
 //	}
-
-	/*inline vec3<T> ToFVec3()
-	{
-		return vec3<T>((T)x, (T)y, (T)0);
-	}*/
-
+//
+//	/*inline vec3<T> ToFVec3()
+//	{
+//		return vec3<T>((T)x, (T)y, (T)0);
+//	}*/
+//
 //};
 //
 //
@@ -630,20 +631,7 @@ public:
 //	}
 //};
 //
-//
 
-
-
-
-//inline fVec2 GetScale(fVec2 s,fVec2 screen)
-//{
-//	return fVec2(s.x / screen.x, s.y / screen.y);
-//}
-//
-//inline fVec2 GetTransalte(fVec2 t, fVec2 c, fVec2 screen)
-//{
-//	return fVec2((t.x + c.x / 2) * 2 / screen.x - 1, 1 - 2 * (t.y + c.y / 2) / screen.y);
-//}
 
 
 
@@ -753,7 +741,7 @@ public:
 	{
 		Vector<T, Type3<T>, 3>v;
 		for (int i = 0; i < 3; i++)
-			v.arr[i] = i > count - 1 ? this->arr[i] : 0;
+			v.arr[i] = i < count  ? this->arr[i] : 0;
 		
 
 		return v;
@@ -763,7 +751,7 @@ public:
 	{
 		Vector<T, Type2<T>, 2>v;
 		for (int i = 0; i < 2; i++)
-			v.arr[i] = i > count - 1 ? this->arr[i] : 0;
+			v.arr[i] = i < count ? this->arr[i] : 0;
 		return v;
 	}
 
@@ -771,7 +759,7 @@ public:
 	{
 		Vector<T, Type4<T>, 4>v;
 		for (int i = 0; i < 4; i++)
-			v.arr[i] =  i > count-1 ? this->arr[i] : 0;
+			v.arr[i] =  i < count ? this->arr[i] : 0;
 		return v;
 	}
 
@@ -836,6 +824,22 @@ public:
 		}
 		return true;
 	}
+
+	inline Vector operator*(const Vector& v)
+	{
+		Vector res;
+		for (int i = 0; i < count; i++)
+			res.arr[i] = this->arr[i] * v.arr[i];
+		return res;
+	}
+	inline Vector operator/(const Vector& v)
+	{
+		Vector res;
+		for (int i = 0; i < count; i++)
+			res.arr[i] = this->arr[i] / v.arr[i];
+		return res;
+	}
+
 };
 
 

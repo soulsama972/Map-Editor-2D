@@ -85,7 +85,7 @@ fVec3 MapEditor::GetWorldMouse()
 	fVec3 screenWorld = p.TransfromV3(inv);
 	screenWorld.x = screenWorld.x + camScreen.x / 2;
 	screenWorld.y = camScreen.y / 2 - screenWorld.y;
-	screenWorld.z = 1;
+	//screenWorld.z = 1;
 	Print("pos: %f , %f \n", screenWorld.x, screenWorld.y);
 	return screenWorld;
 }

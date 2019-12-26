@@ -127,12 +127,26 @@ void Texture2D::AddInstance(fVec3 pos, fVec3 size, Camera camera)
 	//screenWorld = pos.Transfrom((camera.view * camera.GetProjMatrix()).InvertMatrix());
 	//if (screenWorld.x + size.x < 0 || screenWorld.x - size.x> screen.x || screenWorld.y + size.y < -screen.y || screenWorld.y - size.y > 0) // cliping
 	//	return;
-
+	fVec4 invProj = fVec4(2 / screen.x, -2 / screen.y, 1 / (1000.0f - 1), 1);
+//	 invProj = fVec4(2 / screen.x - screen.x  , -2 / screen.y  + screen.y, 1 / (1000.0f - 1) + (1 - 1000.0f), 1);
+	fVec4 vertex = fVec4(-1, -1, 0, 1);
+	fVec4 test =   (vertex * size.ToFVec4()/2 + vertex* screenWorld.ToFVec4());
+	test.w = 1;
+	test = test * invProj;
+	//test.x = test.x * (screen.x / 2) - (screen.x / 2);
+	//test.y = -test.y * (screen.y / 2) + (screen.y / 2);
+	//test.z = size.z;
 	in.matrix.Translate(screenWorld.ToPointer());
 	in.matrix = s * in.matrix;
+	//Model11::AddInstance(in);
+	//fVec4 vertex = fVec4(-1, -1, 0,1);
+	vertex = vertex.TransfromV4(in.matrix);
+	//vertex = vertex.TransfromV4(camera.view);
+	vertex = vertex.TransfromV4(camera.GetProjMatrix());
+	Matrix4x4 m;
+	m.Translate(test.ToPointer());
+	in.matrix = m;
 	Model11::AddInstance(in);
-
-
 
 }
 
