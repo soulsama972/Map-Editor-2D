@@ -13,6 +13,7 @@ public:
 	void Draw(Camera camera);
 	Texture2D *tex;
 	fVec3 screenMap;
+	void ClearAll();
 protected:
 	
 private:

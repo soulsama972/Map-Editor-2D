@@ -31,11 +31,17 @@ void World::LoadMap(std::string file)
 
 void World::Draw(Camera camera)
 {
-	Matrix4x4 w;
-	tex->Update(w, camera.view, camera.GetProjMatrix());
 	for (auto& i : listInfo)
 	{
 		tex->AddInstance(i.origin, i.size, camera);
 	}
 	tex->Draw(true);
+}
+
+void World::ClearAll()
+{
+	listInfo.clear();
+	object.clear();
+	sObject.clear();
+	entity.clear();
 }

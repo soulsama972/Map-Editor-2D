@@ -54,12 +54,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 	entity.Init({ 100,100 }, &t, { 200,200,0 }, {0,0,0},phy,false, true ,10,0);
 	player.Init({ 100,100 }, &t2, { 0.0f,world.screenMap.y-200.0f,1.0f}, { 0,0,0 }, phy, false, true, 10, 0);
 	
-	MapEditor* m = new MapEditor(&bShooter, { 2500,800,1 });
-	m->SetTexture(tex,2);
-	while (m->Update())
-	{
-		m->Draw();
-	}
 
 	while (bShooter.LoopEvent())
 	{
@@ -76,18 +70,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 			camPos.x += 10.01f;
 		if (bShooter.IsKeyPress(Key::Key_A))
 			camPos.x -= 10.01f;
-		camera.Update(camPos);
+		if (bShooter.IsKeyPress(Key::Key_F2))
+		{
+			MapEditor* m = new MapEditor(&bShooter, { 2500,800,1 });
+			m->SetTexture(tex, 2);
+			Sleep(1000);
+			
+			while (m->Update() && !bShooter.IsKeyPress(Key::Key_F1))
+			{
+				m->Draw();
+			}
+			
+			SafeDeletePtr(m);
+			world.LoadMap("map1");
+		}
 
 		bShooter.ClearTargetView({ 0.2,0.2,0.2,1.0 });
-		Matrix4x4 w;
-		t2.Update(w, camera.view, camera.GetProjMatrix());
 		t2.AddInstance(player.GetPosition(), player.GetSize().ToFVec3(), camera);
 		t.Draw();
 		t2.Draw();
 		world.Draw(camera);
 		bShooter.Render(true);
 	}
-	//SafeDeletePtr(m);
+
 
 	return 0;
 }

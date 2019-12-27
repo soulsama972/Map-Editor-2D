@@ -8,19 +8,6 @@ Texture2D::~Texture2D()
 	SafeDelete(this->textrue);
 }
 
-Matrix4x4 TestV(fVec3 pos, fVec3 size)
-{
-	Matrix4x4 res;
-	res.u[0][0] = pos.x;
-	res.u[0][1] = pos.y;
-	res.u[0][2] = pos.z;
-
-	res.u[1][0] = size.x;
-	res.u[1][1] = size.y;
-	res.u[1][2] = size.z;
-
-	return res;
-}
 
 Texture2D::Texture2D(std::string src,UINT MaxInstance)
 {
@@ -63,27 +50,29 @@ Texture2D::Texture2D(std::string src,UINT MaxInstance)
 	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[1].InstanceDataStepRate = 0;
 
-	polygonLayout[2].SemanticName = "world";
+	polygonLayout[2].SemanticName = "POS";
 	polygonLayout[2].SemanticIndex = 0;
-	polygonLayout[2].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	polygonLayout[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	polygonLayout[2].InputSlot = 1;
 	polygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 	polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
 	polygonLayout[2].InstanceDataStepRate = 1;
 
-	polygonLayout[3] = polygonLayout[2];
-	polygonLayout[4] = polygonLayout[2];
-	polygonLayout[5] = polygonLayout[2];
+	polygonLayout[3].SemanticName = "SIZE";
+	polygonLayout[3].SemanticIndex = 0;
+	polygonLayout[3].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	polygonLayout[3].InputSlot = 1;
+	polygonLayout[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	polygonLayout[3].InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+	polygonLayout[3].InstanceDataStepRate = 1;
 
-	polygonLayout[3].SemanticIndex = 1;
-	polygonLayout[4].SemanticIndex = 2;
-	polygonLayout[5].SemanticIndex = 3;
+
 
 
 
 	InitBuffer(dev, devcon, vertex, ind,4,6, MaxInstance, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(TextrueVertex), sizeof(TextrueInstanceType));
 
-	InitializeShaders("Texture2DVs.hlsl", "main", "Texture2DPs.hlsl", "main", polygonLayout, 6);
+	InitializeShaders("Texture2DVs.hlsl", "main", "Texture2DPs.hlsl", "main", polygonLayout, 4);
 
 
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -107,50 +96,26 @@ Texture2D::Texture2D(std::string src,UINT MaxInstance)
 	// Load the texture in.
 	CheckFAILED(D3DX11CreateShaderResourceViewFromFileA(dev, src.c_str(), NULL, NULL, &textrue, NULL));
 
-
-	CreateCnstantBuffer(16 *4 * 4 );
 }
 
-void Texture2D::Update(Matrix4x4 world, Matrix4x4 view, Matrix4x4 proj)
-{
-	struct MyStruct
-	{
-		Matrix4x4 w;
-		Matrix4x4 v;
-		Matrix4x4 p;
-	};
-	MyStruct my;
-	my.w = world;
-	my.v = view;
-	my.p = proj;
-	Model11::Update(&my);
-}
+
 
 void Texture2D::AddInstance(fVec3 pos, fVec3 size, Camera camera)
 {
 	TextrueInstanceType in;
-	Matrix4x4 s = SetScaleMatrix(size/2);
 	fVec3 cameraPos = camera.GetPos();
 	fVec2 screen = camera.GetScreen();
 	
-	//pos = pos - cameraPos.ToNegativeY();
-	fVec3 screenWorld = pos.TransfromV3( camera.GetProjMatrix());
+	fVec3 screenWorld = (pos - cameraPos.ToNegativeY()).TransfromV3( camera.GetProjMatrix());
 	screenWorld.x = screenWorld.x * (screen.x / 2) - ( screen.x / 2);
 	screenWorld.y = -screenWorld.y * (screen.y / 2) + (screen.y / 2);
 	screenWorld.z = size.z;
 
 
-	//screenWorld = pos.Transfrom((camera.view * camera.GetProjMatrix()).InvertMatrix());
 	//if (screenWorld.x + size.x < 0 || screenWorld.x - size.x> screen.x || screenWorld.y + size.y < -screen.y || screenWorld.y - size.y > 0) // cliping
 	//	return;
-
-	in.matrix.Translate(screenWorld.ToPointer());
-	in.matrix = s * in.matrix;
-	//Model11::AddInstance(in);
-
-
-	in.matrix = TestV(screenWorld, size).Transpose();
-	
+	in.pos = screenWorld;
+	in.size = size/2;
 	Model11::AddInstance(in);
 
 }

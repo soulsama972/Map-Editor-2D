@@ -86,6 +86,12 @@
     <FxCompile Include="Texture2DPs.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
+    <FxCompile Include="WireSqureVs.hlsl">
+      <Filter>shader</Filter>
+    </FxCompile>
+    <FxCompile Include="WireSqurePs.hlsl">
+      <Filter>shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="utill.cpp">

@@ -737,12 +737,17 @@ public:
 		return v;
 	}
 
-	inline Vector<T,Type3<T>,3> ToFVec3()
+	inline Vector ToNegativeY()
 	{
-		Vector<T, Type3<T>, 3>v;
-		for (int i = 0; i < 3; i++)
-			v.arr[i] = i < count  ? this->arr[i] : 0;
-		
+		Vector v;
+		for (int i = 0; i < count; i++)
+		{
+			if (i == 1)
+				v.arr[i] = -this->arr[i];
+			else
+				v.arr[i] =  this->arr[i];
+		}
+
 
 		return v;
 	}
@@ -752,6 +757,17 @@ public:
 		Vector<T, Type2<T>, 2>v;
 		for (int i = 0; i < 2; i++)
 			v.arr[i] = i < count ? this->arr[i] : 0;
+		return v;
+	}
+
+
+	inline Vector<T,Type3<T>,3> ToFVec3()
+	{
+		Vector<T, Type3<T>, 3>v;
+		for (int i = 0; i < 3; i++)
+			v.arr[i] = i < count  ? this->arr[i] : 0;
+		
+
 		return v;
 	}
 
@@ -832,6 +848,7 @@ public:
 			res.arr[i] = this->arr[i] * v.arr[i];
 		return res;
 	}
+
 	inline Vector operator/(const Vector& v)
 	{
 		Vector res;

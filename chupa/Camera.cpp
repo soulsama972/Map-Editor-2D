@@ -4,63 +4,45 @@ Window* Camera::window = nullptr;
 
 void Camera::Init(float width, float height, float zNear, float zFar)
 {
-
-	float l = -width / 2;
-	float r = width / 2;
-	float b = -height / 2;
-	float t = height / 2;
-	proj.u[0][0] = 2 / (r - l);
-	proj.u[1][1] = 2 / (t - b);
+	proj.u[0][0] = 2 / width;
+	proj.u[1][1] = 2 / height;
 	proj.u[2][2] = 1 / (zFar - zNear);
 
-
-	proj.u[3][0] = (l + r) / (l - r);
-	proj.u[3][1] = (t + b) / (b - t);
-	proj.u[3][2] = zNear / (zNear - zFar);
+	proj.u[3][2] = -zNear / ( zFar - zNear);
 
 
 	screen = fVec2(width, height);
+	CreateCnstantBuffer();
+	Update(&proj);
 }
 
-Matrix4x4 Camera::LookAtRH(fVec3 eye, fVec3 target, fVec3 up)
+
+void Camera::CreateCnstantBuffer()
 {
-	fVec3 zaxis = (target - eye);    // The "forward" vector.
-	zaxis = zaxis.GetNormalize();
-	fVec3 xaxis = Cross(up, zaxis);// The "right" vector.
-	xaxis = xaxis.GetNormalize();
-	fVec3 yaxis = Cross(xaxis, zaxis);     // The "up" vector.
+	D3D11_BUFFER_DESC matrixBufferDesc;
+	// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
+	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	matrixBufferDesc.ByteWidth = 16*4;
+	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	matrixBufferDesc.MiscFlags = 0;
+	matrixBufferDesc.StructureByteStride = 0;
 
-	// Create a 4x4 view matrix from the right, up, forward and eye position vectors
-	Matrix4x4 viewMatrix;
-	viewMatrix.u[0][0] = xaxis.x;
-	viewMatrix.u[1][0] = xaxis.y;
-	viewMatrix.u[2][0] = xaxis.z;
-	viewMatrix.u[3][0] = -xaxis.GetDot(eye);
+	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	CheckFAILED(window->GetDevice()->CreateBuffer(&matrixBufferDesc, NULL, &cnstantBuffer));
 
-	viewMatrix.u[0][1] = yaxis.x;
-	viewMatrix.u[1][1] = yaxis.y;
-	viewMatrix.u[2][1] = yaxis.z;
-	viewMatrix.u[3][1] = -yaxis.GetDot(eye);
-
-	viewMatrix.u[0][2] = zaxis.x;
-	viewMatrix.u[1][2] = zaxis.y;
-	viewMatrix.u[2][2] = zaxis.z;
-	viewMatrix.u[3][2] = -zaxis.GetDot(eye);
-
-	viewMatrix.u[0][3] = 0.0f;
-	viewMatrix.u[1][3] = 0.0f;
-	viewMatrix.u[2][3] = 0.0f;
-	viewMatrix.u[3][3] = 1;
-
-	return viewMatrix;
+	
 }
 
-void Camera::Update(fVec3 pos)
+void Camera::Update(void* newBuffer)
 {
-	{
-		fVec3 lookAt(0, 0, 1);
-		fVec3 up(0, 1, 0);
-		view = LookAtRH(pos, pos + lookAt, up);
-		this->pos = pos;
-	}
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	CheckFAILED(window->GetContext()->Map(cnstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
+
+	// Get a pointer to the data in the constant buffer.
+	memcpy(mappedResource.pData, newBuffer, 16 * 4);
+	// Unlock the constant buffer.
+	window->GetContext()->Unmap(cnstantBuffer, 0);
+
+	window->GetContext()->VSSetConstantBuffers(0, 1, &cnstantBuffer);
 }

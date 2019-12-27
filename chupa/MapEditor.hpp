@@ -30,8 +30,15 @@ private:
 		UINT textureId = 0;
 	};
 
+	struct WireSqure
+	{
+		fVec3 pos;
+		fVec3 size;
+		fVec4 Color;
+	};
+	void AddInstance(fVec3 pos, fVec3 size, Camera camera);
 	fVec3 GetWorldMouse();
-
+	Model11<WireSqure> wSqure;
 	int IsEmpty(fVec2 pos);
 	bool IsInBound();
 	fVec3 size = fVec3(100.0f, 100.0f, 100.0f);

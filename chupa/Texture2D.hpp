@@ -4,9 +4,11 @@
 #include"Math.hpp"
 #include<string>
 #include"Camera.hpp"
+
 struct TextrueInstanceType
 {
-	Matrix4x4 matrix;
+	fVec3 pos;
+	fVec3 size;
 };
 
 struct TextrueVertex
@@ -23,7 +25,6 @@ public:
 	~Texture2D();
 	Texture2D() = default;
 	Texture2D(std::string src, UINT MaxInstance);
-	void Update(Matrix4x4 world, Matrix4x4 view, Matrix4x4 proj);
 	void AddInstance(fVec3 pos, fVec3 size, Camera camera);
 	void Draw(bool clearAfter = true);
 	inline void Clear()
@@ -35,7 +36,7 @@ public:
 	{
 		Texture2D::window = window;
 	}
-
+	
 private:
 	
 	ID3D11ShaderResourceView* textrue = nullptr;
