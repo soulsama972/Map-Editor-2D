@@ -673,7 +673,7 @@ public:
 		this->y = y;
 	}
 
-	inline T GetLength()
+	inline T GetLength()const
 	{
 		T res = 0;
 		for (int i = 0; i < count; i++)
@@ -683,12 +683,12 @@ public:
 		return res;
 	}
 
-	inline T GetMagnitude()
+	inline T GetMagnitude()const
 	{
 		return (T)sqrt(GetLength());
 	}
 
-	inline Vector GetNormalize()
+	inline Vector GetNormalize()const
 	{
 		Vector v;
 		T magnitude = GetMagnitude();	
@@ -702,7 +702,7 @@ public:
 		return reinterpret_cast<T*>(this);
 	}
 
-	inline T GetDot(const Vector& v)
+	inline T GetDot(const Vector& v)const
 	{
 		T res = 0;
 		for (int i = 0; i < count; i++)
@@ -712,7 +712,7 @@ public:
 		return res;
 	}
 
-	inline T GetDot()
+	inline T GetDot()const
 	{
 		return GetLength();
 	}
@@ -737,7 +737,7 @@ public:
 		return v;
 	}
 
-	inline Vector ToNegativeY()
+	inline Vector ToNegativeY()const
 	{
 		Vector v;
 		for (int i = 0; i < count; i++)
@@ -752,7 +752,7 @@ public:
 		return v;
 	}
 
-	inline Vector<T, Type2<T>, 2> ToFVec2()
+	inline Vector<T, Type2<T>, 2> ToVec2()const
 	{
 		Vector<T, Type2<T>, 2>v;
 		for (int i = 0; i < 2; i++)
@@ -761,7 +761,7 @@ public:
 	}
 
 
-	inline Vector<T,Type3<T>,3> ToFVec3()
+	inline Vector<T,Type3<T>,3> ToVec3()const
 	{
 		Vector<T, Type3<T>, 3>v;
 		for (int i = 0; i < 3; i++)
@@ -771,7 +771,7 @@ public:
 		return v;
 	}
 
-	inline Vector<T, Type4<T>, 4> ToFVec4()
+	inline Vector<T, Type4<T>, 4> ToVec4()const
 	{
 		Vector<T, Type4<T>, 4>v;
 		for (int i = 0; i < 4; i++)
@@ -779,7 +779,7 @@ public:
 		return v;
 	}
 
-	inline Vector operator+(const Vector& v)
+	inline Vector operator+(const Vector& v)const
 	{
 		Vector res;
 		for (int i = 0; i < count; i++)
@@ -787,12 +787,12 @@ public:
 		return res;
 	}
 
-	inline Vector operator+=(const Vector& v)
+	inline Vector operator+=(const Vector& v)const
 	{
 		return *this + v;
 	}
 
-	inline Vector operator-(const Vector& v)
+	inline Vector operator-(const Vector& v)const
 	{
 		Vector res;
 		for (int i = 0; i < count; i++)
@@ -800,12 +800,14 @@ public:
 		return res;
 	}
 
-	inline Vector operator-=(const Vector& v)
+	inline Vector operator-=(const Vector& v)const
 	{
 		return *this - v;
 	}
 
-	inline Vector operator/(const T& v)
+
+
+	inline Vector operator/(const T& v)const
 	{
 		Vector res;
 		for (int i = 0; i < count; i++)
@@ -813,12 +815,12 @@ public:
 		return res;
 	}
 
-	inline Vector operator/=(const T& v)
+	inline Vector operator/=(const T& v)const
 	{
 		return *this / v;
 	}
 
-	inline Vector operator*(const T& v)
+	inline Vector operator*(const T& v)const
 	{
 		Vector res;
 		for (int i = 0; i < count; i++)
@@ -826,12 +828,12 @@ public:
 		return res;
 	}
 
-	inline Vector operator*=(const T& v)
+	inline Vector operator*=(const T& v)const
 	{
 		return *this * v;
 	}
 
-	inline bool operator==(const Vector& v)
+	inline bool operator==(const Vector& v)const
 	{
 		for (int i = 0; i < count; i++)
 		{
@@ -841,7 +843,7 @@ public:
 		return true;
 	}
 
-	inline Vector operator*(const Vector& v)
+	inline Vector operator*(const Vector& v)const
 	{
 		Vector res;
 		for (int i = 0; i < count; i++)
@@ -849,7 +851,7 @@ public:
 		return res;
 	}
 
-	inline Vector operator/(const Vector& v)
+	inline Vector operator/(const Vector& v)const
 	{
 		Vector res;
 		for (int i = 0; i < count; i++)

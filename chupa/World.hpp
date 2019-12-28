@@ -10,7 +10,7 @@ class World
 public:
 	World() = default;
 	void LoadMap(std::string file);
-	void Draw(Camera camera);
+	void Draw(const Camera& camera);
 	Texture2D *tex;
 	fVec3 screenMap;
 	void ClearAll();

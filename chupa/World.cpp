@@ -29,7 +29,7 @@ void World::LoadMap(std::string file)
 	
 }
 
-void World::Draw(Camera camera)
+void World::Draw(const Camera& camera)
 {
 	for (auto& i : listInfo)
 	{

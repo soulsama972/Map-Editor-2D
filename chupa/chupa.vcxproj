@@ -151,6 +151,7 @@
     <ClInclude Include="Overlay.hpp" />
     <ClInclude Include="Physics.hpp" />
     <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Shape.hpp" />
     <ClInclude Include="StartScreen.hpp" />
     <ClInclude Include="StaticObject.hpp" />
     <ClInclude Include="Texture2D.hpp" />
@@ -169,6 +170,7 @@
     <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Shape.cpp" />
     <ClCompile Include="StartScreen.cpp" />
     <ClCompile Include="StaticObject.cpp" />
     <ClCompile Include="Texture2D.cpp" />

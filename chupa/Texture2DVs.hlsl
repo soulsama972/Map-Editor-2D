@@ -1,8 +1,8 @@
 cbuffer  CAMERAPROJ
 {
 	matrix proj;
+	float3 cameraPos;
 };
-
 
 struct VertexInputType
 {
@@ -24,7 +24,9 @@ PixelInputType main(VertexInputType input)
 {
 	PixelInputType output;
 	input.position.w = 1.0f;
-
+	input.pos.x -= cameraPos.x;
+	input.pos.y += cameraPos.y;
+	input.pos.z -= cameraPos.z;
 	output.position = input.position * float4(input.size,1) + float4(input.pos,0);
 
 	

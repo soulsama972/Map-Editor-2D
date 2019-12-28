@@ -2,7 +2,7 @@
 
 Window* Object::window = nullptr;
 
-void Object::Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics physics, bool isDestroyable)
+void Object::Init(fVec3 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics physics, bool isDestroyable)
 {
 	SetSize(size);
 	SetTexture(texture);

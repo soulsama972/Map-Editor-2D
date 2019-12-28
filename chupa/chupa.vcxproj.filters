@@ -72,6 +72,9 @@
     <ClInclude Include="Camera.hpp">
       <Filter>game</Filter>
     </ClInclude>
+    <ClInclude Include="Shape.hpp">
+      <Filter>directx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl">
@@ -140,6 +143,9 @@
       <Filter>game</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
+      <Filter>directx</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape.cpp">
       <Filter>directx</Filter>
     </ClCompile>
   </ItemGroup>

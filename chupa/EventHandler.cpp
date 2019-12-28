@@ -80,6 +80,7 @@ LRESULT EventHandler::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 bool EventHandler::LoopEvent()
 {
 	MSG msg;
+
 	while (PeekMessageW(&msg, hwnd, 0, 0, PM_REMOVE))
 	{
 			TranslateMessage(&msg);

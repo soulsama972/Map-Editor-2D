@@ -1,15 +1,16 @@
 #pragma once
+#pragma warning (push)
+#pragma warning (disable : 26495)
+#pragma warning (disable : 4005)
 #include<windows.h>
 #include<iostream>
 #include<string>
 #include<fstream>
 #include"Math.hpp"
 #include"utill.hpp"
-#pragma warning (push)
-#pragma warning (disable : 26495)
-#pragma warning (disable : 4005)
 #include<D3D11.h>
 #include<D3DX11.h>
+
 
 #pragma warning(pop)
 
@@ -31,16 +32,14 @@ public:
 
 	void AddInstance(T in);
 	void ClearInstance();
+
 	void Draw();
-
-	T* instance = nullptr;
-
 	void InitBuffer(ID3D11Device* dev, ID3D11DeviceContext* devcon, void* pVertex, void* pIndex, UINT vertexLen, UINT indexLen, UINT maxInstance,D3D11_PRIMITIVE_TOPOLOGY topology, UINT vertexByteWidth, UINT instanceByteWidth);
 	void InitializeShaders(const char* vertexSrcFile, const char* vertexFunctionMainName, const char* pixelSrcFile, const char* pixelFunctionMainName, D3D11_INPUT_ELEMENT_DESC* InputElementDesc, UINT32 InputElementDescCount);
 
 protected:
 private:
-
+	T* instance = nullptr;
 	void CleanUp();
 
 	ID3D11Buffer* vertexBuffer = 0;

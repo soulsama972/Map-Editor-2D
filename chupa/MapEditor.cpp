@@ -2,21 +2,16 @@
 
 
 
-void MapEditor::AddInstance(fVec3 pos, fVec3 size, Camera camera)
+void MapEditor::AddInstance(fVec3 pos, fVec3 size, const Camera& camera)
 {
 	WireSqure in;
 	fVec3 cameraPos = camera.GetPos();
 	fVec2 screen = camera.GetScreen();
-
-	fVec3 screenWorld = (pos - cameraPos.ToNegativeY()).TransfromV3(camera.GetProjMatrix());
-	screenWorld.x = screenWorld.x * (screen.x / 2) - (screen.x / 2);
-	screenWorld.y = -screenWorld.y * (screen.y / 2) + (screen.y / 2);
-	screenWorld.z = size.z;
-
+	fVec3 screenWorld = screenWorld = camera.WorldToScreen(pos);
 
 	//if (screenWorld.x + size.x < 0 || screenWorld.x - size.x> screen.x || screenWorld.y + size.y < -screen.y || screenWorld.y - size.y > 0) // cliping
 	//	return;
-	in.pos = screenWorld;
+	in.pos = screenWorld.ToNegativeY();
 	in.size = size / 2;
 	in.Color = fVec4(255, 255, 255, 255);
 	wSqure.AddInstance(in);
@@ -28,9 +23,9 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 {
 	this->window = window;
 	camera.Bind(window);
-	camera.Init(size.x, size.y, 0.1f, 1000.0f);
+	camera.Init(size.ToVec2(), 0.1f, 1000.0f);
 	this->screen = size;
-	camera.Update(fVec3(0.0f,0.0f,-10.0f));
+	camera.Update(fVec3(size.x/2,size.y/2,size.z));
 
 
 
@@ -87,52 +82,40 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 
 
 
-	wSqure.InitBuffer(window->GetDevice(), window->GetContext(),vertex , ind, 4, 6, 1000, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+	wSqure.InitBuffer(window->GetDevice(), window->GetContext(),vertex , ind, 4, 6, 10000, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 		,sizeof(MyStruct), sizeof(WireSqure));
 
 
 	wSqure.InitializeShaders("WireSqureVs.hlsl", "main", "WireSqurePs.hlsl", "main", polygonLayout, 4);
 
-	
+	for (int j = 0; j <  screen.y / 100; j++)
+	{
+		for (int i = 0; i < screen.x / 100; i++)
+		{
+			AddInstance(fVec3(i * 100 + 50, j * 100 + 50, 1), fVec3(100, 100, 100), camera);
+		}
+	}
+}
+
+MapEditor::~MapEditor()
+{
 }
 
 void MapEditor::MouseHandler()
 {
 	fVec3 ori = GetWorldMouse();
-	fVec3 pos = ori - size/2;
+	fVec3 pos = ori ;
 
 	if (IsInBound())
 	{
-		if (window->IsMouseClick(MOUSE::LEFT) && !stillOn)
-		{
-			int res = IsEmpty(ori.ToFVec2());
-			if (res >= 0)
-			{
-				size = listInfo[res].size;
-				std::swap(listInfo[res], listInfo.back());
-				listInfo.pop_back();
-			}
-			tex[0]->AddInstance(ori, size, camera);
-			stillOn = true;
-		}
-
-		else if (!window->IsMouseClick(MOUSE::LEFT) && stillOn)
-		{
-			stillOn = false;
-			TexData info;
-			info.origin = ori;
-			info.pos = pos;
-			info.size = size;
-			info.textureId = 1;
-			listInfo.push_back(info);
-		}
-
-		else if (stillOn)
-		{
-
-			tex[0]->AddInstance(ori, size, camera);
-		}
+		if (s)
+			DragAndDrop(ori);
+		else
+			ClickDrop(ori);
 	}
+
+
+
 }
 
 void MapEditor::Draw()
@@ -150,32 +133,29 @@ void MapEditor::Draw()
 
 	tex[0]->Draw(true);
 	tex[1]->Draw(true);
+	
 
-	for (int j = 0; j < screen.y /100; j++)
-	{
-		for (int i = 0; i < screen.x / 100; i++)
-		{
-			AddInstance(fVec3(i * 100 + 50, j * 100 + 50, 1), fVec3(100,100,100), camera);
-		}
-	}
 	window->SetRasterizer(D3D11_FILL_WIREFRAME, D3D11_CULL_NONE);
 
 	wSqure.Draw();
-	wSqure.ClearInstance();
 	window->SetRasterizer(D3D11_FILL_SOLID, D3D11_CULL_NONE);
 	window->Render(true);
 }
 
 fVec3 MapEditor::GetWorldMouse()
 {
-	fVec3 mPos = fVec3(window->GetMousePos().x, window->GetMousePos().y, 0);
+	fVec3 mPos = fVec3(window->GetMousePos().x, window->GetMousePos().y,0);
 	fVec3 camPos = camera.GetPos();
 	fVec2 camScreen = camera.GetScreen();
 	fVec2 screen = window->GetScreen();
 	fVec2 diff = camScreen / screen;
 	mPos.x *= diff.x;
 	mPos.y *= diff.y;
-	mPos =  mPos + camPos.ToNegativeY();
+	fVec3 camDiff = camPos - camScreen.ToVec3() /2;
+	mPos =  mPos + camDiff;
+	mPos.x = floor(mPos.x / 100) * 100 + size.x/2;
+	mPos.y = floor(mPos.y / 100) * 100 + size.y/2;
+	mPos.z = zPos;
 	//Print("pos: %f , %f \n", mPos.x, mPos.y);
 	return mPos;
 }
@@ -185,8 +165,8 @@ int MapEditor::IsEmpty(fVec2 pos)
 	int i = 0;
 	for (auto& r : listInfo)
 	{
-		if ((pos.x > r.pos.x && pos.x < r.pos.x + r.size.x) &&
-			(pos.y > r.pos.y && pos.y < r.pos.y + r.size.y ))
+		if ((pos.x >= r.pos.x && pos.x < r.pos.x + r.size.x) &&
+			(pos.y >= r.pos.y && pos.y < r.pos.y + r.size.y ))
 			return i;
 		i++;
 	}
@@ -202,6 +182,53 @@ bool MapEditor::IsInBound()
 	return true;
 }
 
+void MapEditor::DragAndDrop(const fVec3& pos)
+{
+	if (window->IsMouseClick(MOUSE::LEFT) && !stillOn)
+	{
+		int res = IsEmpty(pos.ToVec2());
+		if (res >= 0)
+		{
+
+			size = listInfo[res].size;
+			std::swap(listInfo[res], listInfo.back());
+			listInfo.pop_back();
+		}
+		tex[0]->AddInstance(pos, size, camera);
+		stillOn = true;
+	}
+
+	else if (!window->IsMouseClick(MOUSE::LEFT) && stillOn)
+	{
+		stillOn = false;
+		TexData info;
+		info.origin = pos;
+		info.pos = pos;
+		info.size = size;
+		info.textureId = 1;
+		listInfo.push_back(info);
+	}
+	else if (stillOn)
+		tex[0]->AddInstance(pos, size, camera);
+}
+
+void MapEditor::ClickDrop(const fVec3& pos)
+{
+	if (window->IsMouseClick(MOUSE::LEFT) )
+	{
+		int res = IsEmpty(pos.ToVec2());
+		if (res == -1)
+		{
+			TexData info;
+			info.origin = pos;
+			info.pos = pos;
+			info.size = size;
+			info.textureId = 1;
+			listInfo.push_back(info);
+		}
+	}
+}
+
 bool MapEditor::Update()
 {
 	if (window->LoopEvent())
@@ -213,37 +240,38 @@ bool MapEditor::Update()
 		}
 
 		if (window->IsKeyPress(Key::Key_D))
-			size.x += 10.0f;
+			size.x += 1.0f;
 		if (window->IsKeyPress(Key::Key_A))
-			size.x -= 10.0f;
+			size.x -= 1.0f;
 		if (window->IsKeyPress(Key::Key_W))
-			size.y += 10.0f;
+			size.y += 1.0f;
 		if (window->IsKeyPress(Key::Key_S))
-			size.y -= 10.0f;
+			size.y -= 1.0f;
 		if (window->IsKeyPress(Key::Key_Q))
-			size.z -= 1.0f;
+			zPos -= 1.0f;
 		if (window->IsKeyPress(Key::Key_E))
-			size.z += 1.0f;
+			zPos += 1.0f;
 
 		if (window->IsKeyPress(Key::Key_DARROW))
-			camPos.y -= 10.0f;
-		if (window->IsKeyPress(Key::Key_UARROW))
 			camPos.y += 10.0f;
+		if (window->IsKeyPress(Key::Key_UARROW))
+			camPos.y -= 10.0f;
 		if (window->IsKeyPress(Key::Key_LARROW))
 			camPos.x -= 10.0f;
 		if (window->IsKeyPress(Key::Key_RARROW))
 			camPos.x += 10.0f;
-
+		if (window->IsKeyPress(Key::Key_1))
+			s = !s;
 
 		if (window->IsKeyPress(Key::Key_F5))
 			Save("Map1");
 		camera.Update(camPos);
 		MouseHandler();
-		
 		return true;
 	}
 
 	return false;
+
 }
 
 

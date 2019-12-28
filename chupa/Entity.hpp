@@ -6,7 +6,7 @@ class Entity : public Object
 {
 public:
 	Entity() = default;
-	void Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics physics, bool isDestroyable, bool isAlive, int healthPoint, int manaPoint);
+	void Init(fVec3 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics physics, bool isDestroyable, bool isAlive, int healthPoint, int manaPoint);
 	void AutoMotion(float deltaTime, StaticObject obj);
 	//sets
 	void SetIsAlive(bool isAlive);

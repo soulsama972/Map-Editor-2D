@@ -42,9 +42,9 @@ void Window::Init(const wchar_t* className, int width, int height)
 	RegisterClassEx(&wc);
 	RECT r;
 	SetRect(&r, 0, 0, static_cast<int>(screen.x), static_cast<int>(screen.y));
-	AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
+	AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW , false);
 
-	hwnd = CreateWindowExW(NULL, className, L"chupa", WS_OVERLAPPEDWINDOW,
+	hwnd = CreateWindowExW(NULL, className, L"chupa", WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME,
 		0, 0, r.right - r.left, r.bottom - r.top, NULL, NULL, hInstance, NULL);
 
 	ShowWindow(hwnd, SW_SHOW);

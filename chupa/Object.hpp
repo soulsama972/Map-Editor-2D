@@ -9,7 +9,7 @@ class Object : public StaticObject
 public:
 	Object() = default;
 
-	void Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics physics, bool isDestroyable);
+	void Init(fVec3 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics physics, bool isDestroyable);
 	void Update(float deltaTime);
 	bool IsCollide(StaticObject anotherObj);
 

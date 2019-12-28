@@ -3,7 +3,7 @@
 
 
 
-void Entity::Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics physics, bool isDestroyable, bool isAlive, int healthPoint, int manaPoint)
+void Entity::Init(fVec3 size, Texture2D* texture, fVec3 position, fVec3 origin, Physics physics, bool isDestroyable, bool isAlive, int healthPoint, int manaPoint)
 {
 	SetSize(size);
 	SetTexture(texture);

@@ -1,6 +1,6 @@
 #include "StaticObject.hpp"
 
-void StaticObject::Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 origin)
+void StaticObject::Init(fVec3 size, Texture2D* texture, fVec3 position, fVec3 origin)
 {
 	this->size = size;
 	this->texture = texture;
@@ -8,7 +8,7 @@ void StaticObject::Init(fVec2 size, Texture2D* texture, fVec3 position, fVec3 or
 	this->origin = origin;
 }
 
-void StaticObject::SetSize(fVec2 size)
+void StaticObject::SetSize(fVec3 size)
 {
 	this->size = size;
 }
@@ -30,7 +30,7 @@ void StaticObject::SetOrigin(fVec3 origin)
 
 
 
-fVec2 StaticObject::GetSize()
+fVec3 StaticObject::GetSize()
 {
 	return size;
 }

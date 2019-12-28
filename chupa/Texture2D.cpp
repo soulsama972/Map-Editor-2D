@@ -100,22 +100,15 @@ Texture2D::Texture2D(std::string src,UINT MaxInstance)
 
 
 
-void Texture2D::AddInstance(fVec3 pos, fVec3 size, Camera camera)
+void Texture2D::AddInstance(const fVec3& pos,const fVec3& size,const Camera& camera)
 {
 	TextrueInstanceType in;
-	fVec3 cameraPos = camera.GetPos();
-	fVec2 screen = camera.GetScreen();
+	fVec3 screenWorld = camera.WorldToScreen(pos);
+	screenWorld.z = pos.z;
+	//if(camera.InScreen(screenWorld))
 	
-	fVec3 screenWorld = (pos - cameraPos.ToNegativeY()).TransfromV3( camera.GetProjMatrix());
-	screenWorld.x = screenWorld.x * (screen.x / 2) - ( screen.x / 2);
-	screenWorld.y = -screenWorld.y * (screen.y / 2) + (screen.y / 2);
-	screenWorld.z = size.z;
-
-
-	//if (screenWorld.x + size.x < 0 || screenWorld.x - size.x> screen.x || screenWorld.y + size.y < -screen.y || screenWorld.y - size.y > 0) // cliping
-	//	return;
-	in.pos = screenWorld;
-	in.size = size/2;
+	in.pos = screenWorld.ToNegativeY();
+	in.size = size/ 2;
 	Model11::AddInstance(in);
 
 }
