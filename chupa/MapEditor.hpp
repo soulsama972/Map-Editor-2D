@@ -6,7 +6,7 @@
 #include"Camera.hpp"
 #include<string>
 #include<fstream>
-
+#include <filesystem>
 
 class MapEditor
 {
@@ -21,6 +21,7 @@ public:
 	void MouseHandler();
 	void Draw();
 	bool Update();
+	void LoadTextureFromFolder(std::string pathOfFolder);
 	void Save(std::string nameOfMap);
 private:
 	struct TexData
@@ -55,4 +56,6 @@ private:
 	float zPos = 1;
 	Camera camera;
 	bool s = false;
+	UINT texId = 0;
+	std::vector<Texture2D*> lTex;
 };

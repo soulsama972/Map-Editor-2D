@@ -27,7 +27,7 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 	this->screen = size;
 	camera.Update(fVec3(size.x/2,size.y/2,size.z));
 
-
+	LoadTextureFromFolder("C:\\Users\\Koral\\source\\repos\\chupa\\chupa");
 
 	struct MyStruct
 	{
@@ -99,6 +99,10 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 
 MapEditor::~MapEditor()
 {
+	for (auto& r : lTex)
+	{
+		delete r;
+	}
 }
 
 void MapEditor::MouseHandler()
@@ -126,7 +130,7 @@ void MapEditor::Draw()
 
 	for (auto& i : listInfo)
 	{
-		tex[0]->AddInstance(i.origin, i.size, camera);
+		lTex[i.textureId]->AddInstance(i.origin, i.size, camera);
 	}
 	
 
@@ -134,6 +138,10 @@ void MapEditor::Draw()
 	tex[0]->Draw(true);
 	tex[1]->Draw(true);
 	
+	for (auto r : lTex)
+	{
+		r->Draw(true);
+	}
 
 	window->SetRasterizer(D3D11_FILL_WIREFRAME, D3D11_CULL_NONE);
 
@@ -223,7 +231,7 @@ void MapEditor::ClickDrop(const fVec3& pos)
 			info.origin = pos;
 			info.pos = pos;
 			info.size = size;
-			info.textureId = 1;
+			info.textureId = texId;
 			listInfo.push_back(info);
 		}
 	}
@@ -262,7 +270,20 @@ bool MapEditor::Update()
 			camPos.x += 10.0f;
 		if (window->IsKeyPress(Key::Key_1))
 			s = !s;
-
+		if (window->IsKeyPress(Key::Key_2))
+		{
+			texId++;
+			if (texId > lTex.size()-1)
+				texId = lTex.size()-1;
+			Sleep(1000);
+		}
+		if (window->IsKeyPress(Key::Key_3))
+		{
+			texId--;
+			if (texId < 0)
+				texId = 0;
+			Sleep(1000);
+		}
 		if (window->IsKeyPress(Key::Key_F5))
 			Save("Map1");
 		camera.Update(camPos);
@@ -272,6 +293,30 @@ bool MapEditor::Update()
 
 	return false;
 
+}
+
+void MapEditor::LoadTextureFromFolder(std::string pathOfFolder)
+{
+	for (const auto& entry : std::filesystem::directory_iterator(pathOfFolder))
+	{
+		if (entry.path().string().find(".png") != std::string::npos)
+		{
+
+			Texture2D *t = new Texture2D(entry.path().string(), 1000);
+
+			lTex.push_back(t);
+		}
+	}
+
+	for (const auto& entry : std::filesystem::directory_iterator(""))
+	{
+		if (entry.path().string().empty())
+		{
+			Print("%s", entry.path().c_str());
+		
+		}
+	}
+		
 }
 
 

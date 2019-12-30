@@ -90,7 +90,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 			if (bShooter.IsWindowDestory())
 				return 0;
 		}
-		camera.Update( player.GetPosition());
+		camera.Update( player.GetPosition() - fVec3(0,0,10));
 		bShooter.ClearTargetView({ 0.2,0.2,0.2,1.0 });
 		t2.AddInstance(player.GetPosition(), player.GetSize().ToVec3(), camera);
 		t.Draw();

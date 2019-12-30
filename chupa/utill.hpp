@@ -28,8 +28,10 @@ inline void * ForceCast(T t)
 inline void Print(const char * buffer ,...)
 {
 	std::va_list args;
-	std::string str;
+	std::wstring str;
 	va_start(args, buffer);
+	wchar_t* stringValue = 0;
+	char r = 0;
 	for(int i = 0;i<strlen(buffer);i++)
 	{
 		if (buffer[i] == '%')
@@ -39,11 +41,16 @@ inline void Print(const char * buffer ,...)
 			{
 			case 'd':
 			case 'D':
-				str += std::to_string(va_arg(args, int));
+				str += std::to_wstring(va_arg(args, int));
 				break;
 			case 'f':
 			case 'F':
-				str +=std::to_string(va_arg(args, double));
+				str +=std::to_wstring(va_arg(args, double));
+				break;
+			case 's':
+			case 'S':
+
+				str += va_arg(args, wchar_t*);
 				break;
 			default:
 				break;
@@ -53,6 +60,6 @@ inline void Print(const char * buffer ,...)
 		str += buffer[i];
 	}
 	va_end(args);
-	OutputDebugStringA(str.c_str());
+	OutputDebugString(str.c_str());
 }
 

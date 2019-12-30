@@ -639,6 +639,8 @@ public:
 template<typename T,typename K, int count>
 class Vector : public K
 {
+	
+
 public:
 	inline Vector()
 	{	
@@ -880,7 +882,7 @@ inline Matrix4x4 SetScaleMatrix(const fVec2& scale)
 }
 
 
-inline fVec3 Cross(fVec3 v, fVec3 v2)
+inline fVec3 Cross(const fVec3& v,const fVec3& v2)
 {
 	return fVec3(v.y * v2.z - v.z * v2.y, v.x * v2.z - v.z * v2.x, v.x * v2.y - v.y * v2.x);
 }
