@@ -63,3 +63,12 @@ inline void Print(const char * buffer ,...)
 	OutputDebugString(str.c_str());
 }
 
+inline std::string GetPath()
+{
+	char buffer[256];
+	GetModuleFileNameA(NULL, buffer, 256);
+	std::string path(buffer);
+	path = path.substr(0, path.find_last_of('\\') + 1);
+	return path;
+}
+

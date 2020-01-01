@@ -27,7 +27,11 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 	this->screen = size;
 	camera.Update(fVec3(size.x/2,size.y/2,size.z));
 
-	LoadTextureFromFolder("C:\\Users\\Koral\\source\\repos\\chupa\\chupa");
+	
+
+
+
+	LoadTextureFromFolder(GetPath().c_str());
 
 	struct MyStruct
 	{
@@ -95,6 +99,7 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 			AddInstance(fVec3(i * 100 + 50, j * 100 + 50, 1), fVec3(100, 100, 100), camera);
 		}
 	}
+	InitMenu();
 }
 
 MapEditor::~MapEditor()
@@ -110,7 +115,7 @@ void MapEditor::MouseHandler()
 	fVec3 ori = GetWorldMouse();
 	fVec3 pos = ori ;
 
-	if (IsInBound())
+	if (IsInBound() && !inMenu)
 	{
 		if (s)
 			DragAndDrop(ori);
@@ -142,7 +147,7 @@ void MapEditor::Draw()
 	{
 		r->Draw(true);
 	}
-
+	menu.Draw();
 	window->SetRasterizer(D3D11_FILL_WIREFRAME, D3D11_CULL_NONE);
 
 	wSqure.Draw();
@@ -237,6 +242,63 @@ void MapEditor::ClickDrop(const fVec3& pos)
 	}
 }
 
+void MapEditor::InitMenu()
+{
+	menuSize = fVec3(400, screen.y, 1);
+	menu.Init((GetPath() + "MapEditorMenu.png").c_str(), 1);
+}
+
+void MapEditor::UpdateMenu()
+{
+	mList.clear();
+	fVec3 camPos = camera.GetPos().ToVec2().ToVec3();
+	fVec3 pos = fVec3(-screen.x/2, -screen.y/2, 0) + fVec3(menuSize.x/2, menuSize.y/2, 1) + camPos;
+	UINT index = 0;
+	fVec3 itemPos = fVec3(0, 0, 0);
+	fVec3 itemSize = fVec3(menuSize.x / 2, menuSize.x / 2, 1);
+	fVec3 ori = fVec3(-screen.x / 2, -screen.y / 2, 0) + fVec3(menuSize.x / 4, menuSize.x / 4, 1) + camPos;
+	UINT ID = 0;
+	for (auto r : lTex)
+	{
+		menu.AddInstance(pos, menuSize, camera);	
+		r->AddInstance(ori + itemPos, itemSize, camera);
+
+		TexData info;
+		info.pos = itemPos;
+		info.origin = ori + itemPos;
+		info.size = itemSize;
+		info.textureId = ID;
+		mList.push_back(info);
+
+		index++;
+		ID++;
+		if (index == 2)
+		{
+			itemPos.x -= 2*(menuSize.x / 2);
+			itemPos.y += menuSize.x / 2;
+			index = 0;
+		}
+		itemPos.x += menuSize.x / 2;
+	}
+	fVec3 mPos =  fVec3(window->GetMousePos().x, window->GetMousePos().y,0);
+	Print("%f %f \n", mPos.x, mPos.y);
+	fVec3 m = mPos;
+	fVec2 diff =  window->GetScreen() / camera.GetScreen().ToVec2();
+	if (m.x >= 0 && m.x < (menuSize.x ) * diff.x) // if we are in menu
+		inMenu = true;
+	else
+		inMenu = false;
+	// check if click and update textrue
+	if (inMenu && window->IsMouseClick(MOUSE::LEFT))
+	{
+		for (auto r : mList)
+		{
+			if (m.x > r.pos.x && m.x < (r.pos.x + r.size.x) * diff.x && m.y > r.pos.y* diff.y && m.y < (r.pos.y + r.size.y))
+				texId = r.textureId;
+		}
+	}
+}
+
 bool MapEditor::Update()
 {
 	if (window->LoopEvent())
@@ -270,23 +332,11 @@ bool MapEditor::Update()
 			camPos.x += 10.0f;
 		if (window->IsKeyPress(Key::Key_1))
 			s = !s;
-		if (window->IsKeyPress(Key::Key_2))
-		{
-			texId++;
-			if (texId > lTex.size()-1)
-				texId = lTex.size()-1;
-			Sleep(1000);
-		}
-		if (window->IsKeyPress(Key::Key_3))
-		{
-			texId--;
-			if (texId < 0)
-				texId = 0;
-			Sleep(1000);
-		}
+
 		if (window->IsKeyPress(Key::Key_F5))
 			Save("Map1");
 		camera.Update(camPos);
+		UpdateMenu();
 		MouseHandler();
 		return true;
 	}
@@ -301,22 +351,13 @@ void MapEditor::LoadTextureFromFolder(std::string pathOfFolder)
 	{
 		if (entry.path().string().find(".png") != std::string::npos)
 		{
-
+			if (entry.path().string().find("Map") != std::string::npos)
+				continue;
 			Texture2D *t = new Texture2D(entry.path().string(), 1000);
 
 			lTex.push_back(t);
 		}
 	}
-
-	for (const auto& entry : std::filesystem::directory_iterator(""))
-	{
-		if (entry.path().string().empty())
-		{
-			Print("%s", entry.path().c_str());
-		
-		}
-	}
-		
 }
 
 

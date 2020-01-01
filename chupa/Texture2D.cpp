@@ -11,6 +11,13 @@ Texture2D::~Texture2D()
 
 Texture2D::Texture2D(std::string src,UINT MaxInstance)
 {
+	Init(src, MaxInstance);
+}
+
+
+
+void Texture2D::Init(std::string src, UINT MaxInstance)
+{
 	const auto& devcon = window->GetContext();
 	const auto& dev = window->GetDevice();
 	TextrueVertex vertex[4];
@@ -21,7 +28,7 @@ Texture2D::Texture2D(std::string src,UINT MaxInstance)
 	vertex[2].pos = fVec3(1.0f, 1.0f, 0.0f);
 	vertex[3].pos = fVec3(1.0f, -1.0f, 0.0f);
 
-	vertex[0].tex = fVec2(0,1);
+	vertex[0].tex = fVec2(0, 1);
 	vertex[1].tex = fVec2(0, 0);
 	vertex[2].tex = fVec2(1, 0);
 	vertex[3].tex = fVec2(1, 1);
@@ -31,8 +38,6 @@ Texture2D::Texture2D(std::string src,UINT MaxInstance)
 		0,1,2,
 		0,2,3
 	};
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[6];
-
 
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
@@ -70,7 +75,7 @@ Texture2D::Texture2D(std::string src,UINT MaxInstance)
 
 
 
-	InitBuffer(dev, devcon, vertex, ind,4,6, MaxInstance, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(TextrueVertex), sizeof(TextrueInstanceType));
+	InitBuffer(dev, devcon, vertex, ind, 4, 6, MaxInstance, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(TextrueVertex), sizeof(TextrueInstanceType));
 
 	InitializeShaders("Texture2DVs.hlsl", "main", "Texture2DPs.hlsl", "main", polygonLayout, 4);
 
@@ -95,7 +100,6 @@ Texture2D::Texture2D(std::string src,UINT MaxInstance)
 
 	// Load the texture in.
 	CheckFAILED(D3DX11CreateShaderResourceViewFromFileA(dev, src.c_str(), NULL, NULL, &textrue, NULL));
-
 }
 
 

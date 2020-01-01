@@ -26,6 +26,7 @@ public:
 	Texture2D() = default;
 	Texture2D(std::string src, UINT MaxInstance);
 	Texture2D(std::string src,std::string vs,std::string ps, UINT MaxInstance);
+	void Init(std::string src, UINT MaxInstance);
 	void AddInstance(const fVec3& pos, const fVec3& size, const Camera& camera);
 	void Draw(bool clearAfter = true);
 	inline void Clear()
@@ -42,7 +43,7 @@ private:
 	
 	ID3D11ShaderResourceView* textrue = nullptr;
 	ID3D11SamplerState* sampleState = nullptr;
-
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[4];
 
 
 

@@ -58,4 +58,16 @@ private:
 	bool s = false;
 	UINT texId = 0;
 	std::vector<Texture2D*> lTex;
+
+private://menu texture
+	void InitMenu();
+	void UpdateMenu();
+	inline void DrawMenu()
+	{
+		menu.Draw(false);
+	}
+	bool inMenu = false;
+	Texture2D menu;
+	fVec3 menuSize;
+	std::vector< TexData> mList;
 };

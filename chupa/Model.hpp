@@ -38,6 +38,10 @@ public:
 	void InitializeShaders(const char* vertexSrcFile, const char* vertexFunctionMainName, const char* pixelSrcFile, const char* pixelFunctionMainName, D3D11_INPUT_ELEMENT_DESC* InputElementDesc, UINT32 InputElementDescCount);
 
 protected:
+	ID3D11InputLayout* layout = 0;
+	ID3D11VertexShader* vertexShader = 0;
+	ID3D11PixelShader* pixelShader = 0;
+
 private:
 	T* instance = nullptr;
 	void CleanUp();
@@ -46,12 +50,6 @@ private:
 	ID3D11Buffer* indexBuffer = 0;
 	ID3D11Buffer* instanceBuffer = 0;
 
-	ID3D11Device* dev = 0;
-	ID3D11DeviceContext* devcon = 0;
-	ID3D11VertexShader* vertexShader = 0;
-	ID3D11PixelShader* pixelShader = 0;
-	ID3D11InputLayout* layout = 0;
-	
 	UINT maxInstance = 0;
 	UINT instanceCount = 0;
 
@@ -59,7 +57,10 @@ private:
 	UINT vertexLen = 0;
 	UINT vertexStride = 0;
 	UINT instanceStride = 0;
-	UINT cnstantBufferByteWidth = 0;
+
+	ID3D11Device* dev = 0;
+	ID3D11DeviceContext* devcon = 0;
+
 	D3D11_PRIMITIVE_TOPOLOGY topology = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 };
 

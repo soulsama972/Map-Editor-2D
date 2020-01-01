@@ -1,26 +1,33 @@
+cbuffer CAMERAPROJ
+{
+	matrix proj;
+	float3 cameraPos;
+};
+
 struct VertexInputType
 {
 	float4 position : POSITION;
-	float4 color : COLOR;
-    matrix WVP : world;
+	float2 tex : tex;
+	float3 pos : POS;
+	float3 size : SIZE;
+
 };
 
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
-	float4 color : COLOR;
-    float3 viewDirection : viewDir;
+	float2 tex : tex;
 };
+
 
 PixelInputType main(VertexInputType input)
 {
 	PixelInputType output;
-    input.position.w = 1.0f;
-    output.position = mul(input.position, input.WVP);
-	output.color = input.color;
+	input.position.w = 1.0f;
+	output.position = input.position * float4(input.size, 1) + float4(input.pos, 0);
+	output.position = mul(proj, output.position);
 
-    // Determine the viewing direction based on the position of the camera and the position of the vertex in the world. &&  Normalize the viewing direction vector.
-    output.viewDirection = normalize(input.position.xyz);
-	
+	output.tex = input.tex;
+    
 	return output;
 }
