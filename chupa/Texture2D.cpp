@@ -108,7 +108,6 @@ void Texture2D::AddInstance(const fVec3& pos,const fVec3& size,const Camera& cam
 {
 	TextrueInstanceType in;
 	fVec3 screenWorld = camera.WorldToScreen(pos);
-	screenWorld.z = pos.z;
 	//if(camera.InScreen(screenWorld))
 	
 	in.pos = screenWorld.ToNegativeY();

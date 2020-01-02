@@ -13,11 +13,7 @@ class MapEditor
 public:
 	MapEditor(Window* window,fVec3 size);
 	~MapEditor();
-	inline void SetTexture(Texture2D** tex,int count)
-	{
-		this->tex = tex;
-		TextureCount = count;
-	}
+
 	void MouseHandler();
 	void Draw();
 	bool Update();
@@ -50,8 +46,6 @@ private:
 	bool stillOn = false;
 	fVec3 screen;
 	Window* window = nullptr;
-	Texture2D** tex = nullptr;
-	int TextureCount = 0;
 	std::vector<TexData> listInfo;
 	float zPos = 1;
 	Camera camera;

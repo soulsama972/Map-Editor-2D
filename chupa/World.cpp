@@ -5,6 +5,7 @@
 void World::LoadMap(std::string file)
 {
 	std::ifstream f(file);
+
 	if (f.is_open())
 	{
 

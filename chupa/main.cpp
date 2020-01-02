@@ -9,19 +9,6 @@
 #pragma warning (push)
 #pragma warning (disable : 28251)
 
-template<typename T>
-class V
-{
-public:
-	T x,y,z;
-};
-
-template<typename T>
-class V2
-{
-public:
-	T x,y,z,w;
-};
 
 
 
@@ -76,7 +63,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 		if (bShooter.IsKeyPress(Key::Key_F2))
 		{
 			MapEditor* m = new MapEditor(&bShooter, { 2500,2500,-10 });
-			m->SetTexture(tex, 2);
 			Sleep(1000);
 			
 			while (m->Update() && !bShooter.IsKeyPress(Key::Key_F1))

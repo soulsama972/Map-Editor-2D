@@ -137,12 +137,6 @@ void MapEditor::Draw()
 	{
 		lTex[i.textureId]->AddInstance(i.origin, i.size, camera);
 	}
-	
-
-
-	tex[0]->Draw(true);
-	tex[1]->Draw(true);
-	
 	for (auto r : lTex)
 	{
 		r->Draw(true);
@@ -207,7 +201,7 @@ void MapEditor::DragAndDrop(const fVec3& pos)
 			std::swap(listInfo[res], listInfo.back());
 			listInfo.pop_back();
 		}
-		tex[0]->AddInstance(pos, size, camera);
+		lTex[texId]->AddInstance(pos, size, camera);
 		stillOn = true;
 	}
 
@@ -222,7 +216,7 @@ void MapEditor::DragAndDrop(const fVec3& pos)
 		listInfo.push_back(info);
 	}
 	else if (stillOn)
-		tex[0]->AddInstance(pos, size, camera);
+		lTex[texId]->AddInstance(pos, size, camera);
 }
 
 void MapEditor::ClickDrop(const fVec3& pos)
@@ -252,16 +246,16 @@ void MapEditor::UpdateMenu()
 {
 	mList.clear();
 	fVec3 camPos = camera.GetPos().ToVec2().ToVec3();
-	fVec3 pos = fVec3(-screen.x/2, -screen.y/2, 0) + fVec3(menuSize.x/2, menuSize.y/2, 1) + camPos;
+	fVec3 pos = fVec3(menuSize.x/2, menuSize.y/2, 0) ;
 	UINT index = 0;
-	fVec3 itemPos = fVec3(0, 0, 0);
-	fVec3 itemSize = fVec3(menuSize.x / 2, menuSize.x / 2, 1);
-	fVec3 ori = fVec3(-screen.x / 2, -screen.y / 2, 0) + fVec3(menuSize.x / 4, menuSize.x / 4, 1) + camPos;
+	fVec3 itemPos = fVec3(0, 0,0);
+	fVec3 itemSize = fVec3(menuSize.x / 2, menuSize.x / 2, 0);
+	fVec3 ori = fVec3(-screen.x / 2, -screen.y / 2, 0) + camPos.ToVec2().ToVec3();
 	UINT ID = 0;
 	for (auto r : lTex)
 	{
-		menu.AddInstance(pos, menuSize, camera);	
-		r->AddInstance(ori + itemPos, itemSize, camera);
+		menu.AddInstance(ori + pos, menuSize, camera);	
+		r->AddInstance(ori + itemPos  + itemSize/2, itemSize, camera);
 
 		TexData info;
 		info.pos = itemPos;
@@ -281,10 +275,12 @@ void MapEditor::UpdateMenu()
 		itemPos.x += menuSize.x / 2;
 	}
 	fVec3 mPos =  fVec3(window->GetMousePos().x, window->GetMousePos().y,0);
-	Print("%f %f \n", mPos.x, mPos.y);
 	fVec3 m = mPos;
+
 	fVec2 diff =  window->GetScreen() / camera.GetScreen().ToVec2();
-	if (m.x >= 0 && m.x < (menuSize.x ) * diff.x) // if we are in menu
+	m.x /= diff.x;
+	m.y /= diff.y;
+	if (m.x >= 0 && m.x < menuSize.x ) // if we are in menu
 		inMenu = true;
 	else
 		inMenu = false;
@@ -293,7 +289,7 @@ void MapEditor::UpdateMenu()
 	{
 		for (auto r : mList)
 		{
-			if (m.x > r.pos.x && m.x < (r.pos.x + r.size.x) * diff.x && m.y > r.pos.y* diff.y && m.y < (r.pos.y + r.size.y))
+			if (m.x  > r.pos.x && m.x < (r.pos.x + r.size.x)  && m.y > r.pos.y && m.y < (r.pos.y + r.size.y ))
 				texId = r.textureId;
 		}
 	}
