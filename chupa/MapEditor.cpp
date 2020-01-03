@@ -31,7 +31,7 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 
 
 
-	LoadTextureFromFolder(GetPath().c_str());
+	LoadTextureFromFolder(GetPath()+ "texture");
 
 	struct MyStruct
 	{
@@ -135,11 +135,11 @@ void MapEditor::Draw()
 
 	for (auto& i : listInfo)
 	{
-		lTex[i.textureId]->AddInstance(i.origin, i.size, camera);
+		texMap[i.textureId].tex->AddInstance(i.origin, i.size, camera);
 	}
-	for (auto r : lTex)
+	for (auto r : texMap)
 	{
-		r->Draw(true);
+		r.tex->Draw(true);
 	}
 	menu.Draw();
 	window->SetRasterizer(D3D11_FILL_WIREFRAME, D3D11_CULL_NONE);
@@ -251,11 +251,10 @@ void MapEditor::UpdateMenu()
 	fVec3 itemPos = fVec3(0, 0,0);
 	fVec3 itemSize = fVec3(menuSize.x / 2, menuSize.x / 2, 0);
 	fVec3 ori = fVec3(-screen.x / 2, -screen.y / 2, 0) + camPos.ToVec2().ToVec3();
-	UINT ID = 0;
-	for (auto r : lTex)
+	for (auto r : texMap)
 	{
 		menu.AddInstance(ori + pos, menuSize, camera);	
-		r->AddInstance(ori + itemPos  + itemSize/2, itemSize, camera);
+		r.tex->AddInstance(ori + itemPos  + itemSize/2, itemSize, camera);
 
 		TexData info;
 		info.pos = itemPos;
@@ -265,7 +264,6 @@ void MapEditor::UpdateMenu()
 		mList.push_back(info);
 
 		index++;
-		ID++;
 		if (index == 2)
 		{
 			itemPos.x -= 2*(menuSize.x / 2);
@@ -290,7 +288,7 @@ void MapEditor::UpdateMenu()
 		for (auto r : mList)
 		{
 			if (m.x  > r.pos.x && m.x < (r.pos.x + r.size.x)  && m.y > r.pos.y && m.y < (r.pos.y + r.size.y ))
-				texId = r.textureId;
+				currentId = r.textureId;
 		}
 	}
 }
@@ -347,11 +345,15 @@ void MapEditor::LoadTextureFromFolder(std::string pathOfFolder)
 	{
 		if (entry.path().string().find(".png") != std::string::npos)
 		{
-			if (entry.path().string().find("Map") != std::string::npos)
-				continue;
 			Texture2D *t = new Texture2D(entry.path().string(), 1000);
+			TexMapInfo info;
+			info.tex = t;
+			info.textureId = texIdLen++;
+			int r = entry.path().filename().string().length();
+			entry.path().string().copy(info.name, entry.path().filename().string().length());
 
-			lTex.push_back(t);
+
+			texMap.push_back(info);
 		}
 	}
 }
