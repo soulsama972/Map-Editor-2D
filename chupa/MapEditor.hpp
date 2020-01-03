@@ -26,12 +26,6 @@ private:
 		fVec3	size;
 		UINT textureId = 0;
 	};
-	struct TexMapInfo
-	{
-		Texture2D* tex;
-		UINT textureId = 0;
-		char name[256] = { 0 };
-	};
 	struct WireSqure
 	{
 		fVec3 pos;
@@ -60,8 +54,7 @@ private:
 	Camera camera;
 	bool s = false;
 
-	std::vector< TexMapInfo> texMap;
-	UINT texIdLen = 0;
+	std::vector<Texture2D*> texMap;
 	UINT currentId = 0;
 	Window* window = nullptr;
 private://menu of texture
@@ -77,4 +70,6 @@ private://menu of texture
 	fVec3 menuSize;
 
 	std::vector< TexData> mList;
+
+	UINT texCount = 0;
 };

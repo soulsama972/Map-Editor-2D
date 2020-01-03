@@ -5,19 +5,19 @@
 #include"Entity.hpp"
 #include<string>
 #include<vector>
-
+#include<filesystem>
 class World 
 {
 public:
 	World() = default;
 	void LoadMap(std::string file);
 	void Draw(const Camera& camera);
-	Texture2D *tex;
 	fVec3 screenMap;
 	void ClearAll();
 protected:
 	
 private:
+	void LoadTextureFromFolder(std::string pathOfFolder);
 	struct TexData
 	{
 		fVec3	pos;
@@ -25,7 +25,7 @@ private:
 		fVec3	size;
 		UINT textureId = 0;
 	};
-
+	std::vector<Texture2D*> tex;
 	std::vector<TexData> listInfo;
 	std::vector<Object> object;
 	std::vector<StaticObject>sObject;

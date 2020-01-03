@@ -4,7 +4,7 @@
 
 void MapEditor::AddInstance(fVec3 pos, fVec3 size, const Camera& camera)
 {
-	WireSqure in;
+	WireSqure in = {};
 	fVec3 cameraPos = camera.GetPos();
 	fVec2 screen = camera.GetScreen();
 	fVec3 screenWorld = screenWorld = camera.WorldToScreen(pos);
@@ -14,6 +14,7 @@ void MapEditor::AddInstance(fVec3 pos, fVec3 size, const Camera& camera)
 	in.pos = screenWorld.ToNegativeY();
 	in.size = size / 2;
 	in.Color = fVec4(255, 255, 255, 255);
+	
 	wSqure.AddInstance(in);
 
 }
@@ -28,9 +29,6 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 	camera.Update(fVec3(size.x/2,size.y/2,size.z));
 
 	
-
-
-
 	LoadTextureFromFolder(GetPath()+ "texture");
 
 	struct MyStruct
@@ -38,7 +36,6 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 		fVec3 pos;
 	};
 	MyStruct vertex[4];
-
 
 	vertex[0].pos = fVec3(-1.0f, -1.0f, 0.0f);
 	vertex[1].pos = fVec3(-1.0f, 1.0f, 0.0f);
@@ -104,10 +101,11 @@ MapEditor::MapEditor(Window* window, fVec3 size)
 
 MapEditor::~MapEditor()
 {
-	for (auto& r : lTex)
+	for (auto& r : texMap)
 	{
-		delete r;
+		SafeDeletePtr(r);
 	}
+	texMap.clear();
 }
 
 void MapEditor::MouseHandler()
@@ -135,11 +133,11 @@ void MapEditor::Draw()
 
 	for (auto& i : listInfo)
 	{
-		texMap[i.textureId].tex->AddInstance(i.origin, i.size, camera);
+		texMap[i.textureId]->AddInstance(i.origin, i.size, camera);
 	}
 	for (auto r : texMap)
 	{
-		r.tex->Draw(true);
+		r->Draw(true);
 	}
 	menu.Draw();
 	window->SetRasterizer(D3D11_FILL_WIREFRAME, D3D11_CULL_NONE);
@@ -198,10 +196,11 @@ void MapEditor::DragAndDrop(const fVec3& pos)
 		{
 
 			size = listInfo[res].size;
+			currentId = listInfo[res].textureId;
 			std::swap(listInfo[res], listInfo.back());
 			listInfo.pop_back();
 		}
-		lTex[texId]->AddInstance(pos, size, camera);
+		texMap[currentId]->AddInstance(pos, size, camera);
 		stillOn = true;
 	}
 
@@ -212,11 +211,11 @@ void MapEditor::DragAndDrop(const fVec3& pos)
 		info.origin = pos;
 		info.pos = pos;
 		info.size = size;
-		info.textureId = 1;
+		info.textureId = currentId;
 		listInfo.push_back(info);
 	}
 	else if (stillOn)
-		lTex[texId]->AddInstance(pos, size, camera);
+		texMap[currentId]->AddInstance(pos, size, camera);
 }
 
 void MapEditor::ClickDrop(const fVec3& pos)
@@ -230,7 +229,7 @@ void MapEditor::ClickDrop(const fVec3& pos)
 			info.origin = pos;
 			info.pos = pos;
 			info.size = size;
-			info.textureId = texId;
+			info.textureId = currentId;
 			listInfo.push_back(info);
 		}
 	}
@@ -251,16 +250,17 @@ void MapEditor::UpdateMenu()
 	fVec3 itemPos = fVec3(0, 0,0);
 	fVec3 itemSize = fVec3(menuSize.x / 2, menuSize.x / 2, 0);
 	fVec3 ori = fVec3(-screen.x / 2, -screen.y / 2, 0) + camPos.ToVec2().ToVec3();
+	UINT idLen = 0;
 	for (auto r : texMap)
 	{
 		menu.AddInstance(ori + pos, menuSize, camera);	
-		r.tex->AddInstance(ori + itemPos  + itemSize/2, itemSize, camera);
+		r->AddInstance(ori + itemPos  + itemSize/2, itemSize, camera);
 
 		TexData info;
 		info.pos = itemPos;
 		info.origin = ori + itemPos;
 		info.size = itemSize;
-		info.textureId = ID;
+		info.textureId = idLen++;
 		mList.push_back(info);
 
 		index++;
@@ -346,14 +346,7 @@ void MapEditor::LoadTextureFromFolder(std::string pathOfFolder)
 		if (entry.path().string().find(".png") != std::string::npos)
 		{
 			Texture2D *t = new Texture2D(entry.path().string(), 1000);
-			TexMapInfo info;
-			info.tex = t;
-			info.textureId = texIdLen++;
-			int r = entry.path().filename().string().length();
-			entry.path().string().copy(info.name, entry.path().filename().string().length());
-
-
-			texMap.push_back(info);
+			texMap.push_back(t);
 		}
 	}
 }
@@ -365,6 +358,7 @@ void MapEditor::Save(std::string nameOfMap)
 	if (f.is_open())
 	{
 		f << camera.GetScreen().x << ' ' << camera.GetScreen().y << std::endl;
+		f << listInfo.size() << std::endl;
 		for (auto& r : listInfo)
 		{
 			f << r.origin.x << ' ' << r.origin.y << ' ' << r.origin.z << ' ';
@@ -374,5 +368,6 @@ void MapEditor::Save(std::string nameOfMap)
 		}
 		f.close();
 	}
+
 }
 

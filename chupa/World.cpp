@@ -1,17 +1,32 @@
 #include "World.hpp"
 
+void World::LoadTextureFromFolder(std::string pathOfFolder)
+{
+	for (const auto& entry : std::filesystem::directory_iterator(pathOfFolder))
+	{
+		if (entry.path().string().find(".png") != std::string::npos)
+		{
+			Texture2D* t = new Texture2D(entry.path().string(), 1000);
+
+			tex.push_back(t);
+
+		}
+	}
+}
 
 
 void World::LoadMap(std::string file)
 {
-	std::ifstream f(file);
+	LoadTextureFromFolder(GetPath() + "texture");
+	std::ifstream f(file );
 
 	if (f.is_open())
 	{
-
-		f >> screenMap.x >> screenMap.y;
 		
-		while(true)
+		f >> screenMap.x >> screenMap.y;
+		UINT objCount = 0;
+		f >> objCount;
+		for(int i = 0;i<objCount;i++)
 		{
 			TexData r;
 			f >> r.origin.x >> r.origin.y >> r.origin.z;
@@ -19,12 +34,8 @@ void World::LoadMap(std::string file)
 			f >> r.size.x >> r.size.y >> r.size.z;
 			f >> r.textureId;
 			listInfo.push_back(r);
-			if (f.eof())
-			{
-				listInfo.pop_back();
-				break;
-			}
 		}
+
 		f.close();
 	}
 	
@@ -34,9 +45,13 @@ void World::Draw(const Camera& camera)
 {
 	for (auto& i : listInfo)
 	{
-		tex->AddInstance(i.origin, i.size, camera);
+		tex[i.textureId]->AddInstance(i.origin, i.size, camera);
 	}
-	tex->Draw(true);
+	for (auto& i : tex)
+	{
+		i->Draw(true);
+	}
+//	tex->Draw(true);
 }
 
 void World::ClearAll()
@@ -45,4 +60,5 @@ void World::ClearAll()
 	object.clear();
 	sObject.clear();
 	entity.clear();
+	tex.clear();
 }
