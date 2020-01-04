@@ -238,7 +238,8 @@ void MapEditor::ClickDrop(const fVec3& pos)
 void MapEditor::InitMenu()
 {
 	menuSize = fVec3(400, screen.y, 1);
-	menu.Init((GetPath() + "MapEditorMenu.png").c_str(), 1);
+	menu.Init((GetPath() + "MapEditorMenu.png").c_str(), "Texture2DVs.hlsl", "Texture2DPs.hlsl", 1);
+
 }
 
 void MapEditor::UpdateMenu()
@@ -345,7 +346,7 @@ void MapEditor::LoadTextureFromFolder(std::string pathOfFolder)
 	{
 		if (entry.path().string().find(".png") != std::string::npos)
 		{
-			Texture2D *t = new Texture2D(entry.path().string(), 1000);
+			Texture2D *t = new Texture2D(entry.path().string(),"Texture2DVs.hlsl","Texture2DPs.hlsl", 1000);
 			texMap.push_back(t);
 		}
 	}

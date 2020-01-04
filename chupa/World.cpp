@@ -6,7 +6,7 @@ void World::LoadTextureFromFolder(std::string pathOfFolder)
 	{
 		if (entry.path().string().find(".png") != std::string::npos)
 		{
-			Texture2D* t = new Texture2D(entry.path().string(), 1000);
+			Texture2D* t = new Texture2D(entry.path().string(), "Texture2DVs.hlsl", "Texture2DPs.hlsl", 1000);
 
 			tex.push_back(t);
 

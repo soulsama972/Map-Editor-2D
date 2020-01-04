@@ -62,7 +62,6 @@ private://menu of texture
 
 	void UpdateMenu();
 
-
 	bool inMenu = false;
 
 	Texture2D menu;

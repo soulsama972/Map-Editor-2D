@@ -9,35 +9,22 @@ Texture2D::~Texture2D()
 }
 
 
-Texture2D::Texture2D(std::string src,UINT MaxInstance)
+
+Texture2D::Texture2D(std::string src, std::string vs, std::string ps, UINT MaxInstance)
 {
-	Init(src, MaxInstance);
+	Init(src,vs,ps, MaxInstance);
 }
 
 
 
-void Texture2D::Init(std::string src, UINT MaxInstance)
+void Texture2D::Init(std::string src, std::string vs, std::string ps, UINT MaxInstance)
 {
 	const auto& devcon = window->GetContext();
 	const auto& dev = window->GetDevice();
-	TextrueVertex vertex[4];
 
 
-	vertex[0].pos = fVec3(-1.0f, -1.0f, 0.0f);
-	vertex[1].pos = fVec3(-1.0f, 1.0f, 0.0f);
-	vertex[2].pos = fVec3(1.0f, 1.0f, 0.0f);
-	vertex[3].pos = fVec3(1.0f, -1.0f, 0.0f);
+	CreateVertexTexBuffer(MaxInstance);
 
-	vertex[0].tex = fVec2(0, 1);
-	vertex[1].tex = fVec2(0, 0);
-	vertex[2].tex = fVec2(1, 0);
-	vertex[3].tex = fVec2(1, 1);
-
-	unsigned int ind[] =
-	{
-		0,1,2,
-		0,2,3
-	};
 
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
@@ -47,9 +34,10 @@ void Texture2D::Init(std::string src, UINT MaxInstance)
 	polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[0].InstanceDataStepRate = 0;
 
+
 	polygonLayout[1].SemanticName = "tex";
-	polygonLayout[1].SemanticIndex = 0;
 	polygonLayout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	polygonLayout[1].SemanticIndex = 0;
 	polygonLayout[1].InputSlot = 0;
 	polygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
@@ -72,13 +60,52 @@ void Texture2D::Init(std::string src, UINT MaxInstance)
 	polygonLayout[3].InstanceDataStepRate = 1;
 
 
+	InitializeShaders(vs.c_str(), "main", ps.c_str(), "main", polygonLayout, 4);
+
+	CreateSample();
+
+	// Load the texture in.
+	CheckFAILED(D3DX11CreateShaderResourceViewFromFileA(dev, src.c_str(), NULL, NULL, &textrue, NULL));
 
 
 
-	InitBuffer(dev, devcon, vertex, ind, 4, 6, MaxInstance, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(TextrueVertex), sizeof(TextrueInstanceType));
+}
 
-	InitializeShaders("Texture2DVs.hlsl", "main", "Texture2DPs.hlsl", "main", polygonLayout, 4);
+void Texture2D::AddInstance(const fVec3& pos,const fVec3& size,const Camera& camera)
+{
+	TextrueInstanceType in;
+	fVec3 screenWorld = camera.WorldToScreen(pos);
+	//if(camera.InScreen(screenWorld))
+	
+	in.pos = screenWorld.ToNegativeY();
+	in.size = size/ 2;
+	Model11::AddInstance(in);
 
+}
+
+
+void Texture2D::Draw(bool clearAfter)
+{
+	if (textrue)
+	{
+		const auto& devcon = window->GetContext();
+		devcon->PSSetShaderResources(0, 1, &textrue);
+		devcon->PSSetSamplers(0, 1, &sampleState);
+		Model11::Draw();
+		devcon->PSSetShaderResources(0, 0, 0);
+		devcon->PSSetSamplers(0, 0, 0);
+	}
+	else
+	{
+		Model11::Draw();
+	}
+	if(clearAfter)
+		ClearInstance();
+}
+
+void Texture2D::CreateSample()
+{
+	const auto& dev = window->GetDevice();
 
 	D3D11_SAMPLER_DESC samplerDesc;
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -97,37 +124,69 @@ void Texture2D::Init(std::string src, UINT MaxInstance)
 
 	// Create the texture sampler state.
 	CheckFAILED(dev->CreateSamplerState(&samplerDesc, &sampleState));
-
-	// Load the texture in.
-	CheckFAILED(D3DX11CreateShaderResourceViewFromFileA(dev, src.c_str(), NULL, NULL, &textrue, NULL));
 }
 
-
-
-void Texture2D::AddInstance(const fVec3& pos,const fVec3& size,const Camera& camera)
+void Texture2D::CreateVertexTexBuffer(UINT MaxInstance)
 {
-	TextrueInstanceType in;
-	fVec3 screenWorld = camera.WorldToScreen(pos);
-	//if(camera.InScreen(screenWorld))
-	
-	in.pos = screenWorld.ToNegativeY();
-	in.size = size/ 2;
-	Model11::AddInstance(in);
-
-}
-
-
-
-void Texture2D::Draw(bool clearAfter)
-{
-	
 	const auto& devcon = window->GetContext();
-	devcon->PSSetShaderResources(0, 1, &textrue);
-	devcon->PSSetSamplers(0, 1, &sampleState);
-	Model11::Draw();
-	devcon->PSSetShaderResources(0, 0,0);
-	devcon->PSSetSamplers(0, 0,0);
-	if(clearAfter)
-		ClearInstance();
+	const auto& dev = window->GetDevice();
+
+
+	struct TextrueVertex
+	{
+		fVec3 pos;
+		fVec2 tex;
+	};
+
+	TextrueVertex vertex[4];
+
+	vertex[0].pos = fVec3(-1.0f, -1.0f, 0.0f);
+	vertex[1].pos = fVec3(-1.0f, 1.0f, 0.0f);
+	vertex[2].pos = fVec3(1.0f, 1.0f, 0.0f);
+	vertex[3].pos = fVec3(1.0f, -1.0f, 0.0f);
+
+	vertex[0].tex = fVec2(0, 1);
+	vertex[1].tex = fVec2(0, 0);
+	vertex[2].tex = fVec2(1, 0);
+	vertex[3].tex = fVec2(1, 1);
+
+	unsigned int ind[] =
+	{
+		0,1,2,
+		0,2,3
+	};
+
+	InitBuffer(dev, devcon, vertex, ind, 4, 6, MaxInstance, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(TextrueVertex), sizeof(TextrueInstanceType));
 }
+
+void Texture2D::CreateVertexColorBuffer(UINT MaxInstance)
+{
+	const auto& devcon = window->GetContext();
+	const auto& dev = window->GetDevice();
+
+
+	struct TextrueVertex
+	{
+		fVec3 pos;
+	};
+
+	TextrueVertex vertex[4];
+
+	vertex[0].pos = fVec3(-1.0f, -1.0f, 0.0f);
+	vertex[1].pos = fVec3(-1.0f, 1.0f, 0.0f);
+	vertex[2].pos = fVec3(1.0f, 1.0f, 0.0f);
+	vertex[3].pos = fVec3(1.0f, -1.0f, 0.0f);
+
+
+	unsigned int ind[] =
+	{
+		0,1,2,
+		0,2,3
+	};
+
+	InitBuffer(dev, devcon, vertex, ind, 4, 6, MaxInstance, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, sizeof(TextrueVertex), sizeof(TextrueInstanceType));
+
+}
+
+
 
