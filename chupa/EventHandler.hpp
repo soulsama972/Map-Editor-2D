@@ -139,6 +139,7 @@ public:
 	inline bool IsWindowDestory()
 	{
 		return windowDestory;
+
 	}
 	static Map map;
 

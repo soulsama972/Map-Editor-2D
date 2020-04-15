@@ -1,7 +1,7 @@
 #pragma once
 #include"Model.hpp"
 #include"Math.hpp"
-#include"StaticObject.hpp"
+#include"Texture2D.hpp"
 #include<vector>
 #include"Camera.hpp"
 #include<string>

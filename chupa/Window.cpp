@@ -82,8 +82,6 @@ void Window::Init(const wchar_t* className, fVec2 screenRes)
 }
 
 
-
-
 void Window::ClearTargetView(fVec4 color)
 {
 	devcon->ClearRenderTargetView(backBuffer, color.ToPointer());
