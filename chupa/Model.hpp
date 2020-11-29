@@ -235,7 +235,7 @@ void Model11<T>::AddInstance(T in)
 		devcon->Map(instanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		dataPtr = mappedResource.pData;
 
-		memcpy(dataPtr, instance, instanceStride * instanceCount);
+		memcpy(dataPtr, instance, (UINT)instanceStride * (UINT)instanceCount);
 
 		devcon->Unmap(instanceBuffer, 0);
 	}
